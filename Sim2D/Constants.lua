@@ -16,27 +16,27 @@ SIM2D.TIMER.DRAW.INTERVAL			= 17;
 
 SIM2D.PULSE							= const("SIM2D.PULSE", 		"", true);
 SIM2D.PULSE.OFF						= -1;
-SIM2D.PULSE.ULTRA_SLOW				= const("SIM2D.ULTRA_SLOW", "", true);
+SIM2D.PULSE.ULTRA_SLOW				= const("SIM2D.PULSE.ULTRA_SLOW", "", true);
 SIM2D.PULSE.ULTRA_SLOW.ID			= 34583;
 SIM2D.PULSE.ULTRA_SLOW.INTERVAL		= 500;
-SIM2D.PULSE.SLOW 					= const("SIM2D.SLOW", 		"", true);
+SIM2D.PULSE.SLOW 					= const("SIM2D.PULSE.SLOW", 		"", true);
 SIM2D.PULSE.SLOW.ID					= 34584;
 SIM2D.PULSE.SLOW.INTERVAL			= 250;
-SIM2D.PULSE.MEDIUM					= const("SIM2D.MEDIUM",		"", true);
+SIM2D.PULSE.MEDIUM					= const("SIM2D.PULSE.MEDIUM",		"", true);
 SIM2D.PULSE.MEDIUM.ID				= 34585;
 SIM2D.PULSE.MEDIUM.INTERVAL			= 100;
-SIM2D.PULSE.FAST					= const("SIM2D.FAST",		"", true);
+SIM2D.PULSE.FAST					= const("SIM2D.PULSE.FAST",		"", true);
 SIM2D.PULSE.FAST.ID					= 34586;
 SIM2D.PULSE.FAST.INTERVAL			= 50;
-SIM2D.PULSE.ULTRA_FAST				= const("SIM2D.ULTRA_FAST",	"", true);
+SIM2D.PULSE.ULTRA_FAST				= const("SIM2D.PULSE.ULTRA_FAST",	"", true);
 SIM2D.PULSE.ULTRA_FAST.ID			= 34587;
 SIM2D.PULSE.ULTRA_FAST.INTERVAL 	= 17; -- ~60 FPS
 
 --these serve as super-layers. These are drawn and polled in their ordinal order. These stratum are further sub-divided by layers (listed below).
 SIM2D.STRATUM						= const("SIM2D.STRATUM");
-SIM2D.STRATUM.GO					= 1;
-SIM2D.STRATUM.EFFECT				= 2;
-SIM2D.STRATUM.UI					= 3;
+SIM2D.STRATUM.GO					= 1; --for drawing game objects
+SIM2D.STRATUM.EFFECT				= 2; --for drawing effects
+SIM2D.STRATUM.UI					= 3; --for drawing UI objects
 SIM2D.STRATUM.COUNT					= 3;
 SIM2D.STRATUM.DEFAULT				= SIM2D.STRATUM.GO;
 

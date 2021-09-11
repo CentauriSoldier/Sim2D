@@ -96,7 +96,7 @@ end
 class "LED" : extends(Sim2D) {
 
 
-	__construct = function(this, sState, sName, nX, nY, nWidth, nHeight, nStratum, nLayer, hDC, bDoNotPoll, bDoNotAutoDraw)
+	__construct = function(this, sState, sName, nX, nY, nWidth, nHeight, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		local nRadius 		= nHeight / 2;
 		local nCenterX 		= nX + nWidth / 2;
 		local nCenterY 		= nY + nHeight / 2;
@@ -105,7 +105,7 @@ class "LED" : extends(Sim2D) {
 
 		tLEDs[this] = {
 			ActiveColor 	= -1,
-			DC 				= hDC,
+			--DC 				= hDC,
 			OnColor			= -1,
 			OnColorRGB		= {Red = 255, Green = 0, Blue = 0},
 			OffColor		= -1,
@@ -124,7 +124,7 @@ class "LED" : extends(Sim2D) {
 		};
 
 		--TODO use a rectangle here or change all this to use a circle
-		this:super(sState, sName, oCircle, hDC, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
+		this:super(sState, sName, oCircle, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
 
 		local oLED = tLEDs[this];
 		SetOnState(this, oLED.OnColorRGB.Red, 	oLED.OnColorRGB.Green, 	oLED.OnColorRGB.Blue);

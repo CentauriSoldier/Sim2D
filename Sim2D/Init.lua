@@ -91,7 +91,7 @@ end
 
 if not(COG_INIT) then
 	import("CoG.init");
-	COG_INIT = true;
+	COG_INIT = true; --TODO DOES this need to be here? Doesn't CoG take care of this?
 end
 
 --warn the user if LuaEx is missing

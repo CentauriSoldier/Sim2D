@@ -186,14 +186,14 @@ Sim2D.OnStartup = function()
 
 					--TODO make this use a pairs function to call all obejct using their TYPEs (designated at the end ofeach class file)
 					if (tData.Type == SIM2D.TYPE.PRG) then
-						Prg(sState, sObject, nX, nY, nWidth, nHeight, hDC);
+						Prg(sState, sObject, nX, nY, nWidth, nHeight);
 
 					--hex statebutton
 					elseif (tData.Type == SIM2D.TYPE.STATEBTN) then
-						StateBtn(sState, sObject, nX, nY, nWidth, nHeight, hDC);
+						StateBtn(sState, sObject, nX, nY, nWidth, nHeight);
 
 					elseif (tData.Type == SIM2D.TYPE.COUNTYROW) then
-						CountyRow(sState, sObject, nX, nY, nWidth, nHeight, hDC);
+						CountyRow(sState, sObject, nX, nY, nWidth, nHeight);
 
 					end
 

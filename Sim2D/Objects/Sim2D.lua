@@ -12,7 +12,7 @@ local bHasInit = false;
 
 class "Sim2D" {
 
-	__construct = function(this, sState, sName, oShape, hDC, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
+	__construct = function(this, sState, sName, oShape, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		sState = sState:lower();--TODO check this input!!!
 		--get the object's stratum
 		nStratum = Util.StratumIsValid(nStratum) and nStratum or SIM2D.STRATUM.DEFAULT;
@@ -26,10 +26,10 @@ class "Sim2D" {
 
 		tSim2D.ObjectSettings[this] = {
 			AutoDraw 		= not (type(bDoNotAutoDraw) == "boolean" and bDoNotAutoDraw or false), --defaults to true --TODO should this have mutator/accessor or should it be permanant?
-			AutoPoll 		= not (type(bDoNotPoll) 	== "boolean" and bDoNotPoll 	or false),			--defaults to true --TODO should this have mutaror/accessor or should it be permanant?
+			AutoPoll 		= not (type(bDoNotPoll) 	== "boolean" and bDoNotPoll 	or false), --defaults to true --TODO should this have mutaror/accessor or should it be permanant?
 			Children		= {},
 			DrawIndex 		= 0,
-			DC				= hDC, --TODO allow this to be modified
+			--DC				= hDC, --TODO allow this to be modified?
 			ClickableLeft	= true, --allows/disallows event firing
 			ClickableRight	= true, --allows/disallows event firing
 			Clicked			= false,
@@ -56,16 +56,14 @@ class "Sim2D" {
 		--set up the first (potential) onenter event for this object
 		tSim2D.EventUtil.OnEnterQueue[this] = true;
 
-		--TODO separate polling from drawing so objects can interally choose to poll or draw their own objects more granularlly
 		--store state objects here for fast processing
-
 		if (tSim2D.ObjectSettings[this].AutoPoll)	then
 			local nNextIndex = #tSim2D.PollObjects[nStateID][nStratum] + 1;
 			tSim2D.PollObjects[nStateID][nStratum][nNextIndex] = this;
 		end
 
 		if (tSim2D.ObjectSettings[this].AutoDraw) then
-			local nNextIndex = #tSim2D.DrawObjects[nStateID][nStratum][nLayer] + 1
+			local nNextIndex = #tSim2D.DrawObjects[nStateID][nStratum][nLayer] + 1;
 			tSim2D.DrawObjects[nStateID][nStratum][nLayer][nNextIndex] = this;
 		end
 
@@ -77,7 +75,7 @@ class "Sim2D" {
 		local sState 	= this:GetName();
 
 		this:Destroy();
-		tSim2D.ObjectSettings[this] 			= nil;
+		tSim2D.ObjectSettings[this] 		= nil;
 		tSim2D.PollObjects[sState][sName] 	= nil;
 		tSim2D.ObjectsByName[sState][sName]	= nil;
 		this = nil;

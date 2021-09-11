@@ -20,9 +20,9 @@ local DrawingFont = DrawingFont;
 --TODO also make horizonal bars
 class "Prg" : extends(Sim2D) {
 
-	__construct = function(this, sState, sName, nX, nY, nWidth, nHeight, hDC, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
+	__construct = function(this, sState, sName, nX, nY, nWidth, nHeight, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		local oRect = rectangle(point(nX, nY), nWidth, nHeight);
-		this:super(sState, sName, oRect, hDC, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
+		this:super(sState, sName, oRect, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
 
 		tPrgs[this] = {
 			Bar 		= {X = 0, Y = 0, Width = 0, Height = 0},
@@ -30,7 +30,7 @@ class "Prg" : extends(Sim2D) {
 			BarColor 	= Color.RGB(255, 0, 0),
 			CenterText 	= true,
 			CurrentPos	= 0,
-			DC 			= hDC, --TODO allow this to be modified,
+			--DC 			= hDC, --TODO allow this to be modified,
 			Font 		= nil,
 			Text 		= "",
 			TextColor 	= Color.RGB(255, 255, 255),
