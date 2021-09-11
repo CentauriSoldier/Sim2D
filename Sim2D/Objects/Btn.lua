@@ -53,8 +53,8 @@ end
 
 class "Btn" : extends(Sim2D) {
 
-	__construct = function(this, sState, sName, oShape, hDC, nLayer, bDoNotPoll, bDoNotAutoDraw)
-		this:super(sState, sName, oShape, hDC, nLayer, bDoNotPoll, bDoNotAutoDraw);
+	__construct = function(this, sState, sName, oShape, hDC, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
+		this:super(sState, sName, oShape, hDC, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
 
 		tBtns[this] = {
 			Images = {

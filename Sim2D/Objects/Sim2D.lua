@@ -8,12 +8,14 @@ local Util;
 
 local bHasInit = false;
 
-
+--TODO add physics, drag and collision
 
 class "Sim2D" {
 
-	__construct = function(this, sState, sName, oShape, hDC, nLayer, bDoNotPoll, bDoNotAutoDraw)
+	__construct = function(this, sState, sName, oShape, hDC, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		sState = sState:lower();--TODO check this input!!!
+		--get the object's stratum
+		nStratum = Util.StratumIsValid(nStratum) and nStratum or SIM2D.STRATUM.DEFAULT;
 		--get the object's layer
 		local nLayer = Util.LayerIsValid(nLayer) and nLayer or SIM2D.LAYER.DEFAULT;
 		--get the state ID
@@ -44,6 +46,7 @@ class "Sim2D" {
 			Shape 			= oShape,
 			State 			= sState,
 			StateID			= nStateID, --no accessor for this since it's internal
+			Stratum			= nStratum,
 			Visible 		= true,
 		};
 		--TODO redo state id to be a character count of the state string (lowered)
@@ -57,11 +60,13 @@ class "Sim2D" {
 		--store state objects here for fast processing
 
 		if (tSim2D.ObjectSettings[this].AutoPoll)	then
-			tSim2D.PollObjects[nStateID][#tSim2D.PollObjects[nStateID] + 1] = this;
+			local nNextIndex = #tSim2D.PollObjects[nStateID][nStratum] + 1;
+			tSim2D.PollObjects[nStateID][nStratum][nNextIndex] = this;
 		end
 
 		if (tSim2D.ObjectSettings[this].AutoDraw) then
-			tSim2D.DrawObjects[nStateID][nLayer][#tSim2D.DrawObjects[nStateID][nLayer] + 1] = this;
+			local nNextIndex = #tSim2D.DrawObjects[nStateID][nStratum][nLayer] + 1
+			tSim2D.DrawObjects[nStateID][nStratum][nLayer][nNextIndex] = this;
 		end
 
 	end,
@@ -117,6 +122,10 @@ class "Sim2D" {
 		return tSim2D.ObjectSettings[this].State;
 	end,
 
+	GetStratum = function(this)
+		return tSim2D.ObjectSettings[this].Stratum;
+	end,
+
 	IsHovered = function(this)
 		return tSim2D.ObjectSettings[this].Hovered;
 	end,
@@ -156,7 +165,7 @@ class "Sim2D" {
 		tSim2D.ObjectSettings[this].ClickableRight = type(bFlag) == "boolean" and bFlag or false;
 		return this;
 	end,
-
+--TODO set stratum method and get layer method
 	SetDrawLayer = function(this, nLayer)
 		local oObject 		= tSim2D.ObjectSettings[this];
 		local nOldLayer		= oObject.Layer;

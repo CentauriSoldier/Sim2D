@@ -18,47 +18,6 @@ local InternalCallback 	= Sim2D.InternalCallback;
 local OnDraw			= InternalCallback.OnDraw;
 local OnEvent			= InternalCallback.OnEvent;
 
-local function CalculateUIRects()
-	--get the screen size
-	--local tDisplay = System.GetDisplayInfo();
-
-	--TODO rearrange these tables to use a 'Window' index and actual rectangles
-	--store the screen size for later use
-	--tSim2D.Rect.System = rectangle(point(0, 0), tDisplay.Width, tDisplay.Height);
-
-
-
-	--store the build size info
-	--tSim2D.Rect.Build = rectangle(point(), tWindowStyles.Width, tWindowStyles.Height);
-
-
-	--get the build ratios
-	--tSim2D.Ratios.WH = math.ratio(tSim2D.Rect.Build.width, tSim2D.Rect.Build.height);
-	--tSim2D.Ratios.HW = math.ratio(tSim2D.Rect.Build.height, tSim2D.Rect.Build.width);
-
-	--calculate the app window size and position
-	--local tAppRect 			= math.fitrect(tDisplay.Width, tDisplay.Height, 0, 0, tSim2D.Ratios.WH.left, tSim2D.Ratios.WH.right, 1, true);
-
-	--inform the ui of the window size
-	--tSim2D.Rect.App 		= {rectangle(point(tAppRect.x, tAppRect.y), tAppRect.width, tAppRect.height);};
-
-	--get the app window handle
-	--tSim2D.Rect.App.Wnd = Application.GetWndHandle();
-
-	--set the application window size and location --TODO only do this if it's fullscreen
-	--Window.SetSize(tSim2D.Rect.App.Wnd, tDisplay.Width, tDisplay.Height);
-	--Window.SetPos( tSim2D.Rect.App.Wnd, 0, 0);
-
-	--set the coefficient of variation
-	--tSim2D.CoV.HX = tSim2D.Rect.App.width 	/ tSim2D.Rect.Build.width;
-	--tSim2D.CoV.VY = tSim2D.Rect.App.height	/ tSim2D.Rect.Build.height;
-
-	--import the UI rectangle data
-	--tSim2D.Rect.App 	= UI.GetAppRect();
-	--tSim2D.Rect.Build 	= UI.GetBuildRect();
-	--tSim2D.Rect.System 	= UI.GetSystemRect();
-end
-
 --TODO optimize
 
 --TODO make this a more gneralized function
@@ -165,7 +124,11 @@ Sim2D.OnStartup = function()
 
 			--create a place to store the pollable and pulsable objects
 			tSim2D.ObjectsByName[nStateID]	= {};
-			tSim2D.PollObjects[nStateID]	= {};
+			tSim2D.PollObjects[nStateID]	= {
+				[SIM2D.STRATUM.GO]	 		= {},
+				[SIM2D.STRATUM.EFFECT] 		= {},
+				[SIM2D.STRATUM.UI]			= {},
+			};
 			tSim2D.PulseObjects[nStateID]	= {
 				[SIM2D.PULSE.ULTRA_SLOW] 	= {},
 				[SIM2D.PULSE.SLOW] 			= {},
@@ -174,15 +137,39 @@ Sim2D.OnStartup = function()
 				[SIM2D.PULSE.ULTRA_FAST] 	= {},
 			};
 			tSim2D.DrawObjects[nStateID] 	= {
-				[SIM2D.LAYER.BACKGROUND_BACK] 	= {},
-				[SIM2D.LAYER.BACKGROUND_MID] 	= {},
-				[SIM2D.LAYER.BACKGROUND_FRONT] 	= {},
-				[SIM2D.LAYER.MIDGROUND_BACK] 	= {},
-				[SIM2D.LAYER.MIDGROUND_MID] 	= {},
-				[SIM2D.LAYER.MIDGROUND_FRONT] 	= {},
-				[SIM2D.LAYER.FOREGROUND_BACK]	= {},
-				[SIM2D.LAYER.FOREGROUND_MID] 	= {},
-				[SIM2D.LAYER.FOREGROUND_FRONT] 	= {},
+				[SIM2D.STRATUM.GO] 	= {
+					[SIM2D.LAYER.BACKGROUND_BACK] 	= {},
+					[SIM2D.LAYER.BACKGROUND_MID] 	= {},
+					[SIM2D.LAYER.BACKGROUND_FRONT] 	= {},
+					[SIM2D.LAYER.MIDGROUND_BACK] 	= {},
+					[SIM2D.LAYER.MIDGROUND_MID] 	= {},
+					[SIM2D.LAYER.MIDGROUND_FRONT] 	= {},
+					[SIM2D.LAYER.FOREGROUND_BACK]	= {},
+					[SIM2D.LAYER.FOREGROUND_MID] 	= {},
+					[SIM2D.LAYER.FOREGROUND_FRONT] 	= {},
+				},
+				[SIM2D.STRATUM.EFFECT] = {
+					[SIM2D.LAYER.BACKGROUND_BACK] 	= {},
+					[SIM2D.LAYER.BACKGROUND_MID] 	= {},
+					[SIM2D.LAYER.BACKGROUND_FRONT] 	= {},
+					[SIM2D.LAYER.MIDGROUND_BACK] 	= {},
+					[SIM2D.LAYER.MIDGROUND_MID] 	= {},
+					[SIM2D.LAYER.MIDGROUND_FRONT] 	= {},
+					[SIM2D.LAYER.FOREGROUND_BACK]	= {},
+					[SIM2D.LAYER.FOREGROUND_MID] 	= {},
+					[SIM2D.LAYER.FOREGROUND_FRONT] 	= {},
+				},
+				[SIM2D.STRATUM.UI] = {
+					[SIM2D.LAYER.BACKGROUND_BACK] 	= {},
+					[SIM2D.LAYER.BACKGROUND_MID] 	= {},
+					[SIM2D.LAYER.BACKGROUND_FRONT] 	= {},
+					[SIM2D.LAYER.MIDGROUND_BACK] 	= {},
+					[SIM2D.LAYER.MIDGROUND_MID] 	= {},
+					[SIM2D.LAYER.MIDGROUND_FRONT] 	= {},
+					[SIM2D.LAYER.FOREGROUND_BACK]	= {},
+					[SIM2D.LAYER.FOREGROUND_MID] 	= {},
+					[SIM2D.LAYER.FOREGROUND_FRONT] 	= {},
+				},
 			};
 
 			--import the objects from the factory files
@@ -236,52 +223,55 @@ function Sim2D.OnTimer(nID)
 		tSim2D.EventUtil.ObjectHovered = nil;
 
 		--iterate through the active state's objects and poll each one (which is pollable)
-		for x = 1, #tSim2D.PollObjects[tSim2D.ActiveStateID] do
-			local this 		= tSim2D.PollObjects[tSim2D.ActiveStateID][x];
-			local tSettings	= tSim2D.ObjectSettings[this];
---TODO should i put all these hoverable objects in an actual queue to have their events fired?
-			if (tSettings.AutoPoll) then
+		for nStratum = 1, #tSim2D.PollObjects[tSim2D.ActiveStateID] do
 
-				if (tSettings.Shape:containsPoint(tSim2D.Canvas.Mouse.X, tSim2D.Canvas.Mouse.Y)) then
-					tSim2D.EventUtil.ObjectHovered = this;
+			for x = 1, #tSim2D.PollObjects[tSim2D.ActiveStateID][nStratum] do
+				local this 		= tSim2D.PollObjects[tSim2D.ActiveStateID][nStratum][x];
+				local tSettings	= tSim2D.ObjectSettings[this];
+	--TODO should i put all these hoverable objects in an actual queue to have their events fired?
+				if (tSettings.AutoPoll) then
 
-					if (tSettings.Hoverable) then
-						--indicate that the mouse is over
-						tSettings.Hovered = true;
+					if (tSettings.Shape:containsPoint(tSim2D.Canvas.Mouse.X, tSim2D.Canvas.Mouse.Y)) then
+						tSim2D.EventUtil.ObjectHovered = this;
 
-						if (tSettings.OnEnterReady and type(this.OnEnter) == "function") then
-						--turn off the onenter event
-						tSettings.OnEnterReady = false;
-						--fire the onenter event
-						this:OnEnter(tSim2D.Canvas.Mouse.X, tSim2D.Canvas.Mouse.Y);
-						--turn on the onleave event
-						tSettings.OnLeaveReady = true;
+						if (tSettings.Hoverable) then
+							--indicate that the mouse is over
+							tSettings.Hovered = true;
+
+							if (tSettings.OnEnterReady and type(this.OnEnter) == "function") then
+							--turn off the onenter event
+							tSettings.OnEnterReady = false;
+							--fire the onenter event
+							this:OnEnter(tSim2D.Canvas.Mouse.X, tSim2D.Canvas.Mouse.Y);
+							--turn on the onleave event
+							tSettings.OnLeaveReady = true;
+							end
+
 						end
 
+					elseif (tSettings.OnLeaveReady and type(this.OnLeave) == "function") then
+
+						--TODO check for toggle status before doing this part
+						--set unclicked
+						tSettings.ClickedLeft 	= false;
+						tSettings.ClickedReft 	= false;
+						tSettings.Clicked		= false;
+
+						--indicate that the mouse is no longer over
+						tSettings.Hovered = false;
+						--turn off the onleave event
+						tSettings.OnLeaveReady = false;
+						--fire the onleave event
+						this:OnLeave(tSim2D.Canvas.Mouse.X, tSim2D.Canvas.Mouse.Y);
+						--turn on the onenter event
+						tSettings.OnEnterReady = true;
 					end
 
-				elseif (tSettings.OnLeaveReady and type(this.OnLeave) == "function") then
-
-					--TODO check for toggle status before doing this part
-					--set unclicked
-					tSettings.ClickedLeft 	= false;
-					tSettings.ClickedReft 	= false;
-					tSettings.Clicked		= false;
-
-					--indicate that the mouse is no longer over
-					tSettings.Hovered = false;
-					--turn off the onleave event
-					tSettings.OnLeaveReady = false;
-					--fire the onleave event
-					this:OnLeave(tSim2D.Canvas.Mouse.X, tSim2D.Canvas.Mouse.Y);
-					--turn on the onenter event
-					tSettings.OnEnterReady = true;
 				end
 
 			end
 
 		end
-
 	--[[ ________  ___  ___  ___       ________  _______
 		|\   __  \|\  \|\  \|\  \     |\   ____\|\  ___ \
 		\ \  \|\  \ \  \\\  \ \  \    \ \  \___|\ \   __/|

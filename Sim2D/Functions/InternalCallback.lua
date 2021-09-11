@@ -25,16 +25,22 @@ function Sim2D.InternalCallback.OnDraw(sObjectName, D, hDC)
 	--draw the canvas background  --TODO do not do this here...this should be left to the user to do by creating an image object and setting its layer to 0
 	Drawing.DrawImage(DrawingImage.GetID(tSim2D.Canvas.Backgrounds[tSim2D.ActiveStateID]), 0, 0);
 
-	--iterate through each each layer in the active state
-	for nLayer = 1, #tSim2D.DrawObjects[tSim2D.ActiveStateID] do
-		local tLayer = tSim2D.DrawObjects[tSim2D.ActiveStateID][nLayer];
+	--iterate through each each stratum in the active state
+	for nStratum = 1, #tSim2D.DrawObjects[tSim2D.ActiveStateID] do
 
-		--draw each object in the layer
-		for nIndex = 1, #tLayer do
-			local oObject = tLayer[nIndex];
+		--iterate through each each layer in this stratum
+		for nLayer = 1, #tSim2D.DrawObjects[tSim2D.ActiveStateID][nStratum] do
+		local tLayer = tSim2D.DrawObjects[tSim2D.ActiveStateID][nStratum][nLayer];
 
-			if (tSim2D.ObjectSettings[oObject].Visible and type(oObject.OnDraw) == "function") then
-				oObject:OnDraw(tSim2D.Canvas.Mouse.X, tSim2D.Canvas.Mouse.Y, sObjectName, D, hDC);
+			--draw each object in this layer
+			for nIndex = 1, #tLayer do
+				local oObject = tLayer[nIndex];
+
+				--TODO add a check to determine if the object is within the boundary of the canvas
+				if (tSim2D.ObjectSettings[oObject].Visible and type(oObject.OnDraw) == "function") then
+					oObject:OnDraw(tSim2D.Canvas.Mouse.X, tSim2D.Canvas.Mouse.Y, sObjectName, D, hDC);
+				end
+
 			end
 
 		end

@@ -1,7 +1,8 @@
 SIM2D								= const("SIM2D", 				"", true);
 
 SIM2D.SOUND_CHANNEL					= CHANNEL_USER4; --this channel MUST be reserved for Sim2D
-SIM2D.CANVAS						= "__uicom canvas__";--the canvas on the page MUST be named this
+--TODO add more channels--basically, sim2d will take over AMS completely
+SIM2D.CANVAS						= "__sim2d canvas__";--the canvas on the page MUST be named this
 
 SIM2D.TYPE							= const("SIM2D.TYPE", 			"", true); --used to during object creation to identify item type
 
@@ -31,17 +32,25 @@ SIM2D.PULSE.ULTRA_FAST				= const("SIM2D.ULTRA_FAST",	"", true);
 SIM2D.PULSE.ULTRA_FAST.ID			= 34587;
 SIM2D.PULSE.ULTRA_FAST.INTERVAL 	= 17; -- ~60 FPS
 
+--these serve as super-layers. These are drawn and polled in their ordinal order. These stratum are further sub-divided by layers (listed below).
+SIM2D.STRATUM						= const("SIM2D.STRATUM");
+SIM2D.STRATUM.GO					= 1;
+SIM2D.STRATUM.EFFECT				= 2;
+SIM2D.STRATUM.UI					= 3;
+SIM2D.STRATUM.COUNT					= 3;
+SIM2D.STRATUM.DEFAULT				= SIM2D.STRATUM.GO;
+
 SIM2D.LAYER 						= const("SIM2D.LAYER", 		"", true);
 SIM2D.LAYER.COUNT					= 9;
-SIM2D.LAYER.BACKGROUND				= const("SIM2D.BACKGROUND",	"", true);
+SIM2D.LAYER.BACKGROUND				= const("SIM2D.LAYER.BACKGROUND",	"", true);
 SIM2D.LAYER.BACKGROUND_BACK			= 1;
 SIM2D.LAYER.BACKGROUND_MID			= 2;
 SIM2D.LAYER.BACKGROUND_FRONT		= 3;
-SIM2D.LAYER.MIDGROUND				= const("SIM2D.MIDGROUND",	"", true);
+SIM2D.LAYER.MIDGROUND				= const("SIM2D.LAYER.MIDGROUND",	"", true);
 SIM2D.LAYER.MIDGROUND_BACK			= 4;
 SIM2D.LAYER.MIDGROUND_MID			= 5;
 SIM2D.LAYER.MIDGROUND_FRONT			= 6;
-SIM2D.LAYER.FOREGROUND				= const("SIM2D.FOREGROUND",	"", true);
+SIM2D.LAYER.FOREGROUND				= const("SIM2D.LAYER.FOREGROUND",	"", true);
 SIM2D.LAYER.FOREGROUND_BACK			= 7;
 SIM2D.LAYER.FOREGROUND_MID			= 8;
 SIM2D.LAYER.FOREGROUND_FRONT		= 9;

@@ -26,8 +26,8 @@ end
 
 class "Ani" : extends(Sim2D) {
 
-	__construct = function(this, sState, sName, oShape, hDC, nLayer, pFolder, sFiletype, nDuration, nX, nY, nWidth, nHeight, bDoNotPoll, bDoNotAutoDraw)
-		this:super(sState, sName, rectangle(point(nX, nY), nWidth, nHeight), hDC, nLayer, bDoNotPoll, bDoNotAutoDraw);
+	__construct = function(this, sState, sName, oShape, hDC, nStratum, nLayer, pFolder, sFiletype, nDuration, nX, nY, nWidth, nHeight, bDoNotPoll, bDoNotAutoDraw)
+		this:super(sState, sName, rectangle(point(nX, nY), nWidth, nHeight), hDC, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
 
 		tAnis[this] = {
 			CyclesPerSecond = -1,

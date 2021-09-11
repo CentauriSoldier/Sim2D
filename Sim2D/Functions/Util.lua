@@ -90,11 +90,13 @@ function Sim2D.Util.AddState(sState)
 end
 
 
-function Sim2D.Util.LayerIsValid(vLayer)
+function Sim2D.Util.LayerIsValid(bIsUICom, vLayer)
 	return (type(vLayer) == "number" and vLayer > 0 and vLayer <= SIM2D.LAYER.COUNT and math.floor(vLayer) == vLayer);
 end
 
-
+function Sim2D.Util.StratumIsValid(bIsUICom, nStratum)
+	return (type(nStratum) == "number" and nStratum > 0 and nStratum <= SIM2D.STRATUM.COUNT and math.floor(nStratum) == nStratum);
+end
 
 
 function Sim2D.Util.ImageTypeIsValid(sType)
