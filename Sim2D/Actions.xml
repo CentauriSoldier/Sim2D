@@ -1,0 +1,406 @@
+<ActionTemplates>
+   <Action>
+      <Name>XML.Count</Name>
+      <Description>Counts the number of elements below a given XML path that match a specific element name.</Description>
+      <ReturnValueType>number</ReturnValueType>
+      <Arguments>
+         <Arg>
+            <Name>XMLPath</Name>
+            <Description>The path to the element whose children you want to count.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"root/element/element"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+         <Arg>
+            <Name>ElementName</Name>
+            <Description>The element name (tag name) that you want to search for. Only elements that match will be counted. Use * to match any name.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"*"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+      </Arguments>
+   </Action>
+   <Action>
+      <Name>XML.GetAttribute</Name>
+      <Description>Returns the value of an element's attribute.</Description>
+      <ReturnValueType>string</ReturnValueType>
+      <Arguments>
+         <Arg>
+            <Name>XMLPath</Name>
+            <Description>The path to the element whose attribute you want to retrieve.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"root/element/element"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+         <Arg>
+            <Name>AttributeName</Name>
+            <Description>The name of the attribute.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"MyAttribute"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+      </Arguments>
+   </Action>
+   <Action>
+      <Name>XML.GetAttributeNames</Name>
+      <Description>Returns the names of an element's attributes in a numerically indexed table.</Description>
+      <ReturnValueType>table</ReturnValueType>
+      <Arguments>
+         <Arg>
+            <Name>XMLPath</Name>
+            <Description>The path to the element whose attribute names you want to retrieve.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"root/element/element"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+      </Arguments>
+   </Action>
+   <Action>
+      <Name>XML.GetElementNames</Name>
+      <Description>Returns a numerically indexed table containing the names of all child elements contained within a specific element.</Description>
+      <ReturnValueType>table</ReturnValueType>
+      <Arguments>
+         <Arg>
+            <Name>XMLPath</Name>
+            <Description>The path to the element whose child elements you want to find.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"root/element/element"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+         <Arg>
+            <Name>FullPaths</Name>
+            <Description>Whether to return the full paths of the child elements, or just the element names.</Description>
+            <Type>boolean</Type>
+            <Default>false</Default>
+            <Required>0</Required>
+            <EasyMode>
+               <Default>false</Default>
+               <DataType>boolean</DataType>
+               <Constraints>none</Constraints>
+            </EasyMode>
+         </Arg>
+         <Arg>
+            <Name>IncludeIndices</Name>
+            <Description>Whether to include the delimiter and index (e.g. ":3") for each child element, or just the element names.</Description>
+            <Type>boolean</Type>
+            <Default>false</Default>
+            <Required>0</Required>
+            <EasyMode>
+               <Default>false</Default>
+               <DataType>boolean</DataType>
+               <Constraints>none</Constraints>
+            </EasyMode>
+         </Arg>
+      </Arguments>
+   </Action>
+   <Action>
+      <Name>XML.GetElementXML</Name>
+      <Description>Returns the raw XML of an element, i.e. the plain-text XML code for the element and all of its children.</Description>
+      <ReturnValueType>string</ReturnValueType>
+      <Arguments>
+         <Arg>
+            <Name>XMLPath</Name>
+            <Description>The path to the element whose XML you want to retrieve.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"root/element/element"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+      </Arguments>
+   </Action>
+   <Action>
+      <Name>XML.GetValue</Name>
+      <Description>Returns the value of an element.</Description>
+      <ReturnValueType>string</ReturnValueType>
+      <Arguments>
+         <Arg>
+            <Name>XMLPath</Name>
+            <Description>The path to the element whose value you want to retrieve.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"root/element/element"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+      </Arguments>
+   </Action>
+   <Action>
+      <Name>XML.GetXML</Name>
+      <Description>Returns the currently loaded XML document as a string.</Description>
+      <ReturnValueType>string</ReturnValueType>
+      <Arguments/>
+   </Action>
+   <Action>
+      <Name>XML.InsertXML</Name>
+      <Description>Inserts raw XML code into a specific location in the currently loaded document.</Description>
+      <ReturnValueType/>
+      <Arguments>
+         <Arg>
+            <Name>XMLPath</Name>
+            <Description>The path to the element where you want to insert the XML text.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"root/element/element"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+         <Arg>
+            <Name>Text</Name>
+            <Description>The XML text that you want to insert.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default><![CDATA["<element>value1</element><element>value2</element>"]]></Default>
+               <DataType>string</DataType>
+               <Constraints>none</Constraints>
+            </EasyMode>
+         </Arg>
+         <Arg>
+            <Name>InsertionMode</Name>
+            <Description>The insertion mode to use. (Controls where the XML is inserted relative to the provided XMLPath.)</Description>
+            <Type>number</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>XML.INSERT_BEFORE</Default>
+               <DataType>combo</DataType>
+               <Constraints>XML.INSERT_BEFORE,XML.INSERT_AFTER,XML.REPLACE</Constraints>
+            </EasyMode>
+         </Arg>
+      </Arguments>
+   </Action>
+   <Action>
+      <Name>XML.Load</Name>
+      <Description>Loads an XML file into memory so it can be processed.</Description>
+      <ReturnValueType/>
+      <Arguments>
+         <Arg>
+            <Name>Filename</Name>
+            <Description>The path to the XML file.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"C:\\MyFile.xml"</Default>
+               <DataType>fileedit</DataType>
+               <Constraints>Docs</Constraints>
+            </EasyMode>
+         </Arg>
+      </Arguments>
+   </Action>
+   <Action>
+      <Name>XML.RemoveAttribute</Name>
+      <Description>Removes a specific attribute from an element.</Description>
+      <ReturnValueType/>
+      <Arguments>
+         <Arg>
+            <Name>XMLPath</Name>
+            <Description>The path to the element whose attribute you want to remove.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"root/element/element"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+         <Arg>
+            <Name>AttributeName</Name>
+            <Description>The name of the attribute you want to remove.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"MyAttribute"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+      </Arguments>
+   </Action>
+   <Action>
+      <Name>XML.RemoveElement</Name>
+      <Description>Removes a specific element (and its children) from the currently loaded XML document.</Description>
+      <ReturnValueType/>
+      <Arguments>
+         <Arg>
+            <Name>XMLPath</Name>
+            <Description>The path to the element you want to remove.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"root/element/element"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+      </Arguments>
+   </Action>
+   <Action>
+      <Name>XML.Save</Name>
+      <Description>Saves the currently loaded XML document to a file.</Description>
+      <ReturnValueType/>
+      <Arguments>
+         <Arg>
+            <Name>Filename</Name>
+            <Description>The full path for the XML file.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"C:\\MyFile.xml"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+      </Arguments>
+   </Action>
+   <Action>
+      <Name>XML.SetAttribute</Name>
+      <Description>Sets the value of an element's attribute.</Description>
+      <ReturnValueType/>
+      <Arguments>
+         <Arg>
+            <Name>XMLPath</Name>
+            <Description>The path to the element whose attribute you want to set.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"root/element/element"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+         <Arg>
+            <Name>AttributeName</Name>
+            <Description>The name of the attribute you want to set.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"MyAttribute"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+         <Arg>
+            <Name>AttributeValue</Name>
+            <Description>The value you want the attribute to have.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"MyValue"</Default>
+               <DataType>string</DataType>
+               <Constraints>none</Constraints>
+            </EasyMode>
+         </Arg>
+      </Arguments>
+   </Action>
+   <Action>
+      <Name>XML.SetValue</Name>
+      <Description>Sets the value of an element.</Description>
+      <ReturnValueType/>
+      <Arguments>
+         <Arg>
+            <Name>XMLPath</Name>
+            <Description>The path to the element whose value you want to set.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"root/element/element"</Default>
+               <DataType>string</DataType>
+               <Constraints>1,*</Constraints>
+            </EasyMode>
+         </Arg>
+         <Arg>
+            <Name>Value</Name>
+            <Description>The value you want the element to have.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default>"MyValue"</Default>
+               <DataType>string</DataType>
+               <Constraints>none</Constraints>
+            </EasyMode>
+         </Arg>
+         <Arg>
+            <Name>WriteCDATA</Name>
+            <Description>Whether to write the value as a CDATA section.</Description>
+            <Type>boolean</Type>
+            <Default>false</Default>
+            <Required>0</Required>
+            <EasyMode>
+               <Default>false</Default>
+               <DataType>boolean</DataType>
+               <Constraints>none</Constraints>
+            </EasyMode>
+         </Arg>
+      </Arguments>
+   </Action>
+   <Action>
+      <Name>XML.SetXML</Name>
+      <Description>Loads an XML document into memory from a string.</Description>
+      <ReturnValueType/>
+      <Arguments>
+         <Arg>
+            <Name>Text</Name>
+            <Description>The XML document. This will replace the contents of the currently loaded XML document.</Description>
+            <Type>string</Type>
+            <Default/>
+            <Required>1</Required>
+            <EasyMode>
+               <Default><![CDATA["<root><element>MyValue1</element><element>MyValue2</element></root>"]]></Default>
+               <DataType>string</DataType>
+               <Constraints>none</Constraints>
+            </EasyMode>
+         </Arg>
+      </Arguments>
+   </Action>
+</ActionTemplates>
