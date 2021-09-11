@@ -2,4 +2,4 @@
  A 2D Game Framework for Autoplay Media Studio
 
 # License
-Sim2D is Licensed under The Unlicense expect where otherwise noted in indidiual files/modules.
+Sim2D is Licensed under The Unlicense except where otherwise noted in indidiual files/modules.
