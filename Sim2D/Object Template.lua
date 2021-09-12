@@ -2,7 +2,7 @@ local tMyObjects 	= {};
 
 local class 		= class;
 local tSim2D 		= Sim2D.__properties;
-local UICOM 		= UICOM;
+local SIM2D 		= SIM2D;
 local Sim2D 		= Sim2D;
 
 
