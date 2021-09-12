@@ -6,6 +6,8 @@
 ### What is Sim2D?
 **Sim2D** is a gaming framework designed to make game creation with Autoplay Media Studio simple and fast.
 
+### What Sim2D is *NOT*
+While Sim2D is great for the creating game types listed above (as well other such game types), it is not, nor ever will be, viable for making graphic-intense games such as 3D games, First Person Shooters, etc. The boon of being able to use AMS for creating games comes with limitations which cannot be overcome by this framework.  
 
 ### Plugin Requirements
  - AAA - [*download*](https://github.com/CentauriSoldier/AutoPlayMediaStudioPlugins)
@@ -22,7 +24,7 @@
 - Makes Use of Autoplay Media Studio's WYSIWYG editor even for custom objects   
  
 ### Planned Features
- - Implementation of Tile maps (produced by the [TILED](https://www.mapeditor.org/) editor) ![](https://www.mapeditor.org/img/tiled-logo-header.png)
+ - Implementation of Tile maps (produced by the [TILED](https://www.mapeditor.org/) editor) ![](https://www.mapeditor.org/img/tiled-logo-header.png width="20")
 
 
 
