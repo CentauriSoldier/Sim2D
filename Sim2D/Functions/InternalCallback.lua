@@ -23,7 +23,7 @@ local hImage = DrawingImage.New(300, 200, 32, DRAW_IMAGE_TRANSPARENT);
 
 function Sim2D.InternalCallback.OnDraw(sObjectName, D, hDC)
 	--draw the canvas background  --TODO do not do this here...this should be left to the user to do by creating an image object and setting its layer to 0
-	Drawing.DrawImage(DrawingImage.GetID(tSim2D.Canvas.Backgrounds[tSim2D.ActiveStateID]), 0, 0);
+	--Drawing.DrawImage(DrawingImage.GetID(tSim2D.Canvas.Backgrounds[tSim2D.ActiveStateID]), 0, 0);
 
 	--iterate through each each stratum in the active state
 	for nStratum = 1, #tSim2D.DrawObjects[tSim2D.ActiveStateID] do
@@ -48,7 +48,7 @@ function Sim2D.InternalCallback.OnDraw(sObjectName, D, hDC)
 	end
 
 	--TEST draw a panel (for fps testing)
-	Drawing.DrawImage(DrawingImage.GetID(hPanel), tSim2D.Canvas.Mouse.X, tSim2D.Canvas.Mouse.Y);
+	--Drawing.DrawImage(DrawingImage.GetID(hPanel), tSim2D.Canvas.Mouse.X, tSim2D.Canvas.Mouse.Y);
 end
 
 --[[
@@ -195,7 +195,7 @@ function Sim2D.InternalCallback.OnEvent(tEvent)
 	elseif (nEvent == CANVAS_KEYBOARD_KEY_DOWN) then
 		local tModifiers = tEvent.Keyboard.Modifiers;
 		local nKey = tEvent.Keyboard.Key;
-
+		--TODO allow user-made event functions to fire
 		--TODO setupa  system that tells this section when the keyboard is over an input box
 		if (nKey == 27) then --ESC
 			Application.Exit(0);

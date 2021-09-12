@@ -3,8 +3,6 @@ if (Project.LoadAutoPlayFile()) then --get the project build info (stores if not
 	local tProps 	= Sim2D.__properties;
 	local tBuild 	= tProps.Build;
 
-	--get each dialogex
-
 	local tData = Project.GetAutoPlayData();
 	local tProjectInfo	= tData.ProjectInfo;
 	local tWindowStyles = tProjectInfo.WindowStyles;
@@ -20,6 +18,7 @@ if (Project.LoadAutoPlayFile()) then --get the project build info (stores if not
 
 
 	--do the factory stuff here!!!!
+
 
 	--process each page's/dialogex's uicom objects
 
@@ -39,19 +38,3 @@ if (Project.LoadAutoPlayFile()) then --get the project build info (stores if not
 
 	TextFile.WriteFromString(SIM2D.VAR.USER_BUILD_DATA_FILE_PATH, serialize.table(tSaveData), false);
 end
-
-
-
---[[
-Framework Ideas
-
-Sim2D
-
-Sim2D.UI
-SimUI.Object
-
-
-
-
-
-]]

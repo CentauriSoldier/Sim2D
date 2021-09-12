@@ -9,7 +9,6 @@ local Drawing 			= Drawing;
 local DrawingImage 		= DrawingImage;
 local File				= File;
 local Folder			= Folder;
-local Game 				= Game;
 local Page 				= Page;
 local point 			= point;
 local type				= type;
@@ -24,9 +23,17 @@ local OnEvent			= InternalCallback.OnEvent;
 --TODO optimize
 
 
-function Sim2D.OnPreLoad(sState)
+function Sim2D.OnPreload(sState)
 	--set the active state
 	Util.SetState(sState);
+
+	--TODO this should be left to the (soon-to-be-implemented) equalize function
+	local tAppRect = tSim2D.Ports[SIM2D.PORT.APP].Rect;
+
+	Input.SetSize(SIM2D.CANVAS, tAppRect.width, tAppRect.height);
+	Input.SetPos(SIM2D.CANVAS, tAppRect.vertices.topLeft.x, tAppRect.vertices.topLeft.y);
+
+
 
 	--start the event timer
 	Page.StartTimer(SIM2D.TIMER.EVENT.INTERVAL, 		SIM2D.TIMER.EVENT.ID);
@@ -42,27 +49,27 @@ function Sim2D.OnPreLoad(sState)
 	Page.StartTimer(SIM2D.TIMER.DRAW.INTERVAL, 			SIM2D.TIMER.DRAW.ID);
 
 	--resize the state background TODO do this only once for each state
-	local tAppRect = tSim2D.Ports[SIM2D.PORT.APP].Rect;
-	DrawingImage.Resize(tSim2D.Canvas.Backgrounds[tSim2D.ActiveStateID], tAppRect.width, tAppRect.height, DRAW_RESIZE_INTERPOLATE);
+	--local tAppRect = tSim2D.Ports[SIM2D.PORT.APP].Rect;
+	--DrawingImage.Resize(tSim2D.Canvas.Backgrounds[tSim2D.ActiveStateID], tAppRect.width, tAppRect.height, DRAW_RESIZE_INTERPOLATE);
 end
 
 
 --TODO the redraws are wrong
 function Sim2D.OnShow(sState)
-	local tAppRect = tSim2D.Ports[SIM2D.PORT.APP].Rect;
 
+	Application.SetRedraw(false);
+	--create the canvas
+	Canvas.Create(SIM2D.CANVAS, {Keyboard = true, ClipMouse = true});
+	--add the event callback function
+	Canvas.SetCallback(SIM2D.CANVAS, OnEvent);
 	--TODO only do this once!
 
 	--setup the Sim2D canvas
-	Application.SetRedraw(false);
-	Input.SetSize(SIM2D.CANVAS, tAppRect.width, tAppRect.height);
-	Input.SetPos(SIM2D.CANVAS, tAppRect.vertices.topLeft.x, tAppRect.vertices.topLeft.y);
-	Application.SetRedraw(true);
-	Canvas.Create(SIM2D.CANVAS, {Keyboard = true, ClipMouse = true});
-	Application.SetRedraw(false);
 
-	--add an event callback function
-	Canvas.SetCallback(SIM2D.CANVAS, OnEvent);
+
+
+
+	Application.SetRedraw(true);
 end
 
 
@@ -184,7 +191,7 @@ Sim2D.OnStartup = function()
 					local nWidth 	= oRect.width;
 					local nHeight 	= oRect.height;
 
-					--TODO make this use a pairs function to call all obejct using their TYPEs (designated at the end ofeach class file)
+					--TODO make this use a pairs function to call all objects using their TYPEs (designated at the end ofeach class file)
 					if (tData.Type == SIM2D.TYPE.PRG) then
 						Prg(sState, sObject, nX, nY, nWidth, nHeight);
 
