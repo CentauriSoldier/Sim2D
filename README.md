@@ -66,7 +66,7 @@ Using Sim2D, all you need to do is create a lua class file which inherits proper
 	
 	return MyObject;
 
-Using the Draw action plugin, these objects are drawn at run-time over a auto-managed "canvas" (an Input object with a specific name). The objects are drawn in layers so that UI objects show up on top. The objects have events and will soon have (optional) collision.
+Using the Draw action plugin, these objects are drawn at run-time over an auto-managed "canvas" (an Input object with a specific name). The objects are drawn in layers so that UI objects show up on top. The objects have events and will soon have (optional) collision.
 
 **Speed**
 
