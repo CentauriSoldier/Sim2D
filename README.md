@@ -4,7 +4,11 @@
 
 ----------
 ### What is Sim2D?
-**Sim2D** is a gaming framework designed to make game creation with Autoplay Media Studio simple and fast. It allows for the quick and simple creation of custom objects which, without this framework, would require programming a new Object Plugin for each object a person wished to create. Using Sim2D, all you need to do is create a lua class file which inherits properties from the base (or other) object. You can create any object that you can imagine using built-in objects or your own, custom objects. An object can have several other objects inside it making it easy to create amalgamated objects. If this all sounds complicated, don't fret, it's not. In the provided examples, you can see how easy object creation really is. 
+**Sim2D** is a gaming framework designed to make game creation with Autoplay Media Studio simple and fast. It allows for the quick and simple creation of custom objects which, without this framework, would require programming a new Object Plugin for each object a person wished to create.
+
+**Sim2D Objects**
+
+Using Sim2D, all you need to do is create a lua class file which inherits properties from the base (or other) object. You can create any object that you can imagine using built-in objects or your own, custom objects. An object can have several other objects inside it making it easy to create amalgamated objects. If this all sounds complicated, don't fret, it's not. In the provided examples, you can see how easy object creation really is.
 
 **Object Template**
 
@@ -62,7 +66,15 @@
 	
 	return MyObject;
 
-Using the Draw action plugin, these objects are drawn at run-time over a auto-managed "canvas" (an Input object with a specific name). The objects are drawn in layers so that UI objects show up on top. The objects have events and will soon have (optional) collision.  
+Using the Draw action plugin, these objects are drawn at run-time over a auto-managed "canvas" (an Input object with a specific name). The objects are drawn in layers so that UI objects show up on top. The objects have events and will soon have (optional) collision.
+
+**Speed**
+
+Besides that, custom object draws are significantly faster than Autoplay Media Studio's object draw, allowing for a real and practical pathway to creating games in AMS.   
+
+**Feasible Game Types**
+
+RPGs, Puzzle, Table-top-style, Text, Scroller, and their ilk.  
 
 ### What Sim2D is *NOT*
 While Sim2D is great for the creating game types listed above (as well other such game types), it is not, nor ever will be, viable for making graphic-intense games such as 3D games, First Person Shooters, etc. The boon of being able to use AMS for creating games comes with limitations which cannot be overcome by this framework.  
@@ -75,17 +87,28 @@ While Sim2D is great for the creating game types listed above (as well other suc
 
 ### Current Features
 - Automatic fullscreen mode
-- Auto-scaling of all build-time objects
+- Auto-scaling of all build-time objects (whether AMS or Sim2D)
 - App preserves build-time aspect ratio at run-time regardless of display resolution
 - Custom object creation
 - OOP-based class system for built-in and custom objects
 - Makes Use of Autoplay Media Studio's WYSIWYG editor even for custom objects 
-- Optional object **Pulse** action which allows for consistent, custom, timed events to occur on your objects (great for making LEDs, moving images, etc.).
+- Optional object **Pulse** action which allows for consistent, custom, timed events to occur on your objects (great for making LEDs, particle effects, moving images, etc.).
+- Serialization/Deserialization methods great for saving/loading game data.  
+- Declaration of object as UI, Game Object or Effect left to user discretion allowing for creation of many types of custom objects.
+- Disabling of auto-draw and auto-poll for manual control (used for embedding objects within other objects) 
  
 ### Planned Features
  - Implementation of Tile maps (produced by the [TILED](https://www.mapeditor.org/) editor)
  - Object Collision
- - ListBox, Scrollbars and several other common objects. 
+ - ListBox, Scrollbars and several other common objects
+ - Factory Objects (for 'bullets' and other such things)
+ - Zoom feature for canvas (does not affect UI objects) 
+
+### How Can I Help?
+
+You can help by forking and making pull request with your awesome improvements to this framework! Any little bit is appreciated. If you are known to me, you may also make a contributor request. I will not be accepting all requests but will accept requests from people with whom I am familiar and who have a good rep and a valid AMS license.
+
+In addition, if you're using AMS and haven't yet got a license, please support Indigo Rose by purchasing a valid commercial license.   
 
 ----------
 ### License
