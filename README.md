@@ -93,7 +93,7 @@ While Sim2D is great for the creating game types listed above (as well other suc
 - OOP-based class system for built-in and custom objects
 - Makes Use of Autoplay Media Studio's WYSIWYG editor even for custom objects 
 - Optional object **Pulse** action which allows for consistent, custom, timed events to occur on your objects (great for making LEDs, particle effects, moving images, etc.).
-- Serialization/Deserialization methods great for saving/loading game data.  
+- Serialization/Deserialization methods (great for saving/loading game data).  
 - Declaration of object as UI, Game Object or Effect left to user discretion allowing for creation of many types of custom objects.
 - Disabling of auto-draw and auto-poll for manual control (used for embedding objects within other objects) 
  
@@ -103,6 +103,13 @@ While Sim2D is great for the creating game types listed above (as well other suc
  - ListBox, Scrollbars and several other common objects
  - Factory Objects (for 'bullets' and other such things)
  - Zoom feature for canvas (does not affect UI objects) 
+ - Game-type Modules such as RPG, Puzzle, etc. with custom objects and methods for each one.
+
+### Usage
+COMING SOON
+
+### Examples
+COMING SOON
 
 ### How Can I Help?
 
