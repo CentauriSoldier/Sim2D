@@ -115,7 +115,7 @@ COMING SOON
 
 You can help by forking and making pull request with your awesome improvements to this framework! Any little bit is appreciated. If you are known to me, you may also make a contributor request. I will not be accepting all requests but will accept requests from people with whom I am familiar and who have a good rep and a valid AMS license.
 
-In addition, if you're using AMS and haven't yet got a license, please support Indigo Rose by purchasing a valid commercial license.   
+In addition, if you're using AMS and haven't yet got a license, please support Indigo Rose by purchasing a valid commercial license. If as many people as use AMS also owned a license, we might just get an update to AMS :P.
 
 ----------
 ### License
