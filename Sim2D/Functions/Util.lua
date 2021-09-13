@@ -28,7 +28,7 @@ function Sim2D.Util.IsCompiled()--TODO remove this now that uicom requires proje
 	return bRet;
 end
 
-
+--[[
 function Sim2D.Util.GetStateBackgroundPath(sState)
 	--set the default path (in case the state has no image)
 	local pImage = SIM2D.VAR.USER_FACTORY_PATH.."\\Default Background.png";
@@ -54,7 +54,7 @@ function Sim2D.Util.GetStateBackgroundPath(sState)
 	end
 	return pImage;
 end
-
+]]
 
 function Sim2D.Util.SetState(sState)
 

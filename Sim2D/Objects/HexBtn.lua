@@ -11,6 +11,7 @@ class "HexBtn" : extends(Btn) {
 		local oHexPoint = point(nCenterX, nCenterY);
 		local oHex 		= hex(oHexPoint, nSize);
 		this:super(sState, sName, oHex, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
+		--this:__fields();--get the shared, quasi-protected fields
 	end,
 }
 

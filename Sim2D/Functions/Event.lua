@@ -110,24 +110,61 @@ Sim2D.OnStartup = function()
 			--get the state ID
 			local nStateID = tSim2D.StateIDs[sState:lower()];
 
+			--[[setup the object counter table
+			tSim2D.ObjectCounter[nStateID] = {
+				[SIM2D.STRATUM.GO] 	= {
+					[SIM2D.LAYER.BACKGROUND_BACK] 	= 0,
+					[SIM2D.LAYER.BACKGROUND_MID] 	= 0,
+					[SIM2D.LAYER.BACKGROUND_FRONT] 	= 0,
+					[SIM2D.LAYER.MIDGROUND_BACK] 	= 0,
+					[SIM2D.LAYER.MIDGROUND_MID] 	= 0,
+					[SIM2D.LAYER.MIDGROUND_FRONT] 	= 0,
+					[SIM2D.LAYER.FOREGROUND_BACK]	= 0,
+					[SIM2D.LAYER.FOREGROUND_MID] 	= 0,
+					[SIM2D.LAYER.FOREGROUND_FRONT] 	= 0,
+				},
+				[SIM2D.STRATUM.EFFECT] = {
+					[SIM2D.LAYER.BACKGROUND_BACK] 	= 0,
+					[SIM2D.LAYER.BACKGROUND_MID] 	= 0,
+					[SIM2D.LAYER.BACKGROUND_FRONT] 	= 0,
+					[SIM2D.LAYER.MIDGROUND_BACK] 	= 0,
+					[SIM2D.LAYER.MIDGROUND_MID] 	= 0,
+					[SIM2D.LAYER.MIDGROUND_FRONT] 	= 0,
+					[SIM2D.LAYER.FOREGROUND_BACK]	= 0,
+					[SIM2D.LAYER.FOREGROUND_MID] 	= 0,
+					[SIM2D.LAYER.FOREGROUND_FRONT] 	= 0,
+				},
+				[SIM2D.STRATUM.UI] = {
+					[SIM2D.LAYER.BACKGROUND_BACK] 	= 0,
+					[SIM2D.LAYER.BACKGROUND_MID] 	= 0,
+					[SIM2D.LAYER.BACKGROUND_FRONT] 	= 0,
+					[SIM2D.LAYER.MIDGROUND_BACK] 	= 0,
+					[SIM2D.LAYER.MIDGROUND_MID] 	= 0,
+					[SIM2D.LAYER.MIDGROUND_FRONT] 	= 0,
+					[SIM2D.LAYER.FOREGROUND_BACK]	= 0,
+					[SIM2D.LAYER.FOREGROUND_MID] 	= 0,
+					[SIM2D.LAYER.FOREGROUND_FRONT] 	= 0,
+				},
+			};]]
+
 			--determine if this is a page or dialog
 			local bIsPage = sIndex == "Pages";
 
 			--set the page/dialogex settings
 			tSim2D.StateProperties[nStateID] = {
 				Type			= bIsPage and "Page" or "DialogEx",
-				FunctionTable 	= bIsPage and  Page 	or  DialogEx,
+				FunctionTable 	= bIsPage and  Page  or  DialogEx,
 			};
 
 			--local tSizes = Sim2D.Util.GetStatesSizes();
 
 			--set the build size
-			tSim2D.StateProperties[nStateID].BuildSize 		= {
+			--tSim2D.StateProperties[nStateID].BuildSize 		= {
 
-			};
+			--};
 
 			--load the state background image
-			tSim2D.Canvas.Backgrounds[nStateID] = DrawingImage.Load(Util.GetStateBackgroundPath(sState), nil);
+			--tSim2D.Canvas.Backgrounds[nStateID] = DrawingImage.Load(Util.GetStateBackgroundPath(sState), nil);
 
 			--create a place to store the pollable and pulsable objects
 			tSim2D.ObjectsByName[nStateID]	= {};
@@ -193,14 +230,15 @@ Sim2D.OnStartup = function()
 
 					--TODO make this use a pairs function to call all objects using their TYPEs (designated at the end ofeach class file)
 					if (tData.Type == SIM2D.TYPE.PRG) then
-						Prg(sState, sObject, nX, nY, nWidth, nHeight);
+						--sState, sName, nX, nY, nWidth, nHeight, nLayer, bDoNotPoll, bDoNotAutoDraw
+						Prg(sState, sObject, nX, nY, nWidth, nHeight, SIM2D.LAYER.MIDGROUND_MID);
 
 					--hex statebutton
 					elseif (tData.Type == SIM2D.TYPE.STATEBTN) then
-						StateBtn(sState, sObject, nX, nY, nWidth, nHeight);
+						StateBtn(sState, sObject, nX, nY, nWidth, nHeight, SIM2D.LAYER.MIDGROUND_MID);
 
 					elseif (tData.Type == SIM2D.TYPE.COUNTYROW) then
-						CountyRow(sState, sObject, nX, nY, nWidth, nHeight);
+						CountyRow(sState, sObject, nX, nY, nWidth, nHeight, SIM2D.LAYER.MIDGROUND_MID);
 
 					end
 

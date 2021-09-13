@@ -36,6 +36,7 @@ return {
 		Point = point(),
 	},
 	ObjectsByName = {},
+	--ObjectCounter = {},
 	PulseObjects = {},
 	PollObjects = {},
 	Ports = { --contains the app, build, system, and all dialogex ports

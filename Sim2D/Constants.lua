@@ -3,6 +3,7 @@ SIM2D								= const("SIM2D", 				"", true);
 SIM2D.SOUND_CHANNEL					= CHANNEL_USER4; --this channel MUST be reserved for Sim2D
 --TODO add more channels--basically, sim2d will take over AMS completely
 SIM2D.CANVAS						= "__sim2d canvas__";--the canvas on the page MUST be named this
+SIM2D.CANVAS_COLOR					= Color.RGBA(0, 0, 0, 0);
 
 SIM2D.TYPE							= const("SIM2D.TYPE", 			"", true); --used to during object creation to identify item type
 

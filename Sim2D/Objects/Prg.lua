@@ -24,18 +24,20 @@ class "Prg" : extends(Sim2D) {
 		local oRect = rectangle(point(nX, nY), nWidth, nHeight);
 		this:super(sState, sName, oRect, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
 
-		tPrgs[this] = {
-			Bar 		= {X = 0, Y = 0, Width = 0, Height = 0},
-			BGColor 	= Color.RGB(0, 0, 0),
-			BarColor 	= Color.RGB(255, 0, 0),
-			CenterText 	= true,
-			CurrentPos	= 0,
-			--DC 			= hDC, --TODO allow this to be modified,
-			Font 		= nil,
-			Text 		= "",
-			TextColor 	= Color.RGB(255, 255, 255),
-			Shape 		= oRect,
-		};
+		tPrgs[this] = this:__fields();--get the shared, quasi-protected fields
+		local oPrg = tPrgs[this];
+
+		oPrg.Bar 		= {X = 0, Y = 0, Width = 0, Height = 0};
+		oPrg.BGColor 	= Color.RGB(0, 0, 0);
+		oPrg.BarColor 	= Color.RGB(255, 0, 0);
+		oPrg.CenterText = true;
+		oPrg.CurrentPos	= 0;
+		--tPrgs[this].--DC 			= hDC, --TODO allow this to be modified,
+		oPrg.Font 		= nil;
+		oPrg.Text 		= "";
+		oPrg.TextColor 	= Color.RGB(255, 255, 255);
+
+
 
 	end,
 

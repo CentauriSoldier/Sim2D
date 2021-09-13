@@ -13,10 +13,7 @@ class "CircleBtn" : extends(Btn) {
 
 		this:super(sState, sName, oCircle, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
 
-		tRoundBtn[this] = {
-			--DC = hDC, --TODO allow this to be modified,
-			Shape = oCircle,
-		};
+		tRoundBtn[this] = this:__fields();--get the shared, quasi-protected fields
 	end,
 
 }

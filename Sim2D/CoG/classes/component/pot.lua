@@ -7,7 +7,7 @@
 	Note: 'increase' and 'decrease' are logical terms referring to motion along a line based on the current direction. E.g., If a pot is
 	alternating and descening, 'increase' would cause the positional value to be absolutely reduced, while 'decrease' would have the opposite
 	affect.
-	By default, values are clamped at min and max; however, if the object is set to be revolving (or laternating), any values which exceed the minimum or maximum
+	By default, values are clamped at min and max; however, if the object is set to be revolving (or alternating), any values which exceed the minimum or maximum
 	boundaries, are carried over. For example, imagine a pot is set to have a min value of 0 and a max of 100. Then, imagine its position is set to 120.
 	If revolving, it would have a final positional value of 19; if alternating it would have a final positional value of 80 and, if neither, its final positional
 	value would be 100.</p>

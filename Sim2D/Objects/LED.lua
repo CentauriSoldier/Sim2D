@@ -103,30 +103,28 @@ class "LED" : extends(Sim2D) {
 		local oCirclePoint 	= point(nCenterX, nCenterY);
 		local oCircle 		= circle(oCirclePoint, nRadius);
 
-		tLEDs[this] = {
-			ActiveColor 	= -1,
+		--TODO use a rectangle here or change all this to use a circle
+		this:super(sState, sName, oCircle, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
+		tLEDs[this] = this:__fields();--get the shared, quasi-protected fields
+		local oLED 	= tLEDs[this];
+
+		oLED.ActiveColor 	= -1;
 			--DC 				= hDC,
-			OnColor			= -1,
-			OnColorRGB		= {Red = 255, Green = 0, Blue = 0},
-			OffColor		= -1,
-			OffColorRGB		= {Red = 0, Green = 0, Blue = 0},
+		oLED.OnColor		= -1;
+		oLED.OnColorRGB		= {Red = 255, Green = 0, Blue = 0};
+		oLED.OffColor		= -1;
+		oLED.OffColorRGB	= {Red = 0, Green = 0, Blue = 0};
 			--LightBrush		= WinApi.CreateSolidBrush(255),
 			--TODO allow differnt color and thickness of borders
 			--BorderPen		= WinApi.CreatePen(PS_SOLID, 2, 0),
-			PulseColors 	= {},
-			PulsePot 		= pot(1, tLED.MaxPulses, 1, 1, POT.CONTINUITY.ALT),
-			State 			= SIM2D.LED.STATE.OFF,
-			Width 			= nWidth,
-			Height 			= nHeight,
-			X 				= nX,
-			Y 				= nY,
-			Shape 			= oCircle,
-		};
+		oLED.PulseColors 	= {};
+		oLED.PulsePot 		= pot(1, tLED.MaxPulses, 1, 1, POT.CONTINUITY.ALT);
+		oLED.State 			= SIM2D.LED.STATE.OFF;
+		oLED.Width 			= nWidth;
+		oLED.Height 		= nHeight;
+		oLED.X 				= nX;
+		oLED.Y 				= nY;
 
-		--TODO use a rectangle here or change all this to use a circle
-		this:super(sState, sName, oCircle, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
-
-		local oLED = tLEDs[this];
 		SetOnState(this, oLED.OnColorRGB.Red, 	oLED.OnColorRGB.Green, 	oLED.OnColorRGB.Blue);
 		SetOffState(this, oLED.OffColorRGB.Red, oLED.OffColorRGB.Green, oLED.OffColorRGB.Blue);
 		ResetPulseColors(this);

@@ -28,14 +28,14 @@ class "Ani" : extends(Sim2D) {
 
 	__construct = function(this, sState, sName, oShape, nStratum, nLayer, pFolder, sFiletype, nDuration, nX, nY, nWidth, nHeight, bDoNotPoll, bDoNotAutoDraw)
 		this:super(sState, sName, rectangle(point(nX, nY), nWidth, nHeight), nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
+		tAnis[this] = this:__fields();--get the shared, quasi-protected fields
+		local oAni 	= tAnis[this];
 
-		tAnis[this] = {
-			CyclesPerSecond = -1,
-			CurrentID		= -1,
-			Duration 		= type(nDuration) == "number" and nDuration or 0,
-			FileType		= type(sFiletype) == "string" and sFiletype or "",
-			Images  		= {},
-		};
+		oAni.CyclesPerSecond 	= -1;
+		oAni.CurrentID			= -1;
+		oAni.Duration 			= type(nDuration) == "number" and nDuration or 0;
+		oAni.FileType			= type(sFiletype) == "string" and sFiletype or "";
+		oAni.Images  			= {};
 
 		assert(Sim2D.ImageTypeIsValid(sFiletype), "Not a valid image type.");
 

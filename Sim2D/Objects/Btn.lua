@@ -56,59 +56,61 @@ class "Btn" : extends(Sim2D) {
 	__construct = function(this, sState, sName, oShape, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		this:super(sState, sName, oShape, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
 
-		tBtns[this] = {
-			Images = {
-				Badge = {--draws no matter what, is topmost, and does not change
-					Path 	= "",
-					Handle 	= nil,
-					X 		= 0,
-					Y 		= 0,
-				},
-				Clicked = {
-					Path 	= "",
-					Handle 	= nil,
-					X 		= 0,
-					Y 		= 0,
-				},
-				Hovered = {
-					Path 	= "",
-					Handle 	= nil,
-					X 		= 0,
-					Y 		= 0,
-				},
-				Disabled = {
-					Path 	= "",
-					Handle 	= nil,
-					X 		= 0,
-					Y 		= 0,
-				},
-				Normal = {
-					Path 	= "",
-					Handle 	= nil,
-					X 		= 0,
-					Y 		= 0,
-				},
+		tBtns[this] = this:__fields();--get the shared, quasi-protected fields
+		local oBtn = tBtns[this];
+
+		oBtn.Images = {
+			Badge = {--draws no matter what, is topmost, and does not change
+				Path 	= "",
+				Handle 	= nil,
+				X 		= 0,
+				Y 		= 0,
 			},
-			IsToggle = false,
-			Sounds = {
-				Enter 		= {
-					Path 	= "",
-					Volume	= "",
-				},
-				Leave 		= {
-					Path 	= "",
-					Volume	= "",
-				},
-				LeftClick 	= {
-					Path 	= "",
-					Volume	= "",
-				},
-				RightClick 	= {
-					Path 	= "",
-					Volume	= "",
-				},
+			Clicked = {
+				Path 	= "",
+				Handle 	= nil,
+				X 		= 0,
+				Y 		= 0,
+			},
+			Hovered = {
+				Path 	= "",
+				Handle 	= nil,
+				X 		= 0,
+				Y 		= 0,
+			},
+			Disabled = {
+				Path 	= "",
+				Handle 	= nil,
+				X 		= 0,
+				Y 		= 0,
+			},
+			Normal = {
+				Path 	= "",
+				Handle 	= nil,
+				X 		= 0,
+				Y 		= 0,
 			},
 		};
+		oBtn.IsToggle = false;
+		oBtn.Sounds = {
+			Enter 		= {
+				Path 	= "",
+				Volume	= "",
+			},
+			Leave 		= {
+				Path 	= "",
+				Volume	= "",
+			},
+			LeftClick 	= {
+				Path 	= "",
+				Volume	= "",
+			},
+			RightClick 	= {
+				Path 	= "",
+				Volume	= "",
+			},
+		};
+
 	end,
 
 	SetBadgeImage = function(this, pImage, nWidth, nHeight, pCenter)
@@ -144,7 +146,8 @@ class "Btn" : extends(Sim2D) {
 	end,
 
 	DrawImage = function(this)
-		local tImage = nil;
+		local tImage 	= nil;
+		local oBtn 		= tBtns[this];
 
 		if (this:GetEnabled()) then
 
@@ -169,7 +172,7 @@ class "Btn" : extends(Sim2D) {
 			if (tImage.Handle) then
 				Drawing.SetFilteringMode(DRAW_BLEND_ALPHACLIP);
 
-				--draw the state image
+				--draw the image
 				Drawing.DrawImage(DrawingImage.GetID(tImage.Handle), tImage.X, tImage.Y);
 
 				--draw the badge (if present)

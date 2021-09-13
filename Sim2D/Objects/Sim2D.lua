@@ -10,7 +10,48 @@ local bHasInit = false;
 
 --TODO add physics, drag and collision
 
+local function GetBaseSettings()
+	return {
+		AutoDraw 		= true,
+		AutoPoll 		= true,
+		Children		= {},
+		DrawIndex 		= 0,
+		--DC				= hDC, --TODO allow this to be modified?
+		ClickableLeft	= true, --allows/disallows event firing
+		ClickableRight	= true, --allows/disallows event firing
+		Clicked			= false,
+		ClickedLeft		= false,
+		ClickedRight	= false,
+		Hoverable		= true, --allows/disallows event firing
+		Hovered			= false,
+		Layer			= nLayer,
+		Name 			= sName,
+		OnEnterReady	= true,
+		OnLeaveReady	= false,
+		PulseIndex 		= 0,
+		PulseRate		= SIM2D.PULSE.OFF,
+		Shape 			= oShape,
+		State 			= sState,
+		StateID			= nStateID, --no accessor for this since it's internal
+		Stratum			= nStratum,
+		Visible 		= true,
+	};
+end
+
 class "Sim2D" {
+
+	--[[
+	DO NOT OVERRIDE!
+	]]
+	--TODO check for child object/class when returning (or don't return)
+	__fields = function(this) --shared, quasi-protected fields available to all child classes
+
+		if (not tSim2D.ObjectSettings[this]) then
+			error("Cannot get protected fields from parent object. Super method must be called for this class (and upward throughout the parental hierarchy) first.");
+		end
+
+		return tSim2D.ObjectSettings[this];
+	end,
 
 	__construct = function(this, sState, sName, oShape, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		sState = sState:lower();--TODO check this input!!!
@@ -50,8 +91,6 @@ class "Sim2D" {
 			Visible 		= true,
 		};
 		--TODO redo state id to be a character count of the state string (lowered)
-		--TODO NEXT, COUNT ALL TABLES AS ITEMS ARE ADDED AND REMOVED TO PREVENT THE NEED FOR CONSTANT RECOUNTING IN FOR LOOPS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		--LEFT OFF - event system doesn't work..events not firing
 
 		--set up the first (potential) onenter event for this object
 		tSim2D.EventUtil.OnEnterQueue[this] = true;
@@ -67,18 +106,30 @@ class "Sim2D" {
 			tSim2D.DrawObjects[nStateID][nStratum][nLayer][nNextIndex] = this;
 		end
 
+		--increment the object count for the state
+		--tSim2D.ObjectCounter[nStateID][nStratum][nLayer] = tSim2D.ObjectCounter[nStateID][nStratum][nLayer] + 1;
 	end,
 
 	--TODO redo this function so it works and is updated and is optimized, also, does it work with inheritence?
 	Destroy = function(this)
-		local sName 	= this:GetName();
-		local sState 	= this:GetName();
+		local oSim2D = tSim2D.ObjectSettings[this];
 
-		this:Destroy();
-		tSim2D.ObjectSettings[this] 		= nil;
-		tSim2D.PollObjects[sState][sName] 	= nil;
-		tSim2D.ObjectsByName[sState][sName]	= nil;
-		this = nil;
+		--subtract this object from the total count
+		--tSim2D.ObjectCounter[oSim2D.StateID][oSim2D.Stratum][oSim2D.Layer] = tSim2D.ObjectCounter[oSim2D.StateID][oSim2D.Stratum][oSim2D.Layer] - 1;
+
+		--TODO cOMPLETE this
+		--tSim2D.ObjectSettings[this] 		= nil;
+		--tSim2D.PollObjects[sState][sName] 	= nil;
+		--tSim2D.ObjectsByName[sState][sName]	= nil;
+		--this = nil;
+
+		for x = 1, #tSim2D.ObjectSettings.Children do
+			tSim2D.ObjectSettings.Children[x]:Destroy();
+		end
+
+
+
+		--TODO update the total object count for this object's state
 	end,
 
 	GetChildren = function(this)
@@ -138,6 +189,10 @@ class "Sim2D" {
 
 	IsClickedRight = function(this)
 		return tSim2D.ObjectSettings[this].ClickedRight;
+	end,
+
+	IsVisisble = function(this)
+		return tSim2D.ObjectSettings[this].Visible;
 	end,
 
 	OnEnter = function(this)
@@ -210,17 +265,21 @@ class "Sim2D" {
 	end,
 
 	SetEnabled = function(this, bFlag)
-		local tSettings = tSim2D.ObjectSettings[this];
-		local bEnable 	= type(bFlag) == "boolean" and bFlag or false;
+		local oSim2D 	= tSim2D.ObjectSettings[this];
+		local bEnabled 	= type(bFlag) == "boolean" and bFlag or false;
 
-		tSettings.ClickableLeft 	= bEnable;
-		tSettings.ClickableRight  	= bEnable;
-		tSettings.Hoverable 		= bEnable;
+		oSim2D.ClickableLeft 	= bEnabled;
+		oSim2D.ClickableRight  	= bEnabled;
+		oSim2D.Hoverable 		= bEnabled;
+
+		for x = 1, #oSim2D.Children do
+			oSim2D.Children[x]:SetEnabled(bEnabled);
+		end
 
 		return this;
 	end,
 
-	SetHoverable = function(this, bFlag)
+	SetHoverable = function(this, bFlag)--TODO should this propogate through the children and, if so, how?
 		tSim2D.ObjectSettings[this].Hoverable = type(bFlag) == "boolean" and bFlag or false;
 		return this;
 	end,
@@ -273,17 +332,36 @@ class "Sim2D" {
 	end,
 
 	SetVisible = function(this, bFlag)
-		tSim2D.ObjectSettings[this].Visible	= type(bFlag) == "boolean" and bFlag or false;
+		local oSim2D 	= tSim2D.ObjectSettings[this];
+		local bVisible 	= type(bFlag) == "boolean" and bFlag or false;
+		oSim2D.Visible	= bVisible;
+
+		for x = 1, #oSim2D.Children do
+			oSim2D.Children[x]:SetVisible(bVisible);
+		end
+
 		return this;
 	end,
 
 	ToggleEnabled = function(this)
-		tSim2D.ObjectSettings[this].Enabled = not tSim2D.ObjectSettings[this].Enabled;
+		local oSim2D = tSim2D.ObjectSettings[this];
+		oSim2D.Enabled = not oSim2D.Enabled;
+
+		for x = 1, #oSim2D.Children do
+			oSim2D.Children[x]:ToggleEnabled();
+		end
+
 		return this;
 	end,
-	--TODO make sure all functions like this apply to the childrebn objects as well by implementing and checking for a __children table in the object
+
 	ToggleVisible = function(this)
-		tSim2D.ObjectSettings[this].Visible = not tSim2D.ObjectSettings[this].Visible;
+		local oSim2D = tSim2D.ObjectSettings[this];
+		oSim2D.Visible = not oSim2D.Visible;
+
+		for x = 1, #oSim2D.Children do
+			oSim2D.Children[x]:ToggleVisible();
+		end
+
 		return this;
 	end,
 
