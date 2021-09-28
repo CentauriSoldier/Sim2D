@@ -1,9 +1,5 @@
 local tQueues = {};
 
-assert(type(class) == "function", "Error loading the rectangle class. It depends on class.");
-assert(type(serialize) 		== "table", 	"Error loading the pot class. It depends on serialize.");
-assert(type(deserialize)	== "table", 	"Error loading the pot class. It depends on deserialize.");
-
 --localization
 local assert 		= assert;
 local class 		= class;
@@ -12,7 +8,7 @@ local deserialize	= deserialize;
 local table			= table;
 local type 			= type;
 
-class "queue" {
+return class "queue" {
 
 	 __construct = function(this)
 		tQueues[this] = {
@@ -66,4 +62,4 @@ class "queue" {
 
 		return tRet;
 	end,
-}
+};

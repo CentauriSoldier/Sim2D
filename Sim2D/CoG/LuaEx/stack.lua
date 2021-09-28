@@ -12,7 +12,7 @@ local deserialize	= deserialize;
 local table			= table;
 local type 			= type;
 
-class "stack" {
+return class "stack" {
 
 	 __construct = function(this)
 		tStacks[this] = {
@@ -68,6 +68,4 @@ class "stack" {
 
 		return tRet;
 	end,
-}
-
-return stack;
+};

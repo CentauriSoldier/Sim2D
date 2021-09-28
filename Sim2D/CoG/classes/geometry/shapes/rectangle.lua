@@ -23,11 +23,6 @@
 </ul>
 @website https://github.com/CentauriSoldier
 *]]
-assert(type(class) == "function", "Error loading the rectangle class. It depends on class.");
-assert(type(shape) == "class", "Error loading the rectangle class. It depends on the shape class.");
-assert(type(point) == "class", "Error loading the rectangle class. It depends on the point class.");
-assert(type(serialize) 		== "table", 	"Error loading the rectangle class. It depends on serialize.");
-assert(type(deserialize)	== "table", 	"Error loading the rectangle class. It depends on deserialize.");
 
 --localization
 local class 		= class;
@@ -55,7 +50,7 @@ local function recalculateVertices(this)
 end
 
 
-class "rectangle" : extends(shape) {
+local rectangle = class "rectangle" : extends(shape) {
 
 	--[[
 	@desc The constructor for the rectangle class.
@@ -64,6 +59,7 @@ class "rectangle" : extends(shape) {
 	@ret oRectangle rectangle A rectangle object. Public properties are vertices (a table containing points for each corner [topLeft, topRight, bottomRight, bottomLeft, center]), width and height.
 	]]
 	__construct = function(this, pTopLeft, nWidth, nHeight)
+		this:super();
 		this.vertices 	= {
 			topLeft 	= point(),
 			topRight	= point(),

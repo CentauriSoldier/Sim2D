@@ -18,21 +18,32 @@
 </ul>
 @website https://github.com/CentauriSoldier
 *]]
---localization
-assert(type(class) == "function", "Error loading the shape class. It depends on class.");
+
 
 --localization
 local class	= class;
 
-class "shape" {
 
+
+local shape = class "shape" {
+	containsPoint  = function()
+		error("The 'containsPoint' function has not been implemented in the child class.");
+	end,
+	update  = function()
+		error("The 'update' function has not been implemented in the child class.");
+	end,
 };
 
+--make public, static versions of these functions
 
+
+--[[
+For use with the shape.containsPoint
+]]
 
 --THIS IS CURRENTLY JUST REFERENCE FOR CREATING CHILD METHODS
 
-function shape.createPickablePolygon(tPoints)
+--[[function shape.createPickablePolygon(tPoints)
 	-- Takes in a table with a sequence of ints for the (x, y) of each point of the polygon.
 	-- Example: {x1, y1, x2, y2, x3, y3, ...}
 	-- Note: no need to repeat the first point at the end of the table, the testing function
@@ -57,7 +68,7 @@ function shape.createPickablePolygon(tPoints)
 	end
 	return tPoly
 end
-
+]]
 --for speed, this should be impletmented in each child class
 --[[function shape.containsPoint(x, y, poly)
 	-- Takes in the x and y of the point in question, and a 'poly' table created by

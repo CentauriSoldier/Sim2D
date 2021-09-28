@@ -23,9 +23,6 @@
 </ul>
 @website https://github.com/CentauriSoldier
 *]]
-assert(type(const) == "function", "const has not been loaded.");
-assert(type(serialize) 		== "table", 	"Error loading the point class. It depends on serialize.");
-assert(type(deserialize)	== "table", 	"Error loading the point class. It depends on deserialize.");
 
 --localization
 local class 		= class;
@@ -34,7 +31,7 @@ local deserialize	= deserialize;
 local type 			= type;
 local math			= math;
 
-class "point" {
+local point = class "point" {
 
 	--[[
 	@desc This is the constructor for the point class.
@@ -64,9 +61,8 @@ class "point" {
 	@ret oPoint point A new point with the values of the two points added together. If an incorrect paramters is passed, a new point with the values of the correct paramter (the point) is returned.
 	]]
 	__add = function(this, vRight)
-		local sType = type(vRight);
 
-		if (sType == "point") then
+		if (type(this) == "point" and type(vRight) == "point") then
 			return point(this.x + vRight.x,
 						 this.y + vRight.y);
 		end
@@ -125,6 +121,10 @@ class "point" {
 
 	end,
 
+	__tostring = function(this)
+		return "x: "..this.x.." y: "..this.y;
+	end,
+
 	deserialize = function(this, sData)
 		local tData = deserialize.table(sData);
 
@@ -138,7 +138,7 @@ class "point" {
 		local nRet = 0;
 
 		if (type(this) == "point" and type(oOther) == "point") then
-			nRet = math.math.sqrt( (this.x - oOther.x) ^ 2 + (this.y - oOther.y) ^ 2);
+			nRet = math.sqrt( (this.x - oOther.x) ^ 2 + (this.y - oOther.y) ^ 2);
 		end
 
 		return nRet;
@@ -172,9 +172,10 @@ class "point" {
 			nYDelta = this.y - oOther.y;
 
 			if (nYDelta == 0) then
-				nRet = MATH.UNDEF;
+				nRet = MATH_UNDEF;
 			else
 				nRet = math.atan(nYDelta / nXDelta);
+				--nRet = nYDelta / nXDelta;
 			end
 
 		end

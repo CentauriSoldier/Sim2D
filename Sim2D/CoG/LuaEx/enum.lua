@@ -15,23 +15,41 @@ local type 			= type;
 ███████╗╚█████╔╝╚█████╔╝██║░░██║███████╗  ██║░░░░░╚██████╔╝██║░╚███║╚█████╔╝░░░██║░░░██║╚█████╔╝██║░╚███║██████╔╝
 ╚══════╝░╚════╝░░╚════╝░╚═╝░░╚═╝╚══════╝  ╚═╝░░░░░░╚═════╝░╚═╝░░╚══╝░╚════╝░░░░╚═╝░░░╚═╝░╚════╝░╚═╝░░╚══╝╚═════╝░
 ]]
+local tKeyWords = {"and", "break", "do", "else", "elseif", "end",
+				   "false", "for", "function", "goto", "if", "in",
+				   "local", "nil", "not", "or", "repeat", "return",
+				   "then", "true", "until", "while",
+				   --LuaEx keywords
+				   "constant","enum"
+			   };
+local nKeywords = #tKeyWords;
 
-local __type__ = type;
+local function isvariablecompliant(sInput, bSkipKeywordCheck)
+	local bRet = false;
+	local bIsKeyWord = false;
 
-function type(vObject)
-	local sType = __type__(vObject);
+	--make certain it's not a keyword
+	if (not bSkipKeywordCheck) then
+		for x = 1, nKeywords do
 
-	if (sType == "table") then
-		local tMeta = getmetatable(vObject);
+			if sInput == tKeyWords[x] then
+				bIsKeyWord = true;
+				break;
+			end
 
-		if (tMeta and tMeta.__type) then
-			sType = tMeta.__type;
 		end
 
 	end
 
-	return sType;
+	if (not bIsKeyWord) then
+		bRet =	(sInput ~= "")	 			and
+				(not sInput:match("^%d")) 	and
+				(not sInput:gsub("_", ""):match("[%W]"));
+	end
+
+	return bRet;
 end
+
 
 local function formatName(sName)
 	local sRet = "";
@@ -65,6 +83,7 @@ local tReservedIndices = {
 	"__hasA",
 	"__name",
 };
+
 local nReservedIndices = #tReservedIndices;
 
 local function checkForReservedIndex(sInput)
@@ -79,31 +98,52 @@ local function checkForReservedIndex(sInput)
 
 end
 
-local function namesAreValid(tInput)
-	local bRet = true;
-	local nCount = 0;
+local tReservedEnumItemIndices = {"enum", "id", "isA", "isSibling", "previous", "next", "name", "value", "value"};
 
-	--iterate through each name in the table
-	for k, v in pairs(tInput) do
-		nCount = nCount + 1;
-		local bIsValid = type(k) == "number" and k == nCount and type(v) == "string" and v:isvariablecompliant(true);
+local nReservedEnumItemIndices = #tReservedEnumItemIndices;
 
-		--check the entry
-		if (not bIsValid) then
-			bRet = false;
-			break;
+local function checkForReservedItemIndex(sInput)
+
+	for x = 1, nReservedEnumItemIndices do
+
+		if (sInput == tReservedEnumItemIndices[x]) then
+			error("Error creating enum item. Cannot use '"..sInput.."' as an index; it is reserved.");
 		end
 
-		--make sure no reserved indices were input
-		checkForReservedIndex(v);
+	end
+
+end
+
+local function namesAreValid(tInput)
+	local bRet 		= true;
+	local nCount 	= 0;
+
+	if (type(tInput) == "table") then
+		--iterate through each name in the table
+		for k, v in pairs(tInput) do
+			nCount = nCount + 1;
+			local bIsValid = type(k) == "number" and k == nCount and type(v) == "string" and isvariablecompliant(v, true);
+
+			--check the entry
+			if (not bIsValid) then
+				bRet = false;
+				break;
+			end
+
+			--make sure no reserved indices were input
+			checkForReservedIndex(v);
+		end
+
 	end
 
 	return (bRet and nCount > 0), nCount;
 end
 
-local function valuesAreValid(tValues)
-	local sValuesType = type(tValues);
-	local bRet = sValuesType == "table";
+--TODO be sure to check the number of values against the number of name...this will require a number input to this function
+local function validateValues(tValues)
+	local sValuesType	= type(tValues);
+	local bRet 		 	= true;
+	local tRet			= tValues;
 
 	if (sValuesType == "table") then
 		local nIndexChecker = 0;
@@ -113,19 +153,23 @@ local function valuesAreValid(tValues)
 
 			if (type(vIndex) ~= "number") then
 				bRet = false;
+				tRet = {};
 				break;
 			end
 
 			if (vIndex ~= nIndexChecker) then
 				bRet = false;
+				tRet = {};
 				break;
 			end
 
 			local sItemType = type(vItem);
 
-			if (sItemType ~= "string"  	and sItemType ~= "number") then
+			if (sItemType == "nil") then
+			--if (sItemType ~= "string"  	and sItemType ~= "number") then
 			--and sItemType ~= "table" 	and sItemType ~= "function") then
 				bRet = false;
+				tRet = {};
 				break;
 			end
 
@@ -133,7 +177,7 @@ local function valuesAreValid(tValues)
 
 	end
 
-	return bRet;
+	return tRet;
 end
 
 
@@ -146,20 +190,32 @@ end
 ███████╗██║░╚███║╚██████╔╝██║░╚═╝░██║
 ╚══════╝╚═╝░░╚══╝░╚═════╝░╚═╝░░░░░╚═╝
 ]]
-local function enum(sName, tInput, tValues)
+local function enum(sName, tNames, tValues, bPrivate)
+	sName 		= type(sName) 		== "string" 	and sName 		or "";
+	tNames 		= type(tNames) 		== "table" 		and tNames 		or nil;
+	tValues		= type(tValues) 	== "table" 		and tValues 	or {};
+	bPrivate 	= type(bPrivate) 	== "boolean" 	and bPrivate 	or false;
+
 
 	--[[█░█ ▄▀█ █▀█ █ ▄▀█ █▄▄ █░░ █▀▀   █▀▀ █░█ █▀▀ █▀▀ █▄▀   ▄▀█ █▄░█ █▀▄   █▀ █▀▀ ▀█▀ █░█ █▀█
 		▀▄▀ █▀█ █▀▄ █ █▀█ █▄█ █▄▄ ██▄   █▄▄ █▀█ ██▄ █▄▄ █░█   █▀█ █░▀█ █▄▀   ▄█ ██▄ ░█░ █▄█ █▀▀]]
+	local tLuaEX = _G.__LUAEX__;
 
 	--insure the name input is a string
-	assert(type(sName) == "string" and sName:gsub("%s", "") ~= "", "Enum name must be of type string and be non-blank; input value is '"..tostring(sName).."' of type "..type(sName));
-	--check that the name string can be a valid variable
-	assert(sName:isvariablecompliant(), "Enum name must be a string whose text is compliant with lua variable rules; input string is '"..sName.."'");
-	--make sure the variable doesn't alreay exist
-	assert(type(_G[sName]) == "nil", "Variable "..sName.." has already been assigned a non-nil value. Enum cannot overwrite existing variable.")
+	assert(sName:gsub("%s", "") ~= "", "Enum name must be of type string and be non-blank;")--input value is '"..tostring(sName).."' of type "..type(sName));
+
+	--check the name
+	if (not bPrivate) then
+		--check that the name string can be a valid variable
+		assert(isvariablecompliant(sName), "Enum name must be a string whose text is compliant with lua variable rules; input string is '"..sName.."'");
+		--make sure the variable doesn't already exist
+		assert(type(_G[sName]) == "nil" and type(tLuaEX[sName] == "nil"), "Variable "..sName.." has already been assigned a non-nil value. Enum cannot overwrite existing variable.");
+	end
+
+
 	--check the names table
-	local bNamesAreValid, nItemCount = namesAreValid(tInput);
-	assert(type(tInput) == "table" and bNamesAreValid, "Enum input must be a numerically-indexed table whose indices are implicit and whose values are strings.");
+	local bNamesAreValid, nItemCount = namesAreValid(tNames);
+	assert(bNamesAreValid, "Enum input must be a numerically-indexed table whose indices are implicit and whose values are strings.");
 
 	--keeps track of items by their id for simpler and quicker access
 	local tItemsByOrdinal	= {};
@@ -185,7 +241,7 @@ local function enum(sName, tInput, tValues)
 	tEnumData.__name 	= sName;
 
 	--allows for quick determination of items' value
-	local tCheckedValues		= valuesAreValid(tValues) and tValues or {};
+	local tCheckedValues = validateValues(tValues);
 
 	--used to iterate over each item in the enum
 	local function itemsIterator(tTheEnum, nTheIndex)
@@ -212,7 +268,7 @@ local function enum(sName, tInput, tValues)
 		__newindex 	= modifyError,
 		__call 		= items,
 		__tostring 	= function() return sFormattedEnumName; end,
-		__len		= nItemCount;
+		__len		= nItemCount,
 		__type		= "enum",
 	});
 
@@ -220,7 +276,7 @@ local function enum(sName, tInput, tValues)
 		██▄ █░▀█ █▄█ █░▀░█   █ ░█░ ██▄ █░▀░█ ▄█]]
 
 	--process each enum item
-	for nID, sItem in ipairs(tInput) do--ipairs preserves the enum items' input order
+	for nID, sItem in ipairs(tNames) do--ipairs preserves the enum items' input order
 		local tItemShadow = {};
 
 		--create the item's formatted name
@@ -230,8 +286,18 @@ local function enum(sName, tInput, tValues)
 		tItemsByOrdinal[nID] = sItem;
 
 		--get the value to be set
-		local vValue = tCheckedValues[nID] or nID;
+		local vValue;
+
+		if (rawtype(tCheckedValues[nID]) == "nil") then
+			vValue = nID;
+		else
+			vValue = tCheckedValues[nID];
+		end
+
 		local sValueType = type(vValue);
+
+		--check if this is an enum
+		local bValueIsEnum = sValueType == "enum";
 
 		--create the item data table
 		local tItemData = {
@@ -253,30 +319,47 @@ local function enum(sName, tInput, tValues)
 			end,
 			name 		= sItem,
 			value 		= vValue,
-			valueType 	= sValueType,
+			valueType 	= bValueIsEnum and sItem or sValueType,
 		};
+
+		if (bValueIsEnum) then
+
+			for _, oSubItem in vValue() do
+				checkForReservedItemIndex(oSubItem.name);--TODO not working
+				tItemData[oSubItem.name] = oSubItem;
+			end
+
+		end
+
 
 		--create the item object
 		local tItemObject = setmetatable(tItemShadow,
 			{
 				__index 	= function(tTable, vKey)
-					return tItemData[vKey] or error("The enum property or method '"..tostring(vKey).."' does not exist in item '"..sItem.."' in enum '"..sName.."'.");
+
+					if tItemData[vKey] == nil then
+						error("The enum property or method '"..tostring(vKey).."' does not exist in item '"..sItem.."' in enum '"..sName.."'.");
+					else
+						return tItemData[vKey];
+				 	end
 				end,
 				__newindex 	= modifyError;
 				__tostring 	= function() return sFormattedName; end,
 				__type		= sName,
-				--__add
-				--__sub
 			}
 		);
 
 		--make it visible to the enum's data table (both by name and ordinal)
-		tEnumData[sItem] = tItemObject;
-		tEnumData[nID] = tItemObject;
+		tEnumData[sItem] 	= tItemObject;
+		tEnumData[nID] 		= tItemObject;
 	end
 
-	--put the enum into the global environment
-	_G[sName] = tEnum;
+	if (not bPrivate) then
+		--put the enum into the global environment
+		tLuaEX[sName] = tEnum;
+	end
+
+	return tEnum;
 end
 
 return enum;

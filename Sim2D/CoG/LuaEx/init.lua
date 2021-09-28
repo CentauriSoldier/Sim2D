@@ -1,5 +1,5 @@
 --[[*
-@authors Centauri Soldier, Bas Groothedde
+@authors Centauri Soldier (All code except where noted), Bas Groothedde (class.lua), Alex Kloss (base64.lua)
 @copyright Public Domain
 @description
 	<h2>LuaEx</h2>
@@ -45,11 +45,42 @@ For more information, please refer to <http://unlicense.org/>
 @todo
 @usage
 	<h2>Coming Soon</h2>
-@version 0.2
+@version 0.5
 @versionhistory
 <ul>
 	<li>
-		<b>0.2/b>
+		<b>0.5</b>
+		<br>
+		<p>Change: classes are no longer automatically added to the global scope when created; rather, they are returned for the calling scipt to handle.</p>
+		<p>Change: LuaEx classes and modules are no longer auto-protected and may now be hooked or overwritten. This change does not affect the way constants and enums work in terms of their immutability.</p>
+		<p>Bugfix: table.lock was not preserving metatable items (where possible)</p>
+		<p>Feature: added protect function (in stdlib).</p>
+		<p>Feature: added table.lock function.</p>
+		<p>Feature: added table.purge function.</p>
+		<p>Feature: added table.settype function.</p>
+		<p>Feature: added table.unlock function.</p>
+		<p>Feature: added queue class.</p>
+		<p>Feature: added stack class.</p>
+	</li>
+	<li>
+		<b>0.4</b>
+		<br>
+		<p>Bugfix: metavalue causing custom type check to fail to return the proper value.</p>
+		<p>Bugfix: typo that caused enum to not be put into the global environment.</p>
+		<p>Feature: enums can now also be non-global.</p>
+		<p>Feature: the enum created by a call to the enum function are now returned.</p>
+	</li>
+	<li>
+		<b>0.3</b>
+		<br>
+		<p>Hardened the protected table to prevent accidental tampering.</p>
+		<p>Added a meta table to _G in the init module.</p>
+		<p>Changed the name of the const module and function to constant for lua 5.1-5.4 compatibility.</p>
+		<p>Altered the way constants and enums work by using the new, _G metatable to prevent deletion or overwriting.</p>
+		<p>Updated several modules.</p>
+	</li>
+	<li>
+		<b>0.2</b>
 		<br>
 		<p>Added the enum object.</p>
 		<p>Updated a few modules.</p>
@@ -63,9 +94,38 @@ For more information, please refer to <http://unlicense.org/>
 @website https://github.com/CentauriSoldier/LuaEx
 *]]
 
---warn the user if debug is missing
-assert(type(debug) == "table", "LuaEx requires the debug library during initialization. Please enable the debug library before initializing LuaEx.");
+--[[
+Defaulted is true, this protects
+enum and const values from being
+overwritten (except by using
+rawget/rawset. of course). Set
+this to false to prevent alteration
+of the global environment.
+]]
 
+--create the 'protected' table used by LuaEx
+local tLuaEx = {};
+
+_G.__LUAEX__ = setmetatable({}, {
+	__index 	= tLuaEx,
+	__newindex 	= function(t, k, v)
+
+		if tLuaEx[k] then
+			error("Attempt to overwrite __LUAEX__ value in key '"..tostring(k).."' ("..type(k)..") with value "..tostring(v).." ("..type(v)..") .");
+		end
+
+		rawset(tLuaEx, k, v);
+	end,
+	__metatable = false,
+});
+
+--update the package.path
+package.path = package.path..";LuaEx\\?.lua";
+
+--warn the user if debug is missing
+assert(type(debug) == "table", "LuaEx requires the debug library during initialization. Please enable the debug library before initializing LuaEx."); --TODO find a way to remoev this!
+
+--TODO do i need this part?
 --determine the call location
 local sPath = debug.getinfo(1, "S").source;
 --remove the calling filename
@@ -79,21 +139,41 @@ local function import(sFile)
 	return require(sPath..'.'..sFile);
 end
 
---core modules
-const 				= import("const");
-class, interface 	= import("class");
-base64				= import("base64");
+--import core modules
+import("stdlib");
+constant 	= import("constant");
+enum		= import("enum");
 
---lua extension modules
-import("math");
-import("string");
-import("table");
+--setup the global environment to properly manage enums, constants and their ilk
+setmetatable(_G,
+	{--TODO check for existing meta _G table.
+		__newindex = function(t, k, v)
 
---other modules
-serialize 			= import("serialize");
-deserialize 		= import("deserialize");
+			--make sure functions such as constant, enum, etc., constant values and enums values aren't being overwritten
+			if _G.__LUAEX__[k] then
+				error("Attempt to overwrite protected item '"..tostring(k).."' ("..type(_G.__LUAEX__[k])..") with '"..tostring(v).."' ("..type(v)..").");
+			end
 
-enum 				= import("enum");
+			rawset(t, k, v);
+		end,
+		__metatable = false,
+		__index = _G.__LUAEX__,
+	}
+);
 
---useful if using LuaEx as a dependency in multiple modules to prevent the need for loading multilple times
-LUAEX_INIT = true;
+class 		= import("class");
+base64 		= import("base64");
+
+--import lua extension modules
+			  import("math");
+			  import("string");
+			  import("table");
+
+--import other modules
+serialize 	= import("serialize");
+deserialize = import("deserialize");
+
+--import classes
+queue 		= import("queue");
+stack 		= import("stack");
+set 		= import("set");

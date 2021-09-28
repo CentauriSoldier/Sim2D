@@ -21,8 +21,6 @@
 	<ul>
 		<li><strong>pot</strong><br>A logical potentiomter class capable of being fixed or revolving.</p></li>
 		<li><p><strong>protean</strong><br>Designed to hold a base value which can be operated on without needing to change the base value when altering addative or multiplicative values derived from the base. Great for things like character stats or any other value which needs to have its original value available and unchanged after being altered by bonuses or penalties.</p></li>
-		<li><p><strong>queue</strong><br>A basic queue class with obligatory methods.</p></li>
-		<li><p><strong>stack</strong><br>A basic stack class with obligatory methods.</p></li>
 	</ul>
 	<h4>Geometry</h4>
 	<ul>
@@ -89,23 +87,28 @@ For more information, please refer to <http://unlicense.org/>
 </ul>
 @usage
 	<h2>Coming Soon</h2>
-@version 0.4
+@version 0.5
 @versionhistory
 <ul>
 	<li>
-		<b>0.1</b>
+		<b>0.5</b>
 		<br>
-		<p>Compiled various modules into CoG.</p>
+		<p>Change: updated all modules and classes to use the new LuaEx system.</p>
+		<p>Change: removed queue class.</p>
+		<p>Change: removed stack class.</p>
+		<b>0.4</b>
+		<br>
+		<p>Removed the class module (as well other commonly-used Lua libraries) and ported them to a new project. Added CoG's dependency on said project.</p>
+		<b>0.3</b>
+		<br>
+		<p>Created an init module to allow for a single require call to CoG which loads all desired modules</p>
 		<b>0.2</b>
 		<br>
 		<p>Added the class module (create by Bas Groothedde).</p>
 		<p>Added several classes.</p>
-		<b>0.3</b>
+		<b>0.1</b>
 		<br>
-		<p>Created an init module to allow for a single require call to CoG which loads all desired modules</p>
-		<b>0.4</b>
-		<br>
-		<p>Removed the class module (as well other commonly-used Lua libraries) and ported them to a new project. Added CoG's dependency on said project.</p>
+		<p>Compiled various modules into CoG.</p>
 	</li>
 </ul>
 @website https://github.com/CentauriSoldier/CoG
@@ -151,22 +154,21 @@ point 		= import(rClassesGeometry	..".point");
 line 		= import(rClassesGeometry	..".line");
 shape 		= import(rClassesShapes		..".shape");
 circle 		= import(rClassesShapes		..".circle");
-hex 		= import(rClassesShapes		..".hex");
+polygon		= import(rClassesShapes		..".polygon");
+hexagon		= import(rClassesShapes		..".hexagon");
 rectangle 	= import(rClassesShapes		..".rectangle");
 triangle	= import(rClassesShapes		..".triangle");
 
 --classes (component)
 pot 		= import(rClassesComponent..".pot");
 protean 	= import(rClassesComponent..".protean");
-stack 		= import(rClassesComponent..".stack");
-queue 		= import(rClassesComponent..".queue");
 
 --classes (other)
---action 		= import(rClasses.."action");
+--action 	= import(rClasses.."action");
 --bank 		= import(rClasses.."bank");
 --combator 	= import(rClasses.."combator");
 iota 		= import(rClasses..".iota");
 --targetor	= import(rClasses.."targetor");
-
+aStar		= import(rClasses..".aStar");
 --useful if using CoG as a dependency in multiple modules to prevent the need for loading multilple times
 COG_INIT = true;

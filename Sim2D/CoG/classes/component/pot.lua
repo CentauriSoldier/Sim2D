@@ -18,14 +18,9 @@
 @versionhistory
 <ul>
 	<li>
-		<b>1.0</b>
+		<b>1.3</b>
 		<br>
-		<p>Created the module.</p>
-	</li>
-	<li>
-		<b>1.1</b>
-		<br>
-		<p>Added the option for the potentiometer to be continuous in a revolving manner.</p>
+		<p>Added serialization and deserialization methods.</p>
 	</li>
 	<li>
 		<b>1.2</b>
@@ -34,31 +29,47 @@
 		<p>Added the ability which allows the potentiometer to be continuous in a revolving or alternating manner.</p>
 	</li>
 	<li>
-		<b>1.3</b>
+		<b>1.1</b>
 		<br>
-		<p>Added serialization and deserialization methods.</p>
+		<p>Added the option for the potentiometer to be continuous in a revolving manner.</p>
+	</li>
+	<li>
+		<b>1.0</b>
+		<br>
+		<p>Created the module.</p>
 	</li>
 </ul>
 @website https://github.com/CentauriSoldier
 *]]
 local tPots = {};
+local pot;
 
-assert(type(const) 			== "function", 	"Error loading the pot class. It depends on const.");
-assert(type(serialize) 		== "table", 	"Error loading the pot class. It depends on serialize.");
-assert(type(deserialize)	== "table", 	"Error loading the pot class. It depends on deserialize.");
+--make these publicy available
+constant("POT_CONTINUITY_NONE", 	0);
+constant("POT_CONTINUITY_REVOLVE", 	1);
+constant("POT_CONTINUITY_ALT", 		2);
 
-POT						= const("POT", "", true);
-POT.CONTINUITY			= const("POT.CONTINUITY", "", true);
-POT.CONTINUITY.NONE		= 0;
-POT.CONTINUITY.REVOLVE	= 1
-POT.CONTINUITY.ALT		= 2;
+--now localize them
+local POT_CONTINUITY_NONE 		= POT_CONTINUITY_NONE;
+local POT_CONTINUITY_REVOLVE 	= POT_CONTINUITY_REVOLVE;
+local POT_CONTINUITY_ALT 		= POT_CONTINUITY_ALT;
 
---localization
-local class 		= class;
-local serialize 	= serialize;
-local deserialize 	= deserialize;
-local math 			= math;
-local POT 			= POT;
+
+
+local class 					= class;
+local serialize 				= serialize;
+local deserialize 				= deserialize;
+local math 						= math;
+
+
+local function continuityIsValid(nVal)
+	print("printing the local value of POT_CONTINUITY_NONE: "..POT_CONTINUITY_NONE)
+	return rawtype(nVal) == "number" and
+		   (nVal == POT_CONTINUITY_NONE 	or
+		    nVal == POT_CONTINUITY_REVOLVE 	or
+			nVal == POT_CONTINUITY_ALT);
+end
+
 
 local function clampMin(oPot)
 
@@ -83,11 +94,11 @@ local function clampPosMin(oPot)
 
 	if (oPot.pos < oPot.min) then
 
-		if (oPot.continuity == POT.CONTINUITY.REVOLVE) then
+		if (oPot.continuity == POT_CONTINUITY_REVOLVE) then
 			oPot.pos = oPot.min + math.abs(oPot.max - math.abs(-oPot.pos + 1));
 			clampPosMin(oPot);
 
-		elseif (oPot.continuity == POT.CONTINUITY.ALT) then
+		elseif (oPot.continuity == POT_CONTINUITY_ALT) then
 			oPot.pos = oPot.min + (oPot.min - oPot.pos);
 			oPot.toggleAlternator = true;
 			clampPosMax(oPot);
@@ -107,18 +118,17 @@ local function clampPosMin(oPot)
 
 	end
 
-
 end
 
 local function clampPosMax(oPot)
 
 	if (oPot.pos > oPot.max) then
 
-		if (oPot.continuity == POT.CONTINUITY.REVOLVE) then
+		if (oPot.continuity == POT_CONTINUITY_REVOLVE) then
 			oPot.pos = oPot.pos - math.abs(oPot.max - oPot.min + 1);
 			clampPosMax(oPot);
 
-		elseif (oPot.continuity == POT.CONTINUITY.ALT) then
+		elseif (oPot.continuity == POT_CONTINUITY_ALT) then
 			oPot.pos = oPot.max - (oPot.pos - oPot.max);
 			oPot.toggleAlternator = true;
 			clampPosMin(oPot);
@@ -151,12 +161,12 @@ end
 
 
 
-class "pot" {
+pot = class "pot" {
 
 	__construct = function(this, nMin, nMax, nPos, nRate, nContinuity)
 		tPots[this] = {
 			alternator			= 1,
-			continuity			= POT.CONTINUITY.NONE,
+			continuity			= continuityIsValid(nContinuity) and nContinuity or POT_CONTINUITY_NONE,
 			min 				= 0,
 			max 				= 100,
 			pos 				= 0,
@@ -167,31 +177,29 @@ class "pot" {
 		local oPot = tPots[this];
 
 		--set the min
-		if (type(nMin) == "number") then
+		if (rawtype(nMin) == "number") then
 			oPot.min = nMin;
 		end
 
 		--set the max
-		if (type(nMax) == "number") then
+		if (rawtype(nMax) == "number") then
 			oPot.max = nMax;
 			clampMax(oPot);
 		end
 
 		--set the position
-		if (type(nPos) == "number") then
+		if (rawtype(nPos) == "number") then
 			oPot.pos = nPos;
 			clampPosMin(oPot);
 			clampPosMax(oPot);
 		end
 
 		--set the rate
-		if (type(nRate) == "number") then
+		if (rawtype(nRate) == "number") then
 			oPot.rate = nRate;
 			clampRate(oPot);
 		end
 
-		--set continuity type
-			oPot.continuity = (nContinuity and POT.CONTINUITY.isMyConst(nContinuity)) and nContinuity or POT.CONTINUITY.NONE;
 	end,
 
 
@@ -200,7 +208,7 @@ class "pot" {
 		local nAmount = oPot.rate;
 
 		--allow correct input
-		if (type(nValue) == "number") then
+		if (rawtype(nValue) == "number") then
 			nAmount = nValue;
 		end
 
@@ -211,7 +219,7 @@ class "pot" {
 		clampPosMin(oPot);
 		clampPosMax(oPot);
 
-		return tPots[this].pos;
+		return this;
 	end,
 
 
@@ -219,7 +227,7 @@ class "pot" {
 		local oPot = tPots[this];
 		local nCount = 1;
 
-		if (type(nTimes) == "number") then
+		if (rawtype(nTimes) == "number") then
 			nCount = nTimes;
 		end
 
@@ -227,13 +235,13 @@ class "pot" {
 		oPot.pos = oPot.pos - oPot.rate * nCount * oPot.alternator;
 
 		--clamp it
-		if (oPot.continuity == POT.CONTINUITY.ALT) then
+		if (oPot.continuity == POT_CONTINUITY_ALT) then
 			clampPosMax(oPot);
 		end
 
 		clampPosMin(oPot);
 
-		return oPot.pos;
+		return this;
 	end,
 
 	deserialize = function(this, sData)
@@ -280,7 +288,7 @@ class "pot" {
 		local oPot = tPots[this];
 		local nCount = 1;
 
-		if (type(nTimes) == "number") then
+		if (rawtype(nTimes) == "number") then
 			nCount = nTimes;
 		end
 
@@ -288,37 +296,37 @@ class "pot" {
 		oPot.pos = oPot.pos + oPot.rate * nCount * oPot.alternator;
 
 		--clamp it
-		if (oPot.continuity == POT.CONTINUITY.ALT) then
+		if (oPot.continuity == POT_CONTINUITY_ALT) then
 			clampPosMin(oPot);
 		end
 
 		clampPosMax(oPot);
 
-		return oPot.pos;
+		return this;
 	end,
 
 	isAlternating = function(this)
-		return tPots[this].continuity == POT.CONTINUITY.ALT;
+		return tPots[this].continuity == POT_CONTINUITY_ALT;
 	end,
 
 	isAscending = function(this)
 		return (
-			(tPots[this].continuity == POT.CONTINUITY.REVOLVE or
-		    tPots[this].continuity 	== POT.CONTINUITY.ALT) and
+			(tPots[this].continuity == POT_CONTINUITY_REVOLVE or
+		    tPots[this].continuity 	== POT_CONTINUITY_ALT) and
 	        tPots[this].alternator 	== 1
 		  );
 	end,
 
 	isDescending = function(this)
 		return (
-			(tPots[this].continuity == POT.CONTINUITY.REVOLVE or
-		    tPots[this].continuity 	== POT.CONTINUITY.ALT) and
+			(tPots[this].continuity == POT_CONTINUITY_REVOLVE or
+		    tPots[this].continuity 	== POT_CONTINUITY_ALT) and
 	        tPots[this].alternator 	== -1
 		  );
 	end,
 
 	isRevolving = function(this)
-		return tPots[this].revolving == POT.CONTINUITY.REVOLVE;
+		return tPots[this].revolving == POT_CONTINUITY_REVOLVE;
 	end,
 
 	--[[!
@@ -350,69 +358,55 @@ class "pot" {
 	setMax = function(this, nValue)
 		local oPot = tPots[this];
 
-		if (type(nValue) == "number") then
+		if (rawtype(nValue) == "number") then
 			oPot.max = nValue;
 			clampMax(oPot);
 			clampPosMax(oPot)
 		end
 
+		return this;
 	end,
 
 	setMin = function(this, nValue)
 		local oPot = tPots[this];
 
-		if (type(nValue) == "number") then
+		if (rawtype(nValue) == "number") then
 			oPot.min = nValue;
 			clampMin(oPot);
 			clampPosMin(oPot)
 		end
 
+		return this;
 	end,
 
 	setPos = function(this, nValue)
 		local oPot = tPots[this];
 
-		if (type(nValue) == "number") then
+		if (rawtype(nValue) == "number") then
 			oPot.pos = nValue;
 			clampPosMin(oPot);
 			clampPosMax(oPot);
 		end
 
-		return oPot.pos;
+		return this;
 	end,
 
 	setRate = function(this, nValue)
 		local oPot = tPots[this];
 
-		if (type(nValue) == "number") then
+		if (rawtype(nValue) == "number") then
 			oPot.rate = math.abs(nValue);
 			clampRate(oPot);
 		end
 
-		return oPot.pos;
+		return this;
 	end,
 
-	setRevolving = function(this, bRevolving)
-		local oPot 	= tPots[this];
-		local sType = type(bRevolving);
-
-		if (sType == "boolean") then
-			oPot.revolving = bRevolving;
-
-		elseif (sType == "nil") then
-			oPot.revolving = false;
-
-		elseif (sType == "number") then
-
-			if (bRevolving == 0) then
-				oPot.revolving = false;
-			elseif (bRevolving == 1) then
-				oPot.revolving = true;
-			end
-
-		end
-
-		return oPot.pos;
+	setContinuity = function(this, nContinuity)
+		local oPot = tPots[this];
+		oPot.continuity = continuityIsValid(nContinuity) and nContinuity or oPot.continuity;
+		print("Continuity Set to :"..oPot.continuity.." from input value of: "..nContinuity);
+		return this;
 	end,
 
 };

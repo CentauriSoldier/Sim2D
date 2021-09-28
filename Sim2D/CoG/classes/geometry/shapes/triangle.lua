@@ -23,11 +23,6 @@
 </ul>
 @website https://github.com/CentauriSoldier
 *]]
-assert(type(class) 			== "function", 	"Error loading the triangle class. It depends on class.");
-assert(type(shape) 			== "class", 	"Error loading the triangle class. It depends on the shape class.");
-assert(type(point) 			== "class", 	"Error loading the triangle class. It depends on the point class.");
-assert(type(serialize) 		== "table", 	"Error loading the triangle class. It depends on serialize.");
-assert(type(deserialize)	== "table", 	"Error loading the triangle class. It depends on deserialize.");
 
 --localization
 local class 		= class;
@@ -47,7 +42,7 @@ local function recalculateVertices(this)
 end
 
 
-class "triangle" : extends(shape) {
+local triangle = class "triangle" : extends(shape) {
 
 	--[[
 	@desc The constructor for the triangle class.
@@ -56,6 +51,7 @@ class "triangle" : extends(shape) {
 	@ret oTriangle triangle A triangle object. Public properties are vertices (a table containing points for each corner [topLeft, topRight, bottomRight, bottomLeft, center]), width and height.
 	]]
 	__construct = function(this, pTopLeft, nWidth, nHeight)
+		this:super();
 		this.vertices 	= {
 			topLeft 	= point(),
 			bottomLeft 	= point(),
@@ -80,22 +76,9 @@ class "triangle" : extends(shape) {
 	end,
 
 
-	containsPoint = function(this, vPoint, vY)
-		local sPointType 	= type(vPoint);
-		local x 			= 0;
-		local y 			= 0;
-
-		if (sPointType == "point") then
-			x = vPoint.x;
-			y = vPoint.y;
-
-		elseif (sPointType == "number" and type(vY) == "number") then
-			x = vPoint;
-			y = vY;
-		end
-
-		return x >= this.vertices.topLeft.x and x <= this.vertices.topRight.x and
-			   y >= this.vertices.topLeft.y and y <= this.vertices.bottomRight.y;
+	containsPoint = function(this, nX, nY)
+		return nX >= this.vertices.topLeft.x and nX <= this.vertices.topRight.x and
+			   nY >= this.vertices.topLeft.y and nY <= this.vertices.bottomRight.y;
 	end,
 
 	deserialize = function(this, sData)

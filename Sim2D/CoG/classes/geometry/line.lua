@@ -45,10 +45,6 @@ theta = function(this, oOther)
 end,
 ]]
 
-assert(type(point) 			== "class", "Error loading the line class. It depends on the point class.");
-assert(type(serialize) 		== "table", 	"Error loading the line class. It depends on serialize.");
-assert(type(deserialize)	== "table", 	"Error loading the line class. It depends on deserialize.");
-
 --localization
 local class 		= class;
 local deserialize	= deserialize;
