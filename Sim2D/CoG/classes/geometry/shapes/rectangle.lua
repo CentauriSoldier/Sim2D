@@ -26,107 +26,89 @@
 
 --localization
 local class 		= class;
-local serialize		= serialize;
+local constant		= constant;
 local deserialize	= deserialize;
-local type 			= type;
 local math			= math;
 local point			= point;
+local rawtype 		= rawtype;
+local serialize		= serialize;
+local type 			= type;
 
---VERTEX_TOP_LEFT 	= "topLeft";
---VERTEX_TOP_RIGHT 	= "topRight";
---VERTEX_BOTOM_RIGHT 	= "bottomRight";
---VERTEX_BOTOM_LEFT 	= "bottomLeft";
---VERTEX_CENTER	 	= "center";
+local tProtectedRepo = {};
 
-local function recalculateVertices(this)
-	this.vertices.topRight.x 	= this.vertices.topLeft.x + this.width;
-	this.vertices.topRight.y 	= this.vertices.topLeft.y;
-	this.vertices.bottomLeft.x 	= this.vertices.topLeft.x;
-	this.vertices.bottomLeft.y 	= this.vertices.topLeft.y + this.height;
-	this.vertices.bottomRight.x	= this.vertices.topRight.x;
-	this.vertices.bottomRight.y	= this.vertices.bottomLeft.y;
-	this.vertices.center.x		= this.vertices.topLeft.x + this.width / 2;
-	this.vertices.center.y		= this.vertices.topLeft.y + this.height / 2;
-end
-
-
-local rectangle = class "rectangle" : extends(shape) {
+return class "rectangle" : extends(polygon) {
 
 	--[[
 	@desc The constructor for the rectangle class.
 	@func rectangle
 	@mod rectangle
-	@ret oRectangle rectangle A rectangle object. Public properties are vertices (a table containing points for each corner [topLeft, topRight, bottomRight, bottomLeft, center]), width and height.
+	@ret oRectangle rectangle A rectangle object. Public properties are vertices (a numerically-indexed table containing points for each corner), width and height.
 	]]
-	__construct = function(this, pTopLeft, nWidth, nHeight)
-		this:super();
-		this.vertices 	= {
-			topLeft 	= point(),
-			topRight	= point(),
-			bottomLeft	= point(),
-			bottomRight	= point(),
-			center 		= point(),
+	__construct = function(this, tProtected, pTopLeft, nWidth, nHeight)
+		tProtectedRepo[this] = rawtype(tProtected) == "table" and tProtected or {};
+		local tProt = tProtectedRepo[this];
+
+		--setup the protected fields
+		tProt.vertices = {
+			[1] = point(),
+			[2]	= point(),
+			[3]	= point(),
+			[4]	= point(),
 		};
-		this.width 		= type(nWidth) == "number" 	and nWidth 	or 0;
-		this.height 	= type(nHeight) == "number" and nHeight or 0;
+		tProt.width 	= rawtype(nWidth) 	== "number" and nWidth 	or 0;
+		tProt.height 	= rawtype(nHeight) 	== "number" and nHeight or 0;
+
+		--set the anchor point (to the top left vertex)
+		tProt.anchorIndex = 1;
 
 		--check the point input
 		if (type(pTopLeft) == "point") then
-			this.vertices.topLeft.x = pTopLeft.x;
-			this.vertices.topLeft.y = pTopLeft.y;
+			tProt.vertices[1].x = pTopLeft.x;
+			tProt.vertices[1].y = pTopLeft.y;
+			tProt.vertices[2].x = pTopLeft.x + nWidth;
+			tProt.vertices[2].y = pTopLeft.y;
+			tProt.vertices[3].x = pTopLeft.x + nWidth;
+			tProt.vertices[3].y = pTopLeft.y + nHeight;
+			tProt.vertices[4].x = pTopLeft.x;
+			tProt.vertices[4].y = pTopLeft.y + nHeight;
 		end
 
-		recalculateVertices(this);
-	end,
-
-
-	area = function()
-		return this.width * this.height;
-	end,
-
-
-	containsPoint = function(this, vPoint, vY)
-		local sPointType 	= type(vPoint);
-		local x 			= 0;
-		local y 			= 0;
-
-		if (sPointType == "point") then
-			x = vPoint.x;
-			y = vPoint.y;
-
-		elseif (sPointType == "number" and type(vY) == "number") then
-			x = vPoint;
-			y = vY;
+		--override the required protected methods
+		tProt.updateArea = function(tProt)
+			tProt.area = tProt.width * tProt.height;
 		end
 
-		return x >= this.vertices.topLeft.x and x <= this.vertices.topRight.x and
-			   y >= this.vertices.topLeft.y and y <= this.vertices.bottomRight.y;
+		this:super(tProt, nil, true);
+
+		--update the rectangle
+		tProt:updateDetector();
+		tProt:updateAnchors();
+		tProt:updatePerimeterAndEdges();
+		tProt:updateArea();
+		tProt:updateAngles();
 	end,
+
 
 	deserialize = function(this, sData)
 		local tData = deserialize.table(sData);
 
-		this.vertices.topLeft	 	= this.vertices.topLeft:deserialize(tData.vertices.topLeft);
-		this.vertices.topRight 		= this.vertices.topRight:deserialize(tData.vertices.topRight);
-		this.vertices.bottomLeft 	= this.vertices.bottomLeft:deserialize(tData.vertices.bottomLeft);
-		this.vertices.bottomRight 	= this.vertices.bottomRight:deserialize(tData.vertices.bottomRight);
-		this.vertices.center		= this.vertices.center:deserialize(tData.vertices.center);
+		--this.vertices[]	 	= this.vertices.topLeft:deserialize(tData.vertices.topLeft);
+		--this.vertices[]		= this.vertices.topRight:deserialize(tData.vertices.topRight);
+		--this.vertices[] 	= this.vertices.bottomLeft:deserialize(tData.vertices.bottomLeft);
+		--this.vertices[] 	= this.vertices.bottomRight:deserialize(tData.vertices.bottomRight);
+		--this.vertices[]		= this.vertices.center:deserialize(tData.vertices.center);
 
 		this.width 		= tData.width;
 		this.height 	= tData.height;
 	end,
 
-	perimeter = function(this)
-		return 2 * this.width + 2 * this.height;
+
+	getHeight = function(this)
+		return tProtectedRepo[this].height;
 	end,
 
---[[
-	pointIsOnPerimeter = function(this, vPoint, vY)
-
-	end
-]]
-	recalculateVertices = function(this)
-		recalculateVertices(this);
+	getWidth = function(this)
+		return tProtectedRepo[this].width;
 	end,
 
 
@@ -136,7 +118,7 @@ local rectangle = class "rectangle" : extends(shape) {
 		@module rectangle
 		@param bDefer boolean Whether or not to return a table of data to be serialized instead of a serialize string (if deferring serializtion to another object).
 		@ret sData StringOrTable The data, returned as a serialized table (string) or a table is the defer option is set to true.
-	!]]
+	!
 	serialize = function(this, bDefer)
 		local tData = {
 			vertices 	= {
@@ -155,8 +137,37 @@ local rectangle = class "rectangle" : extends(shape) {
 		end
 
 		return tData;
+	end,]]
+
+
+	setHeight = function(this, nHeight)
+		local tProt 	= tProtectedRepo[this];
+		local tVertices = tProt.vertices;
+		local nDelta 	= nHeight - tProt.height;
+		tProt.height 	= nHeight;
+
+		tVertices[3].y = tVertices[3].y + nDelta;
+		tVertices[4].y = tVertices[4].y + nDelta;
+
+		tProt:updateAnchors();
+		tProt:updateDetector();
+		tProt:updatePerimeterAndEdges();
+		tProt:updateArea();
 	end,
 
-};
 
-return rectangle;
+	setWidth = function(this, nWidth)
+		local tProt 	= tProtectedRepo[this];
+		local tVertices = tProt.vertices;
+		local nDelta 	= nWidth - tProt.width;
+		tProt.height 	= nWidth;
+
+		tVertices[2].x = tVertices[2].x + nDelta;
+		tVertices[3].x = tVertices[3].x + nDelta;
+
+		tProt:updateAnchors();
+		tProt:updateDetector();
+		tProt:updatePerimeterAndEdges();
+		tProt:updateArea();
+	end,
+};

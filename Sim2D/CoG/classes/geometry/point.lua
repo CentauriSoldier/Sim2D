@@ -23,12 +23,22 @@
 </ul>
 @website https://github.com/CentauriSoldier
 *]]
+constant("QUADRANT_I", 		"I");
+constant("QUADRANT_II", 	"II");
+constant("QUADRANT_III", 	"III");
+constant("QUADRANT_IV",		"IV");
+constant("QUADRANT_O", 		"O");
+constant("QUADRANT_X",		"X");
+constant("QUADRANT_X_NEG",	"-X");
+constant("QUADRANT_Y", 		"Y");
+constant("QUADRANT_Y_NEG",	"-Y");
 
 --localization
 local class 		= class;
 local serialize		= serialize;
 local deserialize	= deserialize;
 local type 			= type;
+local rawtype		= rawtype;
 local math			= math;
 
 local point = class "point" {
@@ -40,18 +50,9 @@ local point = class "point" {
 	@param nX number The x value. If nil, it defaults to 0.
 	@param nY number The y value. If nil, it defaults to 0.
 	]]
-	__construct = function(this, nX, nY)
-		this.x = 0;
-		this.y = 0;
-
-		if (type(nX) == "number") then
-			this.x = nX;
-		end
-
-		if (type(nY) == "number") then
-			this.y = nY;
-		end
-
+	__construct = function(this, _ignore_, nX, nY)
+		this.x = rawtype(nX) == "number" and nX or 0;
+		this.y = rawtype(nY) == "number" and nY or 0;
 	end,
 
 	--[[
@@ -134,7 +135,50 @@ local point = class "point" {
 		return this;
 	end,
 
-	distance = function(this, oOther)
+	--return O, X, Y, -X, -Y, I, II, III or IV
+	getQuadrant = function(this)
+		local sRet 		= "ERROR";
+		local bYIsNeg 	= this.y < 0;
+		local bYIs0 	= this.y == 0;
+		local bYIsPos 	= not bYIsNeg and not bYIs0;
+
+		if (this.x < 0) then
+
+			if (bYIsNeg) then
+				sRet = "III";
+			elseif (bYIs0) then
+				sRet = "-X";
+			elseif (bYIsPos) then
+				sRet = "II";
+			end
+
+		elseif (this.x == 0) then
+
+			if (bYIsNeg) then
+				sRet = "-Y";
+			elseif (bYIs0) then
+				sRet = "O";
+			elseif (bYIsPos) then
+				sRet = "Y";
+			end
+
+		elseif (this.x > 0) then
+
+			if (bYIsNeg) then
+				sRet = "IV";
+			elseif (bYIs0) then
+				sRet = "X";
+			elseif (bYIsPos) then
+				sRet = "I";
+			end
+
+		end
+
+		return sRet;
+	end,
+
+	--[[deprecated...this is a line function
+	distanceTo = function(this, oOther)
 		local nRet = 0;
 
 		if (type(this) == "point" and type(oOther) == "point") then
@@ -143,6 +187,7 @@ local point = class "point" {
 
 		return nRet;
 	end,
+	]]
 
 	--[[!
 		@desc Serializes the object's data.
@@ -164,7 +209,8 @@ local point = class "point" {
 		return tData;
 	end,
 
-	slope = function(this, oOther)
+	--[[deprecated...this is a line function
+	slopeTo = function(this, oOther)
 		local nRet = 0;
 
 		if (type(this) == "point" and type(oOther) == "point") then
@@ -181,7 +227,7 @@ local point = class "point" {
 		end
 
 		return nRet;
-	end,
+	end,]]
 };
 
 return point;

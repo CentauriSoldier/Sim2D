@@ -29,9 +29,9 @@ local shape = class "shape" {
 	containsPoint  = function()
 		error("The 'containsPoint' function has not been implemented in the child class.");
 	end,
-	update  = function()
-		error("The 'update' function has not been implemented in the child class.");
-	end,
+	--update  = function()
+	--	error("The 'update' function has not been implemented in the child class.");
+	--end,
 };
 
 --make public, static versions of these functions
