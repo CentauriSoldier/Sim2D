@@ -50,10 +50,10 @@ local function isvariablecompliant(sInput, bSkipKeywordCheck)
 	return bRet;
 end
 
-
+--TODO hasA is not working properly
 local function formatName(sName)
 	local sRet = "";
-	local tString = sName:gsub("_", "_|"):delmitedtotable("|");
+	local tString = sName:gsub("_", "_|"):totable("|");
 
 	--go through each string in the table
 	for x = 1, #tString do
@@ -80,7 +80,7 @@ end
 
 local tReservedIndices = {
 	"__count",
-	"__hasA",
+	"__hasa",
 	"__name",
 };
 
@@ -98,7 +98,7 @@ local function checkForReservedIndex(sInput)
 
 end
 
-local tReservedEnumItemIndices = {"enum", "id", "isA", "isSibling", "previous", "next", "name", "value", "value"};
+local tReservedEnumItemIndices = {"enum", "id", "isa", "isSibling", "previous", "next", "name", "value", "value"};
 
 local nReservedEnumItemIndices = #tReservedEnumItemIndices;
 
@@ -235,7 +235,7 @@ local function enum(sName, tNames, tValues, bPrivate)
 
 	--set all reserved item values for the enum object
 	tEnumData.__count	= nItemCount;
-	tEnumData.__hasA = function(oItem)
+	tEnumData.__hasa = function(oItem)
 		return type(oItem) == sName;
 	end;
 	tEnumData.__name 	= sName;
@@ -303,7 +303,7 @@ local function enum(sName, tNames, tValues, bPrivate)
 		local tItemData = {
 			enum		= tEnum,
 			id			= nID,
-			isA 		= function(tEnumItem, tEnumObject)
+			isa 		= function(tEnumItem, tEnumObject)
 				return (type(tEnumItem) == sName and type(tEnumObject) == "enum" and tEnumItem.enum == tEnumObject);
 			end,
 			isSibling	= function(oItem, oOther) --TODO if the sName variable must be unique in the global env, must I check for enum equality as well?

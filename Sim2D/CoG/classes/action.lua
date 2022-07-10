@@ -2,7 +2,7 @@ local tActions = {};
 
 class "action" {
 
-	__construct = function(this, oCost, bRegen, oRegenAmount)
+	__construct = function(this, tProt, oCost, bRegen, oRegenAmount)
 		tActions[this] = {
 			cost 		= type(oCost)			== "protean" 	and oCost 			or protean(),
 			regens		= type(bRegen) 			== "boolean"	and bRegen 			or false,

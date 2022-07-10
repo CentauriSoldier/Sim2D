@@ -78,6 +78,7 @@ return class "rectangle" : extends(polygon) {
 			tProt.area = tProt.width * tProt.height;
 		end
 
+		--call the parent constructor with the protected table, no vertices and skipping auto-update
 		this:super(tProt, nil, true);
 
 		--update the rectangle

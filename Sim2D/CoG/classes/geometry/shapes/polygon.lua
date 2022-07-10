@@ -39,6 +39,7 @@ anchorPoint
 anchors
 detector
 edges 		-
+edgesCount
 exteriorAngles
 interiorAngles
 perimeter
@@ -67,7 +68,7 @@ local function importVertices(tProt, tVertices, nMax)
 
 		if (type(tVertices[x]) == "point") then
 			tProt.verticesCount	= tProt.verticesCount + 1;
-			tProt.vertices[tProt.verticesCount + 1] = point(tVertices[x].x, tVertices[x].y);
+			tProt.vertices[tProt.verticesCount] = point(tVertices[x].x, tVertices[x].y);
 
 		end
 
@@ -176,7 +177,7 @@ local function updateArea(tProt)--this algorithm doesn't work on complex polygon
 end
 
 local function updatePerimeterAndEdges(tProt)
-	local nSum 				= 0;
+	tProt.perimeter			= 0;
 	local tVertices 		= tProt.vertices;
 	local nVerticesCount 	= tProt.verticesCount;
 
@@ -188,39 +189,87 @@ local function updatePerimeterAndEdges(tProt)
 		end
 
 	end
-
+--LEFT OFF HERE it looks like the imported vertices are not getting imported clockwise...
+--it's as-entered which means that if I'm depending on clockwise order, I'm making calulation errors.
+--This means that if the lines are being drawn from the x to x + 1, it may be creating arbitrary lines out/inside
+--the polygon that are not related to the polygon
+--Go back trhough the creation process and visualize it, find out how it's being done and then determine how
+--it should be done.
 	for i = 1, nVerticesCount do
 		local oPoint1 = tVertices[i];
 		local oPoint2 = i < nVerticesCount and tVertices[i + 1] or tVertices[1];
+		--print(tostring(oPoint1).." - "..tostring(oPoint2))
 		tProt.edges[i]:setStart(oPoint1, true);
 		tProt.edges[i]:setEnd(oPoint2);
 		-- = 0;--math.sqrt( (oPoint1.x - oPoint2.x)^2 + (oPoint1.y - oPoint2.y)^2 );
-		nSum = nSum + tProt.edges[i]:getLength();
+		tProt.perimeter = tProt.perimeter + tProt.edges[i]:getLength();
 	end
 
-	tProt.perimeter = nSum;
+	tProt.edgesCount = #tProt.edges;
 end
 
---updates all the interior and exterior angles of the shape (going clockwise)
+--[[updates all the interior and exterior angles of the shape (going clockwise)
 local function updateAngles(tProt)
 	tProt.interiorAngles 	= {};
 	tProt.exteriorAngles 	= {};
 	local tEdges 			= tProt.edges;
 
-	for nLine = 1, tProt.verticesCount do --use the number of vertices since it is the same as the number of edges
+	for nLine = 1, tProt.verticesCount do --use the number of vertices since it's the same as the number of edges
+		local bIsLastLine = nLine == tProt.verticesCount;
 
 		--determine the lines between which the angle will be
 		local oLine1 = tEdges[nLine];
-		local oLine2 = tEdges[(nLine ~= tProt.verticesCount) and (nLine + 1) or 1];
-
-		--determine the second theta by flipping the second line so it's oriented correctly
+		local oLine2 = tEdges[(not bIsLastLine) and (nLine + 1) or 1];
+---LEFT OFF HERE
+		--get the lines' theta value
 		local nTheta1 = oLine1:getTheta();
-		local nTheta2 = oLine2:getTheta()
-		nTheta2 = (nTheta2 >= 180) and nTheta2 - 180 or nTheta2 + 180;
+		local nTheta2 = oLine2:getTheta();
+
+		--if this is the last line, determine the second theta by flipping it so it's oriented correctly
+		if (bIsLastLine) then
+			nTheta2 = (nTheta2 >= 180) and nTheta2 - 180 or nTheta2 + 180;
+		end
 
 		--get the interior angle
 		tProt.interiorAngles[nLine] = math.max(nTheta1, nTheta2) - math.min(nTheta1, nTheta2);
 
+		--get the exterior angle: this allows for negative interior angles so all extangles == 360 even on concave polygons
+		tProt.exteriorAngles[nLine] = 180 - tProt.interiorAngles[nLine];
+	end
+
+end]]
+
+
+local function updateAngles(tProt)
+	tProt.interiorAngles 	= {};
+	tProt.exteriorAngles 	= {};
+	local tEdges 			= tProt.edges;
+
+	for nLine = 1, tProt.edgesCount do --use the number of vertices since it's the same as the number of edges
+		local bIsFirstLine 	= nLine == 1;
+		--local bIsLastLine 	= nLine == tProt.edgesCount;
+
+		--determine the lines between which the angle will be
+		local oLine1 = tEdges[nLine];
+		local nLine2Index = bIsFirstLine and (tProt.edgesCount) or nLine - 1;
+		local oLine2 = tEdges[nLine2Index];
+---LEFT OFF HERE
+		--get the lines' theta value
+		local nTheta1 = oLine1:getTheta();
+		local nTheta2 = oLine2:getTheta();
+		print("(before) "..nLine.."-> "..nTheta1.." | "..nLine2Index.."-> "..nTheta2);
+		--if this is the last line, determine the second theta by flipping it so it's oriented correctly
+		if (bIsFirstLine) then
+			nTheta2 = (nTheta2 >= 180) and nTheta2 - 180 or nTheta2 + 180;
+		end
+		print("(after) "..nLine.."-> "..nTheta1.." | "..nLine2Index.."-> "..nTheta2);
+		--get the interior angle
+		--tProt.interiorAngles[nLine] = math.max(nTheta1, nTheta2) - math.min(nTheta1, nTheta2);
+		local nSmall = math.min(nTheta1, nTheta2);
+		local nLarge = math.max(nTheta1, nTheta2);
+
+		tProt.interiorAngles[nLine] = nLarge;
+		print(tProt.interiorAngles[nLine])
 		--get the exterior angle: this allows for negative interior angles so all extangles == 360 even on concave polygons
 		tProt.exteriorAngles[nLine] = 180 - tProt.interiorAngles[nLine];
 	end
@@ -290,7 +339,7 @@ local polygon = class "polygon" : extends(shape) {
 
 		--import the vertices (if present)
 		if (rawtype(tVertices) == "table") then
-			tProt:importVertices(tVertices);
+			importVertices(tProt, tVertices);
 		end
 
 		--update the polygon (if not skipped)
@@ -302,7 +351,14 @@ local polygon = class "polygon" : extends(shape) {
 			tProt:updateAngles();
 		end
 
-		tProt.verticesCount = #tProt.vertices;
+		if not (tProt.verticesCount) then
+			tProt.verticesCount = #tProt.vertices;
+		end
+
+		if not (tProt.edgesCount) then
+			tProt.edgesCount	= #tProt.edges;
+		end
+
 	end,
 
 	__tostring = function(this)

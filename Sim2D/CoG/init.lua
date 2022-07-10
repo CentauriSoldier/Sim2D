@@ -113,13 +113,6 @@ For more information, please refer to <http://unlicense.org/>
 </ul>
 @website https://github.com/CentauriSoldier/CoG
 *]]
-local rStatic 			= "static";
-local rGenerators		= "static.generators";
-local rClasses 			= "classes";
-local rClassesAudio 	= "classes.audio";
-local rClassesComponent	= "classes.component";
-local rClassesGeometry	= "classes.geometry";
-local rClassesShapes	= "classes.geometry.shapes";
 
 --warn the user if debug is missing
 assert(type(debug) == "table", "CoG requires the debug library during initialization. Please enable the debug library before initializing CoG.");
@@ -127,19 +120,24 @@ assert(type(debug) == "table", "CoG requires the debug library during initializa
 --determine the call location
 local sPath = debug.getinfo(1, "S").source;
 --remove the calling filename
-sPath = sPath:gsub("@", ""):gsub("init.lua", "");
+sPath = sPath:gsub("@", ""):gsub("[Ii][Nn][Ii][Tt].[Ll][Uu][Aa]", "");
 --remove the "/" at the end
 sPath = sPath:sub(1, sPath:len() - 1);
---format the path to be suitable for the 'require()' function
-sPath = sPath:gsub("\\", "."):gsub("/", ".");
+--update the package.path (use the main directory to prevent namespace issues)
+package.path = package.path..";"..sPath.."\\..\\?.lua";
 
-local function import(sFile)
-	return require(sPath..'.'..sFile);
-end
+local rCoG				= "CoG";
+local rStatic 			= rCoG..".static";
+local rGenerators		= rStatic..".generators";
+local rClasses 			= rCoG..".classes";
+local rClassesAudio 	= rClasses..".audio";
+local rClassesComponent	= rClasses..".component";
+local rClassesGeometry	= rClasses..".geometry";
+local rClassesShapes	= rClassesGeometry..".shapes";
 
-if not(LUAEX_INIT) then
-	import("LuaEx.init");
-	LUAEX_INIT = true;
+--require LuaEx
+if not (LUAEX_INIT) then
+	require("CoG.LuaEx.init");
 end
 
 --warn the user if LuaEx is missing
@@ -171,30 +169,30 @@ constant("SHAPE_ANCHOR_CENTROID",	 	-1); --DO NOT CHANGE THIS VALUE
 	not	be used.]]
 constant("SHAPE_ANCHOR_DEFAULT",		SHAPE_ANCHOR_CENTROID);
 
---static entities
-lists 		= import(rStatic	..".lists"); --TODO change this a less common name!
-name 		= import(rGenerators..".name"); --TODO change this a less common name!
+--static entities and generators
+lists 		= require(rStatic			..".lists"); --TODO change this a less common name!
+name 		= require(rGenerators		..".name"); --TODO change this a less common name!
 
 --classes (geometry)
-point 		= import(rClassesGeometry	..".point");
-line 		= import(rClassesGeometry	..".line");
-shape 		= import(rClassesShapes		..".shape");
-circle 		= import(rClassesShapes		..".circle");
-polygon		= import(rClassesShapes		..".polygon");
-hexagon		= import(rClassesShapes		..".hexagon");
-rectangle 	= import(rClassesShapes		..".rectangle");
-triangle	= import(rClassesShapes		..".triangle");
+point 		= require(rClassesGeometry	..".point");
+line 		= require(rClassesGeometry	..".line");
+shape 		= require(rClassesShapes	..".shape");
+circle 		= require(rClassesShapes	..".circle");
+polygon		= require(rClassesShapes	..".polygon");
+hexagon		= require(rClassesShapes	..".hexagon");
+rectangle 	= require(rClassesShapes	..".rectangle");
+triangle	= require(rClassesShapes	..".triangle");
 
 --classes (component)
-pot 		= import(rClassesComponent..".pot");
-protean 	= import(rClassesComponent..".protean");
+pot 		= require(rClassesComponent	..".pot");
+protean 	= require(rClassesComponent	..".protean");
 
 --classes (other)
---action 	= import(rClasses.."action");
---bank 		= import(rClasses.."bank");
---combator 	= import(rClasses.."combator");
-iota 		= import(rClasses..".iota");
---targetor	= import(rClasses.."targetor");
-aStar		= import(rClasses..".aStar");
+--action 	= require(rClasses			..".action");
+--bank 		= require(rClasses			..".bank");
+--combator 	= require(rClasses			..".combator");
+iota 		= require(rClasses			..".iota");
+targetor	= require(rClasses			..".targetor");
+--aStar		= require(rClasses			..".aStar");
 --useful if using CoG as a dependency in multiple modules to prevent the need for loading multilple times
-COG_INIT = true;
+constant("COG_INIT", true);

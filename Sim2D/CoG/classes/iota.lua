@@ -152,7 +152,7 @@ end
 
 
 --TODO add onSecond callback method
-local function levelValues(this)
+local function levelValues(this, tProt)
 	local oIota			= tIotas[this];
 	local nMax 			= IOTA.MAX.SECONDS;
 	local nPreValue 	= 0;

@@ -17,12 +17,12 @@
 	@version 0.2
 	@todo Complete the binary operator metamethods.
 	*]]
-	
+
 	--[[!
 	@module pool
 	@func __construct
 	@scope local
-	@desc The constructor for the pool class.	
+	@desc The constructor for the pool class.
 !]]
 assert(type(CONST) == "function", "CONST has not been loaded.");
 
@@ -48,7 +48,7 @@ POOL_CALLBACK.ON_SUB	= 'onSet';
 local tPool = {};
 
 --[[local function callback(sEvent, oPool)
-	
+
 	if (type(oPool.callbacks[sEvent]) == 'function') then
 		oPool.callbacks[sEvent](oPool);
 	end
@@ -61,116 +61,116 @@ function check(...)
 	--error(oPool.values[POOL.MAX])
 	if (oPool.values[POOL.CURRENT] > oPool.values[POOL.MAX]) then
 		oPool.values[POOL.CURRENT] = oPool.values[POOL.MAX];
-	
+
 	elseif (oPool.values[POOL.CURRENT] < oPool.values[POOL.MIN]) then
 		oPool.values[POOL.CURRENT] = oPool.values[POOL.MIN];
 	end
-	
+
 	if (oPool.values[POOL.MAX] <= oPool.values[POOL.MIN]) then
 		oPool.values[POOL.MAX] = oPool.values[POOL.MIN] + 1;
 	end
-	
+
 	--execute the callback if it exists
 	if (type(oPool.callbacks[POOL_CALLBACK.ON_ALL]) == 'function') then
 		oPool.callbacks[POOL_CALLBACK.ON_ALL](oPool);
 	elseif (type(oPool.callbacks[sEvent]) == 'function') then
 		oPool.callbacks[sEvent](oPool);
 	end
-	
+
 end
 
 
 function setValue(oPool, sValueType, nValue, sEvent)
-	tPool[oPool].values[sValueType] = nValue;	
+	tPool[oPool].values[sValueType] = nValue;
 	check(oPool, sEvent);
 end
 
 class "pool" {
-	
+
 	__construct = function(...)
 		local this = select(1, ...);
-		
+
 		tPool[this] = {
 			callbacks 	= {},
 			values 		= {},
 		};
-		
-		--setup the callbacks		
-		for _, sEvent in pairs(POOL_CALLBACK()) do			
+
+		--setup the callbacks
+		for _, sEvent in pairs(POOL_CALLBACK()) do
 			tPool[this].callbacks[sEvent] = nil;
 		end
-		
-		
+
+
 		--initialize the values
 		local nID = 1;
-		
+
 		for _, sValue in pairs(POOL()) do
 			nID = nID + 1;
 			tPool[this].values[sValue] = select(nID, ...) or 0;
-		end		
-		
+		end
+
 	end,
-	
-	
+
+
 	--[[!
 	@module pool
 	@func __add
 	@scope local
-	@desc NOT DONE YET!	
+	@desc NOT DONE YET!
 	!]]
 	__add = function(vLeft, vRight)
 		local sLeftType 	= type(vLeft);
 		local sRightType 	= type(vRight);
 		local sPool 		= "pool";
 		local oRet 			= nil;
-				
+
 		if (leftOnlyObject(sLeftType, sRightType, sPool)) then
 			oRet = vLeft;
 			setValue(vLeft, POOL.CURRENT, tPool[vLeft].values[POOL.CURRENT] + vRight, POOL_CALLBACK.ON_ADD);
-						
+
 		elseif (rightOnlyObject(sLeftType, sRightType, sPool)) then
 			oRet = vRight;
 			setValue(vRight, POOL.CURRENT, tPool[vRight].values[POOL.CURRENT] + vLeft, POOL_CALLBACK.ON_ADD);
-						
+
 		elseif (bothObjects(sLeftType, sRightType, sPool)) then
 			oRet = vLeft;
 			setValue(vLeft, POOL.CURRENT, tPool[vLeft].values[POOL.CURRENT] + tPool[vRight].values[POOL.CURRENT], POOL_CALLBACK.ON_ADD);
-						
+
 		end
-		
+
 		return oRet;
 	end,
-	
-	
+
+
 	__div = function(vLeft, vRight)
 		local sLeftType 	= type(vLeft);
 		local sRightType 	= type(vRight);
 		local sPool 		= "pool";
 		local oRet 			= nil;
-				
+
 		if (leftOnlyObject(sLeftType, sRightType, sPool)) then
 			oRet = vLeft;
 			setValue(vLeft, POOL.CURRENT, math.floor(tPool[vLeft].values[POOL.CURRENT] / vRight), POOL_CALLBACK.ON_DIV);
-					
+
 		elseif (rightOnlyObject(sLeftType, sRightType, sPool)) then
 			oRet = vRight;
 			setValue(vRight, POOL.CURRENT, math.floor(tPool[vRight].values[POOL.CURRENT] / vLeft), POOL_CALLBACK.ON_DIV);
-			
+
 		elseif (bothObjects(sLeftType, sRightType, sPool)) then
 			oRet = vLeft;
 			setValue(vLeft, POOL.CURRENT, math.floor(tPool[vLeft].values[POOL.CURRENT] / tPool[vRight].values[POOL.CURRENT]), POOL_CALLBACK.ON_DIV);
-			
+
 		end
-		
+
 		return oRet;
 	end,
-	
+
 	__len = function(oThis)
-		setValue(oThis, POOL.CURRENT, tPool[oThis].values[POOL.MAX], POOL_CALLBACK.ON_MAX);		
+		setValue(oThis, POOL.CURRENT, tPool[oThis].values[POOL.MAX], POOL_CALLBACK.ON_MAX);
 		return oThis;
 	end,
 
-	
+
 	--[[!
 	@module pool
 	@func __mod
@@ -188,136 +188,136 @@ class "pool" {
 		local sRightType 	= type(vRight);
 		local sPool 		= "pool";
 		local oRet 			= nil;
-				
+
 		if (leftOnlyObject(sLeftType, sRightType, sPool)) then
 			oRet = vLeft;
 			setValue(vLeft, POOL.MAX, vRight, POOL_CALLBACK.ON_MOD);
-			
+
 		elseif (rightOnlyObject(sLeftType, sRightType, sPool)) then
 			oRet = vRight;
 			setValue(vRight, POOL.MIN, vLeft, POOL_CALLBACK.ON_MOD);
-			
+
 		elseif (bothObjects(sLeftType, sRightType, sPool)) then
 			setValue(vLeft, POOL.MIN, tPool[vRight].values[POOL.MIN], POOL_CALLBACK.ON_MOD);
 			setValue(vLeft, POOL.MAX, tPool[vRight].values[POOL.MAX], POOL_CALLBACK.ON_MOD);
-			
+
 		end
-				
+
 		return oRet;
 	end,
-	
-	
+
+
 	__mul = function(vLeft, vRight)
 		local sLeftType 	= type(vLeft);
 		local sRightType 	= type(vRight);
 		local sPool 		= "pool";
 		local oRet 			= nil;
-				
+
 		if (leftOnlyObject(sLeftType, sRightType, sPool)) then
 			oRet = vLeft;
 			setValue(vLeft, POOL.CURRENT, tPool[vLeft].values[POOL.CURRENT] * vRight, POOL_CALLBACK.ON_MUL);
-			
+
 		elseif (rightOnlyObject(sLeftType, sRightType, sPool)) then
 			oRet = vRight;
 			setValue(vRight, POOL.CURRENT, tPool[vRight].values[POOL.CURRENT] * vLeft, POOL_CALLBACK.ON_MUL);
-			
+
 		elseif (bothObjects(sLeftType, sRightType, sPool)) then
 			oRet = vLeft;
 			setValue(vLeft, POOL.CURRENT, tPool[vLeft].values[POOL.CURRENT] * tPool[vRight].values[POOL.CURRENT], POOL_CALLBACK.ON_MUL);
-			
+
 		end
-		
+
 		return oRet;
 	end,
 
-	
+
 	__sub = function(vLeft, vRight)
 		local sLeftType 	= type(vLeft);
 		local sRightType	= type(vRight);
 		local sPool 		= "pool";
 		local oRet 			= nil;
-				
+
 		if (leftOnlyObject(sLeftType, sRightType, sPool)) then
 			oRet = vLeft;
 			setValue(vLeft, POOL.CURRENT, tPool[vLeft].values[POOL.CURRENT] - vRight, POOL_CALLBACK.ON_SUB);
-			
+
 		elseif (rightOnlyObject(sLeftType, sRightType, sPool)) then
 			oRet = vRight;
 			setValue(vRight, POOL.CURRENT, tPool[vRight].values[POOL.CURRENT] - vLeft, POOL_CALLBACK.ON_SUB);
-			
+
 		elseif (bothObjects(sLeftType, sRightType, sPool)) then
 			oRet = vLeft;
 			setValue(vLeft, POOL.CURRENT, tPool[vLeft].values[POOL.CURRENT] - tPool[vRight].values[POOL.CURRENT], POOL_CALLBACK.ON_SUB);
-			
+
 		end
-		
+
 		return oRet;
 	end,
-	
-	
+
+
 	__tostring = function(...)
 		local oPool 	= tPool[select(1, ...)];
 		local sRet 		= "";
-		
+
 		for _, sValue in pairs(POOL()) do
 			sRet = sRet..sValue..': '..oPool.values[sValue]..' ';
-		end 
-		
+		end
+
 		return sRet;
 	end,
-	
-	
+
+
 	__unm = function(oThis)
 		local oPool = tPool[oThis];
 		setValue(oThis, POOL.CURRENT, oPool.values[POOL.MIN], POOL_CALLBACK.ON_MIN)
 		return oPool;
 	end,
-	
-	
+
+
 	get = function(...)
 		local oPool 	= tPool[select(1, ...)];
 		local sIndex 	= select(2, ...);
 		local nRet 		= nil;
-		
+
 		if (sIndex and oPool.values[sIndex]) then
 			nRet = oPool.values[sIndex];
 		end
-		
+
 		return nRet or math.huge;
 	end,
-	
-	
+
+
 	copy = function(...)
 		local oPool = tPool[select(1, ...)];
 		local oRet = pool();
-		
-		for nID, sValue in pairs(POOL()) do		
+
+		for nID, sValue in pairs(POOL()) do
 			setValue(oRet, sValue, oPool.values[sValue]);
 		end
-		
+
 		return oRet;
 	end,
-	
+
 	set = function(...)
 		local this 		= select(1, ...)
 		local oPool 	= tPool[this];
 		local sIndex 	= select(2, ...);
 		local nValue 	= select(3, ...);
-		
+
 		if (sIndex and nValue and (type(nValue) == 'number') and oPool.values[sIndex]) then
-			setValue(this, sIndex, nValue, POOL_CALLBACK.ON_SET);		
-		end	
-				
+			setValue(this, sIndex, nValue, POOL_CALLBACK.ON_SET);
+		end
+
 	end,
-	
+
 	setCallback = function(...)
 		local this 		= select(1, ...);
 		local sEvent	= select(2, ...);
 		local fCallback = select(3, ...);
-		
+
 		if (sEvent and fCallback and type(sEvent) == 'string' and POOL_CALLBACK.isMyConst(sEvent) and type(fCallback) == 'function') then
 			tPool[this].callbacks[sEvent] = fCallback;
 		end
-		
+
 	end,
 }

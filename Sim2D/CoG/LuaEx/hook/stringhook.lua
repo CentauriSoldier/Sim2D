@@ -1,12 +1,16 @@
 local string = string;
-local tKeyWords = {"and", "break", "do", "else", "elseif", "end",
-				   "false", "for", "function", "if", "in", "local",
-				   "nil", "not", "or", "repeat", "return", "then",
-				   "true", "until", "while",
+
+local tKeyWords = {"and", 		"break", 	"do", 		"else", 	"elseif", 	"end",
+				   "false", 	"for", 		"function", "if", 		"in", 		"local",
+				   "nil", 		"not", 		"or", 		"repeat", 	"return", 	"then",
+				   "true", 		"until", 	"while",
 				   --LuaEx keywords
-				   "constant","enum"
+				   "constant", 	"enum", 	"struct",	"null"
 			   };
 local nKeywords = #tKeyWords;
+
+local UUID_LENGTH 	= 16;
+local UUID_BLOCKS	= 5;
 
 function string.cap(sInput, bLowerRemaining)
 local sRet = "";
@@ -37,7 +41,7 @@ function string.capall(sInput)
 local sRet = "";
 
 	if not string.isblank(sInput) then
-	local tWords = string.totable(sInput, " ");
+	local tWords = string.totable(sInput, " ");--TODO could this use %s to find any space character?
 	local nWords = #tWords;
 
 		for nIndex, sWord in pairs(tWords) do
@@ -57,17 +61,23 @@ local sRet = "";
 return sRet, nWords, tWords
 end
 
---credit for this function (https://www.codegrepper.com/code-examples/lua/lua+split+string+into+table)
-function string.delmitedtotable(sInput, sDelimiter)
+--https://www.codegrepper.com/code-examples/lua/lua+split+string+into+table  AND
+--https://stackoverflow.com/questions/40149617/split-string-with-specified-delimiter-in-lua
+function string.totable(sInput, sDelimiter)
     local tRet = {};
-    for sMatch in (sInput..sDelimiter):gmatch("(.-)"..sDelimiter) do
-        table.insert(tRet, sMatch);
+	for w in sInput:gmatch("([^"..(sDelimiter or "|").."]+),?") do
+        table.insert(tRet, w);
     end
     return tRet;
 end
 
+--TODO put in lua ex CAN THIS BE OPTIIMIZE BY MAING THE RETURNED FUNCTION LOCAL?
+--http://lua-users.org/wiki/StringInterpolation
+getmetatable("").__mod = function(s, tab) return (s:gsub('($%b{})', function(w) return tab[w:sub(3, -2)] or w end)) end;
 
-function string.getfuncname(fFunc)
+
+
+function string.getfuncname(fFunc) --TODO figure out how to make this simpler and recursive with a safety
 
 	if type(fFunc) == "function" then
 
@@ -155,6 +165,11 @@ function string.iskeyword(sInput)
 end
 
 
+function string.isnumeric(sInput)
+	return type(sInput) == "string" and sInput:gsub("[%d%.]", "") == "";
+end
+
+
 function string.isvariablecompliant(sInput, bSkipKeywordCheck)
 	local bRet = false;
 	local bIsKeyWord = false;
@@ -181,92 +196,43 @@ function string.isvariablecompliant(sInput, bSkipKeywordCheck)
 	return bRet;
 end
 
---TODO check
-function string.left(sInput, nChars)
-local nLength = string.len(sInput);
 
-	if nLength > 0 and nLength > nChars then
-	return string.sub(sInput, 1, nChars);
-
-	else
-	return sInput
-
-	end
-
+--https://snippets.bentasker.co.uk
+function string.trim(s)
+  return s:match'^()%s*$' and '' or s:match'^%s*(.*%S)';
 end
 
 
-function string.right(sInput, nChars)
-local nLength = string.len(sInput);
-
-	if nLength > 0 and nLength > nChars then
-	local nStart = nLength - nChars + 1;
-	return string.sub(sInput, nStart);
-
-	else
-	return sInput
-
-	end
-
+--https://snippets.bentasker.co.uk
+function string.trimleft(s)
+  return s:match'^%s*(.*)';
 end
 
 
-function string.uuid(sInputPrefix, nMaxLength)
-local tChars = {"7","f","1","e","3","c","6","b","5","9","a","4","8","d","0","2"};
-local nChars = #tChars;
-local sPrefix = "";
-local sUUID = "";
-local tSequence = {1,4,4,4,12};
-local nMaxPrefixLength = 6;
-local sDelimiter = "-";
+--https://snippets.bentasker.co.uk
+function string.trimright(s)
+  return s:match'^(.*%S)%s*$';
+end
 
-	if type(sInputPrefix) == "string" then
 
-		if not string.isblank(sInputPrefix) then
-		sPrefix = sInputPrefix;
+function string.uuid()
+	local sRet 			= "";
+	local tChars 		= {"7","f","1","e","3","c","6","b","5","9","a","4","8","d","0","2"};--must be equal to UUID_LENGTH
+	local sDelimiter 	= "-";
+	local sPrefix 		= rawtype(sInputPrefix) == "string" and sInputPrefix or "";
+	local tSequence 	= {8, 4, 4, 4, 12};
+
+	for nBlock, nBlockCharCount in pairs(tSequence) do
+		local sDash = nBlock < UUID_BLOCKS and "-" or "";
+
+		for x = 1, nBlockCharCount do
+			sRet = sRet..tChars[math.random(1, UUID_LENGTH)];
 		end
 
+		sRet = sRet..sDash;
 	end
 
-	if type(nMaxLength) == "number" then
-
-		if nMaxLength > 0 and nMaxLength <= 8 then
-		nMaxPrefixLength = nMaxLength;
-		end
-
-	end
-
-	local nLength = string.len(sPrefix);
-
-	if nLength > 1 then
-
-		if nLength > nMaxPrefixLength then
-		sPrefix = string.sub(sPrefix, 1, nMaxPrefixLength);
-		end
-
-		if string.gsub(sPrefix, " ", "") ~= "" then
-		sUUID = sPrefix..sDelimiter;
-		end
-
-		if nLength < nMaxPrefixLength then
-		tSequence[1] = tSequence[1] + (nMaxPrefixLength - nLength);
-		end
-
-	else
-	tSequence[1] = 8;
-	end
-
-	for nIndex, nSequence in pairs(tSequence) do
-
-		for x = 1, nSequence do
-		sUUID = sUUID..tChars[math.random(1, nChars)];
-		end
-
-	sUUID = sUUID.."-";
-	end
-
-sUUID = string.sub(sUUID, 1, string.len(sUUID) - 1);
-return sUUID
+	return sRet
 end
 
 return string;

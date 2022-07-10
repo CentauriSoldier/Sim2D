@@ -140,7 +140,7 @@ local point = class "point" {
 		local sRet 		= "ERROR";
 		local bYIsNeg 	= this.y < 0;
 		local bYIs0 	= this.y == 0;
-		local bYIsPos 	= not bYIsNeg and not bYIs0;
+		local bYIsPos 	= this.y > 0;--not bYIsNeg and not bYIs0;
 
 		if (this.x < 0) then
 

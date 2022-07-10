@@ -168,9 +168,14 @@ function is_base(class_object)
 	return getmetatable(class_object).__parent == nil;
 end
 
--- define a new class
+--[[!
+@mod class
+@func class
+@desc Constructor for class instances.
+@ret class MyClass A class object.
+!]]
 local function class(name)
-	local class_meta   = { __type = name, __parent = nil };
+	local class_meta   = { __type = name, __is_luaex_class = true, __parent = nil };
 	local class_object 	= {};
 
 	--if (type(tLuaEx[name]) ~= "nil") then
@@ -259,7 +264,7 @@ local function class(name)
 
 			-- export the class to global scope with a new metatable, now with the type "class".
 			-- when called, you construct a new object of this class.
-			return setmetatable(class_object, { __type = "class", __call = class_ctor, __instance_mt = class_meta, __parent = getmetatable(class_object).__parent });
+			return setmetatable(class_object, { __type = "class", __is_luaex_class = true, __call = class_ctor, __instance_mt = class_meta, __parent = getmetatable(class_object).__parent });
 		end;
 	});
 end

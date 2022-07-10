@@ -48,6 +48,21 @@ For more information, please refer to <http://unlicense.org/>
 @version 0.5
 @versionhistory
 <ul>
+<li>
+	<b>0.7</b>
+	<br>
+	<p>Change: the rawtype function will now return LuaEx's type names for classes, constants, enums, structs, struct factories (and struct_factory_constructor) and null (and NULL) as oppossed to returning, "table".</p>
+	<p>Feature: added null type.</p>
+	<p>Feature: added the factory module.</p>
+	<p>Feature: added the luatype function (an alias for Lua's original, type, function.)</p>
+	<p>Feature: added the fulltype function.</p>
+	</li>
+	<li>
+		<b>0.6</b>
+		<br>
+		<p>Bugfix: set and stack classes were not modifying values properly.</p>
+		<p>Feature: added infusedhelp module.</p>
+	</li>
 	<li>
 		<b>0.5</b>
 		<br>
@@ -125,16 +140,20 @@ assert(type(debug) == "table", "LuaEx requires the debug library during initiali
 --determine the call location
 local sPath = debug.getinfo(1, "S").source;
 --remove the calling filename
-sPath = sPath:gsub("@", ""):gsub("init.lua", "");
+sPath = sPath:gsub("@", ""):gsub("[Ii][Nn][Ii][Tt].[Ll][Uu][Aa]", "");
 --remove the "/" at the end
 sPath = sPath:sub(1, sPath:len() - 1);
---update the package.path
-package.path = package.path..";"..sPath.."\\?.lua";
+--update the package.path (use the main directory to prevent namespace issues)
+package.path = package.path..";"..sPath.."\\..\\?.lua";
 
---import core modules
-			  require("lib.stdlib");
-constant 	= require("lib.constant");
-enum		= require("lib.enum");
+--import core modules and push them into the global environment
+			  	require("LuaEx.lib.stdlib");
+constant 	= 	require("LuaEx.lib.constant");
+local null	= 	require("LuaEx.lib.null");
+				constant("null", null); -- make sure null can't be overwritten
+				constant("NULL", null); -- create an uppercase alias for null
+enum		= 	require("LuaEx.lib.enum");
+struct		= 	require("LuaEx.lib.struct");
 
 --setup the global environment to properly manage enums, constants and their ilk
 setmetatable(_G,
@@ -153,19 +172,26 @@ setmetatable(_G,
 	}
 );
 
-class 		= require("class.class");
-base64 		= require("ext_lib.base64");
+class 		= require("LuaEx.class.class");
+base64 		= require("LuaEx.ext_lib.base64");
 
 --import lua extension modules
-math 		= require("hook.mathhook");
-string		= require("hook.stringhook");
-table		= require("hook.tablehook");
+math 		= require("LuaEx.hook.mathhook");
+string		= require("LuaEx.hook.stringhook");
+table		= require("LuaEx.hook.tablehook");
+
+--import infusedhelp module
+infusedhelp	= require("LuaEx.class.infusedhelp");
 
 --import other modules
-serialize 	= require("util.serialize");
-deserialize = require("util.deserialize");
+serialize 	= require("LuaEx.util.serialize");
+deserialize = require("LuaEx.util.deserialize");
 
 --import classes
-queue 		= require("class.queue");
-stack 		= require("class.stack");
-set 		= require("class.set");
+queue 		= require("LuaEx.class.queue");
+stack 		= require("LuaEx.class.stack");
+set 		= require("LuaEx.class.set");
+ini 		= require("LuaEx.class.ini");
+
+--useful if using LuaEx as a dependency in multiple modules to prevent the need for loading multilple times
+constant("LUAEX_INIT", true);

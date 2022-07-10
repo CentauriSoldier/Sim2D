@@ -35,7 +35,6 @@ local type 			= type;
 
 local tProtectedRepo = {};
 
-local tSort3;
 --[[assumes the other update functions have been called]]
 local function update(tProt)
 	--update the sides
@@ -43,9 +42,11 @@ local function update(tProt)
 	local nSide2 		= tProt.edges[2]:getLength();
 	local nSide3 		= tProt.edges[3]:getLength();
 
-	--sore the sides by value
-	tSort3 = {nSide1, nSide2, nSide3};
+	--sort the sides by value
+	local tSort3 = {nSide1, nSide2, nSide3};
+
 	table.sort(tSort3);
+
 	tProt.smallSide		= tSort3[1];
 	tProt.midSide		= tSort3[2];
 	tProt.largeSide		= tSort3[3];
@@ -54,8 +55,6 @@ local function update(tProt)
 	local tAngles 	= tProt.angles;
 
 	--TODO update the angles
-
-
 	local nAngle1 	= tAngles[1];
 	local nAngle2 	= tAngles[2];
 	local nAngle3 	= tAngles[3];

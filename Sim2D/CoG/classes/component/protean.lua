@@ -372,7 +372,7 @@ protean = class "protean" {
 		@param bAutoCalculate Whether or not this object should auto-calculate the final value whenever a change is made. This is true by default. If set to nil, it will default to true.
 		@return oProtean protean A protean object.
 	!]]
-	__construct = function(this, nBaseValue, nBaseBonus, nBasePenalty, nMultiplicativeBonus, nMultiplicativePenalty, nAddativeBonus, nAddativePenalty, nMinLimit, nMaxLimit, fonChange, bAutoCalculate)
+	__construct = function(this, tProt, nBaseValue, nBaseBonus, nBasePenalty, nMultiplicativeBonus, nMultiplicativePenalty, nAddativeBonus, nAddativePenalty, nMinLimit, nMaxLimit, fonChange, bAutoCalculate)
 
 		local bHasCallbackFunction = rawtype(fonChange) == "function";
 

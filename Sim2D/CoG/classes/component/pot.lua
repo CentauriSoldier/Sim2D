@@ -18,6 +18,11 @@
 @versionhistory
 <ul>
 	<li>
+		<b>1.4</b>
+		<br>
+		<p>Bugfix: clamping values was not working correctly cause unpredictable results.</p>
+	</li>
+	<li>
 		<b>1.3</b>
 		<br>
 		<p>Added serialization and deserialization methods.</p>
@@ -44,6 +49,11 @@
 local tPots = {};
 local pot;
 
+--the default values in case constructor input is bad
+local nMinDefault 	= 0;
+local nMaxDefault 	= 99;
+local nRateDefault 	= 1;
+
 --make these publicy available
 constant("POT_CONTINUITY_NONE", 	0);
 constant("POT_CONTINUITY_REVOLVE", 	1);
@@ -63,7 +73,7 @@ local math 						= math;
 
 
 local function continuityIsValid(nVal)
-	print("printing the local value of POT_CONTINUITY_NONE: "..POT_CONTINUITY_NONE)
+
 	return rawtype(nVal) == "number" and
 		   (nVal == POT_CONTINUITY_NONE 	or
 		    nVal == POT_CONTINUITY_REVOLVE 	or
@@ -163,43 +173,21 @@ end
 
 pot = class "pot" {
 
-	__construct = function(this, nMin, nMax, nPos, nRate, nContinuity)
+	__construct = function(this, tProt, nMin, nMax, nPos, nRate, nContinuity)
 		tPots[this] = {
 			alternator			= 1,
 			continuity			= continuityIsValid(nContinuity) and nContinuity or POT_CONTINUITY_NONE,
-			min 				= 0,
-			max 				= 100,
-			pos 				= 0,
+			min 				= rawtype(nMin) == "number" and nMin or nMinDefault,
+			max 				= rawtype(nMax) == "number" and nMax or nMaxDefault,
+			pos 				= rawtype(nPos) == "number" and nPos or nMinDefault,
 			toggleAlternator 	= false,
-			rate 				= 1,
+			rate 				= rawtype(nRate) == "number" and nRate or nRateDefault,
 		};
 
 		local oPot = tPots[this];
-
-		--set the min
-		if (rawtype(nMin) == "number") then
-			oPot.min = nMin;
-		end
-
-		--set the max
-		if (rawtype(nMax) == "number") then
-			oPot.max = nMax;
-			clampMax(oPot);
-		end
-
-		--set the position
-		if (rawtype(nPos) == "number") then
-			oPot.pos = nPos;
-			clampPosMin(oPot);
-			clampPosMax(oPot);
-		end
-
-		--set the rate
-		if (rawtype(nRate) == "number") then
-			oPot.rate = nRate;
-			clampRate(oPot);
-		end
-
+		clampPosMin(oPot);
+		clampPosMax(oPot);
+		clampRate(oPot);
 	end,
 
 
@@ -285,15 +273,11 @@ pot = class "pot" {
 	end,
 
 	increase = function(this, nTimes)
-		local oPot = tPots[this];
-		local nCount = 1;
-
-		if (rawtype(nTimes) == "number") then
-			nCount = nTimes;
-		end
+		local oPot 		= tPots[this];
+		local nCount 	= rawtype(nTimes) == "number" and nTimes or 1;
 
 		--set the value
-		oPot.pos = oPot.pos + oPot.rate * nCount * oPot.alternator;
+		oPot.pos = oPot.pos + (oPot.rate * nCount * oPot.alternator);
 
 		--clamp it
 		if (oPot.continuity == POT_CONTINUITY_ALT) then

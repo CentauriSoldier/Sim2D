@@ -27,7 +27,7 @@ local tRovers 	= {};
 
 aStar = {
 	Grid = class "aStar.Grid" {
-		__construct = function(this, fShape, nWidth, nHeight)
+		__construct = function(this, tProt, fShape, nWidth, nHeight)
 			nWidth 	= (type(nWidth) 	== "number" and nWidth 	> 0) and math.floor(nWidth) 	or 1;
 			nHeight = (type(nHeight) 	== "number" and nHeight > 0) and math.floor(nHeight) 	or 1;
 

@@ -21,7 +21,7 @@ end
 --TODO should I use pool for each resource type?
 class "bank" {
 
-	__construct = function(this)
+	__construct = function(this, tProt)
 		tBank[this] = {};
 
 		local nIndex = 1;

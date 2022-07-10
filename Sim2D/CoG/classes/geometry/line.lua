@@ -56,7 +56,7 @@ local function update(this)
 	local nXIsPos	= nXDelta > 0;
 	local nYIsPos	= nYDelta > 0;
 
-	--defaults to quadrant I
+	--[[defaults to quadrant I
 	local nQuadrantAddative = 0;
 
 	if (not nXIsPos and nYIsPos) then
@@ -66,7 +66,7 @@ local function update(this)
 	elseif (nXIsPos and not nYIsPos) then
 		nQuadrantAddative = 270;
 	end
-
+]]
 	--determine slope and y-intercept
 	if (tProt.slopeIsUndefined) then
 		tProt.slope 		= MATH_UNDEF;
@@ -78,16 +78,21 @@ local function update(this)
 
 	--translate end point to the origin (using the object's temp point) in order to find theta
 	local oEnd = tTempPoints[this];
-	local tStart = {
+	--[[local tStart = {
 		x = 0,
 		y = 0,
-	};--TODO this doesn't seem to account for the quadrant...rethink this
+	};]]
 	oEnd.x = tProt.stop.x - tProt.start.x;
 	oEnd.y = tProt.stop.y - tProt.start.y;
 
-	--get the end point's relative location
-	local bQuad = oEnd:getQuadrant();
+	tProt.theta = math.deg(math.atan2(oEnd.y, oEnd.x));
+	--make sure the value is positive
+	tProt.theta = tProt.theta >= 0 and tProt.theta or 360 + tProt.theta;
 
+	--get the end point's relative location
+	--local bQuad = oEnd:getQuadrant();
+
+	--[[
 	if (bQuad == QUADRANT_I) then
 		tProt.theta	= math.deg(math.atan(nXDelta / nYDelta));
 	elseif (bQuad == QUADRANT_II) then
@@ -107,6 +112,7 @@ local function update(this)
 	elseif (bQuad == QUADRANT_O) then
 		tProt.theta	= 0; --TODO is this undefined?
 	end
+]]
 
 	--get the standard-form components and set the x intercept
 	tProt.a = nYDelta;--tProt.stop.y - tProt.start.y;
@@ -136,8 +142,8 @@ return class "line" {
 		local tProt = tProtectedRepo[this];
 
 		tProt.midpoint  = point();
-		tProt.start = type(oStartPoint) == "point" 	and point(oStartPoint.x, oStartPoint.y) or point();
-		tProt.stop 	= type(oEndPoint)	== "point" 	and point(oEndPoint.x, oEndPoint.y) 	or point();
+		tProt.start = type(oStartPoint) == "point" 	and point(oStartPoint.x, 	oStartPoint.y) 	or point();
+		tProt.stop 	= type(oEndPoint)	== "point" 	and point(oEndPoint.x, 		oEndPoint.y) 	or point();
 
 		--default the fields (in case no update is performed)
 		tProt.a 					= 0;
