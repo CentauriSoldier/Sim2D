@@ -67,7 +67,8 @@ IOTA 						= {
 table.settype(IOTA, 			"IOTA");
 table.setsubtype(IOTA.MAX, 		"IOTA.MAX");
 table.setsubtype(IOTA.CALLBACK, "IOTA.CALLBACK");
-table.lock(IOTA);
+--table.lock(IOTA); --TODO table.lock is not working properly...fix it
+--Also, Make these constants like IOTA_YEAR, etc.
 
 local tIota = {};
 local tIotas = {};

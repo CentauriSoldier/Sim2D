@@ -305,38 +305,34 @@ local function setValue(this, sType, vValue)
 		local bCalculated 		= false;
 		local bCallbackCalled 	= false;
 
-		--if a number was passed
-		if (rawtype(vValue) == "number") then
-			--set the value
-			oProtean[sType] = vValue;
+		--set the value
+		oProtean[sType] = vValue;
 
-			--check if this object is linked and, if so, update the linker and it's proteans
-			if (oProtean.isLinked and sType == PROTEAN_VALUE_BASE) then
-				tHub[oProtean.linkerID].baseValue = vValue;
+		--check if this object is linked and, if so, update the linker and it's proteans
+		if (oProtean.isLinked and sType == PROTEAN_VALUE_BASE) then
+			tHub[oProtean.linkerID].baseValue = vValue;
 
-				--update the linked proteans' final value
-				for x = 1, tHub[oProtean.linkerID].totalLinked do
-					local linkedThis 		= tHub[oProtean.linkerID].proteans[x];
-					local oLinkedProtean 	= tProteans[linkedThis];
-					--print(rawtype(tHub[oProtean.linkerID].proteans[x]))
-					if (oLinkedProtean.autoCalculate) then
-						--(re)calculate the final value
-						calculateFinalValue(oLinkedProtean);
-					end
-
-					if (oLinkedProtean.isCallbackActive) then
-						--process the callback function
-						oLinkedProtean.onChange(linkedThis);
-					end
-
+			--update the linked proteans' final value
+			for x = 1, tHub[oProtean.linkerID].totalLinked do
+				local linkedThis 		= tHub[oProtean.linkerID].proteans[x];
+				local oLinkedProtean 	= tProteans[linkedThis];
+				--print(rawtype(tHub[oProtean.linkerID].proteans[x]))
+				if (oLinkedProtean.autoCalculate) then
+					--(re)calculate the final value
+					calculateFinalValue(oLinkedProtean);
 				end
 
-				--indicate that this protean has also been calulated
-				bCalculated 	= true;
-				--and the callback has been called
-				bCallbackCalled = true;
+				if (oLinkedProtean.isCallbackActive) then
+					--process the callback function
+					oLinkedProtean.onChange(linkedThis);
+				end
+
 			end
 
+			--indicate that this protean has also been calulated
+			bCalculated 	= true;
+			--and the callback has been called
+			bCallbackCalled = true;
 		end
 
 		if (oProtean.autoCalculate and not bCalculated) then
@@ -482,26 +478,18 @@ protean = class "protean" {
 	!]]
 	get = function(this, sType)
 		local oProtean	= tProteans[this];
+		sType 			= rawtype(oProtean[sType]) ~= nil and sType or PROTEAN_VALUE_FINAL;
 		local nRet 		= oProtean[sType];
-		sType = rawtype(oProtean[sType]) ~= nil and sType or PROTEAN_VALUE_FINAL;
 
 		if (sType == PROTEAN_VALUE_FINAL) then
 
 			--clamp the value if it has been limited
 			if (oProtean[PROTEAN_LIMIT_MIN]) then
-
-				if (nRet < oProtean[PROTEAN_LIMIT_MIN]) then
-					nRet = oProtean[PROTEAN_LIMIT_MIN];
-				end
-
+				nRet = nRet < oProtean[PROTEAN_LIMIT_MIN] and oProtean[PROTEAN_LIMIT_MIN] or nRet;
 			end
 
 			if (oProtean[PROTEAN_LIMIT_MAX]) then
-
-				if (nRet > oProtean[PROTEAN_LIMIT_MAX]) then
-					nRet = oProtean[PROTEAN_LIMIT_MAX];
-				end
-
+				nRet = nRet > oProtean[PROTEAN_LIMIT_MAX] and oProtean[PROTEAN_LIMIT_MAX] or nRet;
 			end
 
 		elseif (sType == PROTEAN_VALUE_BASE) then
@@ -595,8 +583,12 @@ protean = class "protean" {
 	!]]
 	set = function(this, sType, nValue)
 
-		if (tProteans[this][sType]) then
-			return setValue(this, sType, nValue);
+		if (rawtype(nValue) == "number") then
+
+			if (tProteans[this][sType]) then
+				setValue(this, sType, nValue);
+			end
+
 		end
 
 		return this;

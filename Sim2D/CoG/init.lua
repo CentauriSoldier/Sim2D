@@ -193,6 +193,6 @@ protean 	= require(rClassesComponent	..".protean");
 --combator 	= require(rClasses			..".combator");
 iota 		= require(rClasses			..".iota");
 targetor	= require(rClasses			..".targetor");
---aStar		= require(rClasses			..".aStar");
+aStar		= require(rClasses			..".aStar");
 --useful if using CoG as a dependency in multiple modules to prevent the need for loading multilple times
 constant("COG_INIT", true);

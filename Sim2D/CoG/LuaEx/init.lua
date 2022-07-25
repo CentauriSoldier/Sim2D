@@ -118,12 +118,36 @@ this to false to prevent alteration
 of the global environment.
 ]]
 
---create the 'protected' table used by LuaEx
-local tLuaEx = {};
+--							🆂🅴🆃🆄🅿 🅻🆄🅰🅴🆇 🅿🅰🆃🅷 & 🅼🅴🆃🅰🆃🅰🅱🅻🅴
 
-_G.__LUAEX__ = setmetatable({}, {
-	__index 	= tLuaEx,
-	__newindex 	= function(t, k, v)
+--list all keywords
+local tKeyWords = {	"and", 		"break", 	"do", 		"else", 	"elseif", 	"end",
+					"false", 	"for", 		"function", "if", 		"in", 		"local",
+					"nil", 		"not", 		"or", 		"repeat", 	"return", 	"then",
+					"true", 	"until", 	"while",
+					--LuaEx keywords
+					"constant", 	"enum", 	"struct",	"null"
+};
+
+--create the 'protected' table used by LuaEx
+local tLuaEx = {
+		__KEYWORDS__	= setmetatable({}, {
+			__index 	= tKeyWords,
+			__newindex 	= function(t, k)
+				error("Attempt to perform illegal operation: adding keyword to __KEYWORDS__ table.");
+			end,
+			__pairs		= function (t)
+				return next, tKeyWords, nil;
+			end,
+			__metatable = false,
+		}),
+		__KEYWORDS_COUNT__ = #tKeyWords,
+};
+
+_G.__LUAEX__ = setmetatable({},
+{
+	__index 		= tLuaEx,
+	__newindex 		= function(t, k, v)
 
 		if tLuaEx[k] then
 			error("Attempt to overwrite __LUAEX__ value in key '"..tostring(k).."' ("..type(k)..") with value "..tostring(v).." ("..type(v)..") .");
@@ -131,7 +155,7 @@ _G.__LUAEX__ = setmetatable({}, {
 
 		rawset(tLuaEx, k, v);
 	end,
-	__metatable = false,
+	__metatable 	= false,
 });
 
 --warn the user if debug is missing
@@ -146,14 +170,20 @@ sPath = sPath:sub(1, sPath:len() - 1);
 --update the package.path (use the main directory to prevent namespace issues)
 package.path = package.path..";"..sPath.."\\..\\?.lua";
 
+
+
+--								🅸🅼🅿🅾🆁🆃 🅻🆄🅰🅴🆇 🅼🅾🅳🆄🅻🅴🆂
+
 --import core modules and push them into the global environment
-			  	require("LuaEx.lib.stdlib");
+type 		=  	require("LuaEx.hook.typehook");
+				require("LuaEx.lib.stdlib");
 constant 	= 	require("LuaEx.lib.constant");
 local null	= 	require("LuaEx.lib.null");
-				constant("null", null); -- make sure null can't be overwritten
-				constant("NULL", null); -- create an uppercase alias for null
+				rawset(tLuaEx, "null", null); 	-- make sure null can't be overwritten
+				rawset(tLuaEx, "NULL", null);	-- create an uppercase alias for null
 enum		= 	require("LuaEx.lib.enum");
 struct		= 	require("LuaEx.lib.struct");
+source		=	require("LuaEx.util.source");
 
 --setup the global environment to properly manage enums, constants and their ilk
 setmetatable(_G,
@@ -175,7 +205,7 @@ setmetatable(_G,
 class 		= require("LuaEx.class.class");
 base64 		= require("LuaEx.ext_lib.base64");
 
---import lua extension modules
+--import lua extension modules (except 'typehook' which is loaded first [above])
 math 		= require("LuaEx.hook.mathhook");
 string		= require("LuaEx.hook.stringhook");
 table		= require("LuaEx.hook.tablehook");
@@ -192,6 +222,10 @@ queue 		= require("LuaEx.class.queue");
 stack 		= require("LuaEx.class.stack");
 set 		= require("LuaEx.class.set");
 ini 		= require("LuaEx.class.ini");
+
+--now that everything has loaded, create aliases
+table.serialize 	= serialize.table;
+string.serialize 	= serialize.string;
 
 --useful if using LuaEx as a dependency in multiple modules to prevent the need for loading multilple times
 constant("LUAEX_INIT", true);
