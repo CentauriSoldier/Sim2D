@@ -36,7 +36,7 @@ local oAStar = aStar("COLD", "AQuIFER", "COMPACTION", "DETRITUS", "FORAGEABILITY
 					"VERDURE", "TOXICITY");
 local tA = oAStar.aspectNames;
 
-local groundConfig = aStar.newLayerConfig("TerRAIN", {tA.AQUIFER, tA.COMPACTION, tA.DETRITUS});
+local groundConfig = aStar.newLayerConfig("TerRAIN", tA.AQUIFER, tA.COMPACTION, tA.DETRITUS);
 --print(type(groundConfig))
 local oWorldMap = oAStar:newMap("World Map", ASTAR_MAP_TYPE_HEX_POINTED, {groundConfig}, 50, 28);
 local oTerrainLayer = oWorldMap:getLayer("TERRaIN");
@@ -52,6 +52,13 @@ print(oRover3:isOnLayer("TERRAIn"))
 for k, v in pairs(oAStar:getMaps()) do
 
 end
+
+do
+  local x <const> = 42
+  x = x+1
+end
+
+
 --local oProt = oWorldMap:getLayer("TERRAIN"):getNode(3, 5):getAspect("AQUIFER"):getImpactor();
 --oProt:set(PROTEAN_ADDATIVE_BONUS, 0.21)
 --print(oWorldMap:getLayer("TERRAIN"):getNode(3, 5):getImpact("AQUIFER"))

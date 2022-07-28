@@ -22,7 +22,7 @@ constant("ASTAR_MAP_TYPE_TRIANGLE_POINTED", 4);
 constant("ASTAR_NODE_ENTRY_COST_BASE", 		10); --the central cost upon which all other costs & cost mechanics are predicated
 constant("ASTAR_NODE_ENTRY_COST_MIN", 		1);
 constant("ASTAR_NODE_ENTRY_COST_MAX_RATE",	12);
-constant("ASTAR_NODE_ENTRY_COST_MAX", 		ASTAR_NODE_BASE_ENTRY_COST * ASTAR_NODE_ENTRY_COST_MAX_RATE);
+constant("ASTAR_NODE_ENTRY_COST_MAX", 		ASTAR_NODE_ENTRY_COST_BASE * ASTAR_NODE_ENTRY_COST_MAX_RATE);
 
 --🅻🅾🅲🅰🅻🅸🆉🅰🆃🅸🅾🅽
 local ASTAR_MAP_TYPE_HEX_FLAT 			= ASTAR_MAP_TYPE_HEX_FLAT;
@@ -30,7 +30,10 @@ local ASTAR_MAP_TYPE_HEX_POINTED 		= ASTAR_MAP_TYPE_HEX_POINTED;
 local ASTAR_MAP_TYPE_SQUARE 			= ASTAR_MAP_TYPE_SQUARE;
 local ASTAR_MAP_TYPE_TRIANGLE_FLAT 		= ASTAR_MAP_TYPE_TRIANGLE_FLAT;
 local ASTAR_MAP_TYPE_TRIANGLE_POINTED	= ASTAR_MAP_TYPE_TRIANGLE_POINTED;
-local ASTAR_NODE_BASE_ENTRY_COST		= ASTAR_NODE_BASE_ENTRY_COST;
+local ASTAR_NODE_ENTRY_COST_BASE		= ASTAR_NODE_ENTRY_COST_BASE;
+local ASTAR_NODE_ENTRY_COST_MIN 		= ASTAR_NODE_ENTRY_COST_MIN
+local ASTAR_NODE_ENTRY_COST_MAX_RATE 	= ASTAR_NODE_ENTRY_COST_MAX_RATE
+local ASTAR_NODE_ENTRY_COST_MAX 		= ASTAR_NODE_ENTRY_COST_MAX
 local PROTEAN_BASE_BONUS 				= PROTEAN_BASE_BONUS;
 local PROTEAN_BASE_PENALTY 				= PROTEAN_BASE_PENALTY;
 local PROTEAN_MULTIPLICATIVE_BONUS 		= PROTEAN_MULTIPLICATIVE_BONUS;
@@ -494,10 +497,10 @@ aStarNode = class "aStarNode" {
 	getEntryCost = function(this, oRover)--TODO set this up for multiple rovers
 		assert(type(oRover) == "aStarRover", "Rover must be of type, aStarRover.");
 		local tFields	= tRepo.nodes[this];
-		local nBaseCost = ASTAR_NODE_ENTRY_COST_BASE;
+		local nBaseCost = tRepo.nodes.baseCost;
 		local nRet 	= nBaseCost;
 
-		--iterate over all of this nide's aspects
+		--iterate over all of this node's aspects
 		for sApect, oAspect in pairs(tFields.aspectsByName) do
 			local nImpact = oAspect:getImpactor():get();
 
@@ -505,9 +508,17 @@ aStarNode = class "aStarNode" {
 			if (nImpact > 0) then
 				local tRoverAffinities 	= oRover:getAffinites();
 				local tRoverAversions 	= oRover:getAversions();
+--[[Let F 	= Final Entry Cost
+Let M	= total value of all affinity/aversion values
+Let B	= Node base cost
+Let Naf	= node affinity value
+Let Raf = rover affinity value
+Let Rav	= rover aversion value
+M = M + B * (Rav - Raf);
 
+F = math.clamp(B + Naf * M, ASTAR_NODE_ENTRY_COST_MIN, ASTAR_NODE_ENTRY_COST_MAX);]]
 				--go through the rover's affinities
-				for
+				--for
 
 			end
 
