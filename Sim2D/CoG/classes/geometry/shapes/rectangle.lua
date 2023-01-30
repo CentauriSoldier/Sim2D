@@ -103,7 +103,6 @@ return class "rectangle" : extends(polygon) {
 		this.height 	= tData.height;
 	end,
 
-
 	getHeight = function(this)
 		return tProtectedRepo[this].height;
 	end,

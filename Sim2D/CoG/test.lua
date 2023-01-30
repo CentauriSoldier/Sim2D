@@ -1,9 +1,36 @@
---package.path = package.path..";LuaEx\\?.lua;..\\?.lua;?.lua";
-package.path = package.path..";CoG\\?.lua";
-require("init");
-local function p(item)
-	print(tostring(item).." ("..type(item)..")")
+function getsourcepath()
+	--determine the call location
+	local sPath = debug.getinfo(1, "S").source;
+	--remove the calling filename
+	local sFilenameRAW = sPath:match("^.+"..package.config:sub(1,1).."(.+)$");
+	--make a pattern to account for case
+	local sFilename = "";
+	for x = 1, #sFilenameRAW do
+		local sChar = sFilenameRAW:sub(x, x);
+
+		if (sChar:find("[%a]")) then
+			sFilename = sFilename.."["..sChar:upper()..sChar:lower().."]";
+		else
+			sFilename = sFilename..sChar;
+		end
+
+	end
+	sPath = sPath:gsub("@", ""):gsub(sFilename, "");
+	--remove the "/" at the end
+	sPath = sPath:sub(1, sPath:len() - 1);
+
+	return sPath;
 end
+
+--determine the call location
+local sPath = getsourcepath();
+
+--update the package.path (use the main directory to prevent namespace issues)
+package.path = package.path..";"..sPath.."\\..\\?.lua;";
+
+--load LuaEx
+require("CoG.init");
+--============= TEST CODE BELOW =============
 
 --local r = rectangle(point(0, 0), 25, 20);
 --local t = rectangle(point(0, 0), 25, 20);
@@ -38,7 +65,65 @@ local k = bullet({id = "34sdf"});
 --k.id = null
 --k.id = "asd3234asd"
 --k.id = 4567
-p(type(k))
+--p(type(k))
 --p(struct.struct.bullet)
 --p(type(bullet))
 --p(type(struct))
+--constant("ZERO", 0)
+--local sub = enum("SUB", {"ONE", "TWO"}, true);
+--[[enum("TEST", {"SUB1", "SUB2"}, {enum("SUB1", {"ONE", "TWO", "THREE", "FOUR", "FIVE"}, nil, true),
+								enum("SUB2", {"SIX", "SEVEN", "EIGHT", "NINE", "TEN"}, nil, true)
+							});
+
+t = {
+	k = TEST.SUB1.TWO,
+	r = TEST.SUB2.SEVEN,
+}
+
+enum("COLOR", {"RED", "GREEN", "BLUE"})
+--st = serialize.table(t)
+--print(12)
+--print(type(TEST.SUB1.ONE.FIV));
+local tSub1Meta = getmetatable(TEST.SUB1.TWO.parent);
+local nMetaCount = 0;
+
+for sIndex, vValue in TEST() do
+	print(vValue)
+end
+
+--print(nMetaCount, serialize.table(tSub1Meta));
+--print(type(TEST.SUB1()))
+--print(TEST.SUB.valueType)
+--print(st)
+--print(type(TEST))
+--print(COLOR.RED.enum.__name)
+
+--check if item is of type enum.
+]]
+
+local tVertices 	= {point(0, 0), point(3, 3), point(3, -1)};
+local bSkipUpdate 	= false;
+
+local tri = polygon(tVertices, bSkipUpdate)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--sd

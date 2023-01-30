@@ -1,11 +1,4 @@
-SIM2D.TYPE.LED					= "led";
-SIM2D.LED						= const("SIM2D.LED", 		"", true);
-SIM2D.LED.STATE					= const("SIM2D.LED.STATE", 	"", true);
-SIM2D.LED.STATE.OFF				= 0;
-SIM2D.LED.STATE.ON				= 1;
-SIM2D.LED.STATE.PULSE			= 2;
 --TODO add blink and flicker state
-
 local tSim2D = Sim2D.__properties;
 local tLEDs = {};
 
@@ -93,7 +86,7 @@ local function ResetPulseColors(this)
 end
 
 
-class "LED" : extends(Sim2D) {
+local LED = class "LED" : extends(Sim2D) {
 
 
 	__construct = function(this, sState, sName, nX, nY, nWidth, nHeight, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)

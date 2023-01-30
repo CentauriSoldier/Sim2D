@@ -1,5 +1,3 @@
-SIM2D.TYPE.BTN					= "btn";
-
 local tSim2D = Sim2D.__properties;
 local Util = Sim2D.Util;
 
@@ -51,7 +49,7 @@ local function LoadImage(oButton, pImage, sIndex, nWidth, nHeight, pCenter)
 	return bRet;
 end
 
-class "Btn" : extends(Sim2D) {
+local Btn = class "Btn" : extends(Sim2D) {
 
 	__construct = function(this, sState, sName, oShape, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		this:super(sState, sName, oShape, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);

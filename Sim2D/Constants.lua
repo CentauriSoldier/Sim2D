@@ -1,70 +1,38 @@
-SIM2D								= const("SIM2D", 				"", true);
-
-SIM2D.SOUND_CHANNEL					= CHANNEL_USER4; --this channel MUST be reserved for Sim2D
---TODO add more channels--basically, sim2d will take over AMS completely
-SIM2D.CANVAS						= "__sim2d canvas__";--the canvas on the page MUST be named this
-SIM2D.CANVAS_COLOR					= Color.RGBA(0, 0, 0, 0);
-
-SIM2D.TYPE							= const("SIM2D.TYPE", 			"", true); --used to during object creation to identify item type
-
-SIM2D.TIMER							= const("SIM2D.TIMER", 			"", true);
-SIM2D.TIMER.EVENT					= const("SIM2D.TIMER.EVENT", 	"", true);
-SIM2D.TIMER.EVENT.ID				= 34580;
-SIM2D.TIMER.EVENT.INTERVAL			= 50;
-SIM2D.TIMER.DRAW					= const("SIM2D.TIMER.DRAW", 	"", true);
-SIM2D.TIMER.DRAW.ID					= 34581;
-SIM2D.TIMER.DRAW.INTERVAL			= 17;
-
-SIM2D.PULSE							= const("SIM2D.PULSE", 		"", true);
-SIM2D.PULSE.OFF						= -1;
-SIM2D.PULSE.ULTRA_SLOW				= const("SIM2D.PULSE.ULTRA_SLOW", "", true);
-SIM2D.PULSE.ULTRA_SLOW.ID			= 34583;
-SIM2D.PULSE.ULTRA_SLOW.INTERVAL		= 500;
-SIM2D.PULSE.SLOW 					= const("SIM2D.PULSE.SLOW", 		"", true);
-SIM2D.PULSE.SLOW.ID					= 34584;
-SIM2D.PULSE.SLOW.INTERVAL			= 250;
-SIM2D.PULSE.MEDIUM					= const("SIM2D.PULSE.MEDIUM",		"", true);
-SIM2D.PULSE.MEDIUM.ID				= 34585;
-SIM2D.PULSE.MEDIUM.INTERVAL			= 100;
-SIM2D.PULSE.FAST					= const("SIM2D.PULSE.FAST",		"", true);
-SIM2D.PULSE.FAST.ID					= 34586;
-SIM2D.PULSE.FAST.INTERVAL			= 50;
-SIM2D.PULSE.ULTRA_FAST				= const("SIM2D.PULSE.ULTRA_FAST",	"", true);
-SIM2D.PULSE.ULTRA_FAST.ID			= 34587;
-SIM2D.PULSE.ULTRA_FAST.INTERVAL 	= 17; -- ~60 FPS
-
+--ams object
+local eAMSObject        = enum("AMS_OBJECT",    {"DELIMITER", "DELIMITER_LENGTH", "PREFIX", "PREFIX_LENGTH"}, {" ", 1, "s2d", 3}); --length values must equal associated string lengths
+--canvas
+local eCanvas           = enum("CANVAS",        {"NAME", "COLOR"}, {"__SIM2D_CANVAS__", Color.RGBA(0, 0, 0, 0)}, true);--the canvas on the page MUST be named this
+--layer (sub divisions of each stratum)
+local eLayerBackground  = enum("BACKGROUND",    {"BACK", "MID", "FRONT"}, {1, 2, 3}, true);
+local eLayerMidground   = enum("MIDGROUND",     {"BACK", "MID", "FRONT"}, {4, 5, 6}, true);
+local eLayerForeground  = enum("FOREGROUND",    {"BACK", "MID", "FRONT"}, {7, 8, 9}, true);
+local eLayer            = enum("LAYER",         {"COUNT", "BACKGROUND", "MIDGROUND", "FOREGROUND", "DEFAULT"}, {9, eLayerBackground, eLayerMidground, eLayerForeground, 5}, true);
+--led
+local eLEDState         = enum("STATE",         {"OFF", "ON", "PULSE", "BLINK", "FLICKER"}, {0, 1, 2, 3, 4}, true);
+local eLED              = enum("LED",           {"STATE"}, {eLEDState}, true);
+--port
+local ePort             = enum("PORT",          {"APP", "BUILD", "DIALOGEX", "SYSTEM"}, {0, 1, 2, 3}, true);
+--pulse
+local ePulseUltraSlow   = enum("ULTRA_SLOW",    {"ID", "INTERVAL"}, {34583, 500},   true);
+local ePulseSlow        = enum("SLOW",          {"ID", "INTERVAL"}, {34584, 250},   true);
+local ePulseMedium      = enum("MEDIUM",        {"ID", "INTERVAL"}, {34585, 100},   true);
+local ePulseFast        = enum("FAST",          {"ID", "INTERVAL"}, {34586, 50},    true);
+local ePulseUltraFast   = enum("ULTRA_FAST",    {"ID", "INTERVAL"}, {34587, 17},    true); --17 = ~60 FPS
+local ePulse            = enum("PULSE",         {"OFF", "ULTRA_SLOW", "SLOW", "MEDIUM", "FAST", "ULTRA_FAST"},
+                                                {-1, ePulseUltraSlow, ePulseSlow, ePulseMedium, ePulseFast, ePulseUltraFast}, true);
+--sound
+local eSoundChannel     = enum("CHANNEL",       {"BACKGROUND", "EFFECTS", "NARRATION", "USER1", "USER2", "USER3", "USER4", "ALL"}, {5, 0, 6, 1, 2, 3, 4, -3}, true);
+local eSound            = enum("SOUND",         {"CHANNEL"}, {eSoundChannel}, true);
+--stratum (1 for drawing game objects, 2 for drawing effects, 3 for drawing UI objects)
 --these serve as super-layers. These are drawn and polled in their ordinal order. These stratum are further sub-divided by layers (listed below).
-SIM2D.STRATUM						= const("SIM2D.STRATUM");
-SIM2D.STRATUM.GO					= 1; --for drawing game objects
-SIM2D.STRATUM.EFFECT				= 2; --for drawing effects
-SIM2D.STRATUM.UI					= 3; --for drawing UI objects
-SIM2D.STRATUM.COUNT					= 3;
-SIM2D.STRATUM.DEFAULT				= SIM2D.STRATUM.GO;
-
-SIM2D.LAYER 						= const("SIM2D.LAYER", 		"", true);
-SIM2D.LAYER.COUNT					= 9;
-SIM2D.LAYER.BACKGROUND				= const("SIM2D.LAYER.BACKGROUND",	"", true);
-SIM2D.LAYER.BACKGROUND_BACK			= 1;
-SIM2D.LAYER.BACKGROUND_MID			= 2;
-SIM2D.LAYER.BACKGROUND_FRONT		= 3;
-SIM2D.LAYER.MIDGROUND				= const("SIM2D.LAYER.MIDGROUND",	"", true);
-SIM2D.LAYER.MIDGROUND_BACK			= 4;
-SIM2D.LAYER.MIDGROUND_MID			= 5;
-SIM2D.LAYER.MIDGROUND_FRONT			= 6;
-SIM2D.LAYER.FOREGROUND				= const("SIM2D.LAYER.FOREGROUND",	"", true);
-SIM2D.LAYER.FOREGROUND_BACK			= 7;
-SIM2D.LAYER.FOREGROUND_MID			= 8;
-SIM2D.LAYER.FOREGROUND_FRONT		= 9;
-SIM2D.LAYER.DEFAULT					= SIM2D.LAYER.MIDGROUND_MID;
-
-SIM2D.AMS_OBJECT					= const("SIM2D.AMS_OBJECT");
-SIM2D.AMS_OBJECT.DELIMITER			= " ";
-SIM2D.AMS_OBJECT.DELIMITER_LENGTH	= SIM2D.AMS_OBJECT.DELIMITER:len();
-SIM2D.AMS_OBJECT.PREFIX 			= "s2d";
-SIM2D.AMS_OBJECT.PREFIX_LENGTH 		= SIM2D.AMS_OBJECT.PREFIX:len();
-
-SIM2D.PORT						= const("SIM2D.PORT",	"", true);
-SIM2D.PORT.APP					= 0;
-SIM2D.PORT.BUILD				= 1;
-SIM2D.PORT.DIALOGEX				= 2;
-SIM2D.PORT.SYSTEM				= 3;
+local eStratum          = enum("STRATUM",       {"GO", "EFFECT", "UI", "COUNT", "DEFAULT",}, {1, 2, 3, 3, 1}, true);
+--timer
+local eTimerDraw        = enum("DRAW",          {"ID", "INTERVAL"}, {34581, 17}, true);
+local eTimerEvent       = enum("EVENT",         {"ID", "INTERVAL"}, {34580, 50}, true);
+local eTimer            = enum("TIMER",         {"DRAW", "EVENT"}, {eTimerDraw, eTimerEvent}, true);
+--type (used to during object creation to identify item type)
+local eType             = enum("TYPE",          {"BTN", "CIRCLEBTN", "HEXBTN", "LED", "PRG", "RECTANGLEBTN"},--TODO should LED be in here too?
+                                                {"btn", "circlebtn", "hexbtn", "led", "prg", "rectanglebtn"}, true);
+--SIM2D
+enum("SIM2D",   {"AMS_OBJECT",  "CANVAS",   "LAYER",    "LED",  "PORT", "PULSE",    "SOUND",    "STRATUM",  "TIMER",    "TYPE"},
+                {eAMSObject,    eCanvas,    eLayer,     eLED,   ePort,  ePulse,     eSound,     eStratum,   eTimer,     eType});

@@ -16,7 +16,7 @@ local nCoV_VY 	= 0;
 local hWnd 		= 0;
 local tDisplay 	= System.GetDisplayInfo();
 
---read in the data from the project data file (assunmes the file exists and is valid)
+--read in the data from the project data file (assumes the file exists and is valid)
 tSim2D.BuildData = deserialize.table(TextFile.ReadToString(SIM2D.VAR.USER_BUILD_DATA_FILE_PATH));
 local tBuildData = tSim2D.BuildData;
 
@@ -65,11 +65,11 @@ local tAppRect 		= math.fitrect(tDisplay.Width, tDisplay.Height, 0, 0, tBuild.Ra
 tApp.Rect			= rectangle(point(tAppRect.x, tAppRect.y), tAppRect.width, tAppRect.height);
 
 --technically this is the same as the build ratio but we also store the values here in this table for easy and consistent reference
-tApp.Ratios.WH 		= math.ratio(tApp.Rect.width, tApp.Rect.height);
-tApp.Ratios.HW 		= math.ratio(tApp.Rect.height, tApp.Rect.width);
+tApp.Ratios.WH 		= math.ratio(tApp.Rect:getWidth(), tApp.Rect:getHeight());
+tApp.Ratios.HW 		= math.ratio(tApp.Rect:getHeight(), tApp.Rect:getWidth());
 --determine the coefficient of variation
-tApp.CoV.HX 		= tApp.Rect.width 	/ tBuild.Rect.width
-tApp.CoV.HX 		= tApp.Rect.height	/ tBuild.Rect.height;
+tApp.CoV.HX 		= tApp.Rect:getWidth() 	/ tBuild.Rect:getWidth()
+tApp.CoV.HX 		= tApp.Rect:getHeight()	/ tBuild.Rect:getHeight();
 
 --create all the dialogex ports
 --tSim2D.Ports.DialogEx	= {};--NewPortTable();

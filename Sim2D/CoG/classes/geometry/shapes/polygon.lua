@@ -64,14 +64,20 @@ local function importVertices(tProt, tVertices, nMax)
 	tProt.vertices 		= {};
 	tProt.verticesCount = 0;
 
-	for x = 1, nMax do
+	for nVertex, oPoint in ipairs(tVertices) do
+		tProt.verticesCount	= tProt.verticesCount + 1;
 
-		if (type(tVertices[x]) == "point") then
-			tProt.verticesCount	= tProt.verticesCount + 1;
-			tProt.vertices[tProt.verticesCount] = point(tVertices[x].x, tVertices[x].y);
-
+		--make sure the input indices are sequential integers
+		if (nVertex ~= tProt.verticesCount) then
+			error("Cannot create polygon; vertices must be of type point; vertex ${vertexID} is out of bounds. It should be ${vertexCount}" % {vertexID = nVertex, vertexCount = tProt.verticesCount});
 		end
 
+		--make sure each vertex is a point
+		if (type(oPoint) ~= "point") then
+			error("Cannot create polygon; vertices must be of type point; vertex ${vertexID} is of type ${vertexType}" % {vertexID = nVertex, vertexType = type(oPoint)});
+		end
+
+		tProt.vertices[tProt.verticesCount] = point(oPoint.x, oPoint.y);
 	end
 
 	if (tProt.verticesCount < 3) then
@@ -591,6 +597,7 @@ local polygon = class "polygon" : extends(shape) {
 	--TODO should each subclass be forced to set a minimum limit for the vertices so that a fewer-than-expected-input will throw an error.
 	setVertices = function(this, tPoints)
 		local tProt = tProtectedRepo[this];
+		--TODO this function has been updated and, as such, these input arguments are wrong
 		tProt:importVertices(tPoints, tProt.verticesCount);
 		--TODO doesn't this need updated here?
 	end,

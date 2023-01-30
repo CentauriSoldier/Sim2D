@@ -38,7 +38,7 @@ local function GetBaseSettings()
 	};
 end
 
-class "Sim2D" {
+local Sim2D = class "Sim2D" {
 
 	--[[
 	DO NOT OVERRIDE!
@@ -53,7 +53,7 @@ class "Sim2D" {
 		return tSim2D.ObjectSettings[this];
 	end,
 
-	__construct = function(this, sState, sName, oShape, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
+	__construct = function(this, tprot, sState, sName, oShape, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		sState = sState:lower();--TODO check this input!!!
 		--get the object's stratum
 		nStratum = Util.StratumIsValid(nStratum) and nStratum or SIM2D.STRATUM.DEFAULT;

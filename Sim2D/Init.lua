@@ -91,10 +91,10 @@ end
 
 if not(COG_INIT) then
 	import("CoG.init");
-	COG_INIT = true; --TODO DOES this need to be here? Doesn't CoG take care of this?
+	--COG_INIT = true; --TODO DOES this need to be here? Doesn't CoG take care of this?
 end
 
---warn the user if LuaEx is missing
+--warn the user if CoG is missing
 assert(type(COG_INIT) == "boolean" and COG_INIT, "Sim2D requires the CoG library during initialization. Please include and load the CoG library before initializing Sim2D.");
 
 --Sim2D constants
@@ -107,7 +107,7 @@ local tDetails				= Project.GetDetails();
 --local sProjectFolder		= tDetails.Title;
 
 --set project variables
-SIM2D.VAR					= const("SIM2D.VAR", "Sim2D Variables (set to constants) subject to change (at startup) based on factors such as execution path, etc.", true);
+SIM2D.VAR					= {};
 SIM2D.VAR.IS_GAME			= type(tDetails.IsGame) == "boolean" and tDetails.IsGame or false;
 SIM2D.VAR.TITLE				= type(tDetails.Title) == "string" and tDetails.Title or "Unknown Project";
 

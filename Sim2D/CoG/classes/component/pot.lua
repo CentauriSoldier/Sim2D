@@ -173,6 +173,13 @@ end
 
 pot = class "pot" {
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	__construct = function(this, tProt, nMin, nMax, nPos, nRate, nContinuity)
 		tPots[this] = {
 			alternator			= 1,
@@ -191,6 +198,13 @@ pot = class "pot" {
 	end,
 
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	adjust = function(this, nValue)
 		local oPot = tPots[this];
 		local nAmount = oPot.rate;
@@ -211,6 +225,13 @@ pot = class "pot" {
 	end,
 
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	decrease = function(this, nTimes)
 		local oPot = tPots[this];
 		local nCount = 1;
@@ -232,6 +253,13 @@ pot = class "pot" {
 		return this;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	deserialize = function(this, sData)
 		local oPot = tPots[this];
 		local tData = deserialize.table(sData);
@@ -247,31 +275,80 @@ pot = class "pot" {
 		return this;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	destroy = function(this)
 		table.remove(tPots, this);
 		this = nil;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	getMax = function(this)
 		return tPots[this].max;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	getMin = function(this)
 		return tPots[this].min;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	getPos = function(this)
 		return tPots[this].pos;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	getRate = function(this)
 		return tPots[this].rate;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	getContinuity = function(this)
 		return tPots[this].continuity;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	increase = function(this, nTimes)
 		local oPot 		= tPots[this];
 		local nCount 	= rawtype(nTimes) == "number" and nTimes or 1;
@@ -289,10 +366,24 @@ pot = class "pot" {
 		return this;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	isAlternating = function(this)
 		return tPots[this].continuity == POT_CONTINUITY_ALT;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	isAscending = function(this)
 		return (
 			(tPots[this].continuity == POT_CONTINUITY_REVOLVE or
@@ -301,6 +392,13 @@ pot = class "pot" {
 		  );
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	isDescending = function(this)
 		return (
 			(tPots[this].continuity == POT_CONTINUITY_REVOLVE or
@@ -309,6 +407,13 @@ pot = class "pot" {
 		  );
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	isRevolving = function(this)
 		return tPots[this].revolving == POT_CONTINUITY_REVOLVE;
 	end,
@@ -339,6 +444,13 @@ pot = class "pot" {
 		return tData;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	setMax = function(this, nValue)
 		local oPot = tPots[this];
 
@@ -351,6 +463,13 @@ pot = class "pot" {
 		return this;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	setMin = function(this, nValue)
 		local oPot = tPots[this];
 
@@ -363,6 +482,13 @@ pot = class "pot" {
 		return this;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	setPos = function(this, nValue)
 		local oPot = tPots[this];
 
@@ -375,6 +501,13 @@ pot = class "pot" {
 		return this;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	setRate = function(this, nValue)
 		local oPot = tPots[this];
 
@@ -386,6 +519,13 @@ pot = class "pot" {
 		return this;
 	end,
 
+	--[[!
+		@desc
+		@func
+		module
+		@param
+		@ret
+	!]]
 	setContinuity = function(this, nContinuity)
 		local oPot = tPots[this];
 		oPot.continuity = continuityIsValid(nContinuity) and nContinuity or oPot.continuity;

@@ -1,8 +1,7 @@
-SIM2D.TYPE.CIRCLEBTN					= "circlebtn";
 local tSim2D = Sim2D.__properties;
 local tRoundBtn = {};
 
-class "CircleBtn" : extends(Btn) {
+local CircleBtn = class "CircleBtn" : extends(Btn) {
 
 	__construct = function(this, sState, sName, nX, nY, nWidth, nHeight, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		local nRadius 		= nHeight / 2;

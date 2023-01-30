@@ -1,5 +1,3 @@
-SIM2D.TYPE.PRG					= "prg";
-
 local SIM2D 	= SIM2D;
 local Sim2D 	= Sim2D;
 local tSim2D 	= Sim2D.__properties;
@@ -18,7 +16,7 @@ local Color = Color;
 local DrawingFont = DrawingFont;
 
 --TODO also make horizonal bars
-class "Prg" : extends(Sim2D) {
+local Prg = class "Prg" : extends(Sim2D) {
 
 	__construct = function(this, sState, sName, nX, nY, nWidth, nHeight, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		local oRect = rectangle(point(nX, nY), nWidth, nHeight);

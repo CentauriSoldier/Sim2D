@@ -1,7 +1,6 @@
-SIM2D.TYPE.HEXBTN					= "hexbtn";
 local tSim2D = Sim2D.__properties;
 
-class "HexBtn" : extends(Btn) {
+local HexBtn = class "HexBtn" : extends(Btn) {
 
 	__construct = function(this, sState, sName, nX, nY, nWidth, nHeight, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		--create the hex size and center point based on the rectangle
