@@ -100,16 +100,16 @@ assert(type(COG_INIT) == "boolean" and COG_INIT, "Sim2D requires the CoG library
 --Sim2D constants
 import("Constants");
 
---TODO move this~! UICOm should not handle game paths...thsi should be done by the client
+--TODO move this~! UICOm should not handle game paths...this should be done by the client
 --import the user's project settings
 local tDetails				= Project.GetDetails();
---local sMyGames 				= tDetails.IsGame and "My Games\\" or "";
+--local sMyGames 			= tDetails.IsGame and "My Games\\" or "";
 --local sProjectFolder		= tDetails.Title;
 
 --set project variables
-SIM2D.VAR					= {};
-SIM2D.VAR.IS_GAME			= type(tDetails.IsGame) == "boolean" and tDetails.IsGame or false;
-SIM2D.VAR.TITLE				= type(tDetails.Title) == "string" and tDetails.Title or "Unknown Project";
+SIM2D_VAR					= enum();
+SIM2D.VAR.IS_GAME			= type(tDetails.IsGame) == "boolean" 	and tDetails.IsGame or false;
+SIM2D.VAR.TITLE				= type(tDetails.Title) 	== "string" 	and tDetails.Title 	or "Unknown Project";
 
 --set the Sim2D user path for custom objects, etc.
 SIM2D.VAR.USER_FOLDER_NAME  = "Sim2D_User";
@@ -119,7 +119,7 @@ SIM2D.VAR.USER_OBJECTS_PATH = SIM2D.VAR.USER_PATH.."\\Objects";
 --path to the project build data file
 SIM2D.VAR.USER_BUILD_DATA_FILE_PATH = SIM2D.VAR.USER_PATH.."\\BuildData.lua";
 
---TODO move this~! UICOm should not handle game paths...thsi should be done by the client
+--TODO move this~! UICOm should not handle game paths...this should be done by the client
 --set the userdata path for saving/loading info
 --local nStart, nEnd 			= _DesktopFolder:reverse():find("\\");
 --SIM2D.VAR.USER_DATA_PATH	= _DesktopFolder:sub(1, _DesktopFolder:len() - nStart).."\\Documents\\"..sMyGames..sProjectFolder;

@@ -25,7 +25,7 @@ local eSoundChannel     = enum("CHANNEL",       {"BACKGROUND", "EFFECTS", "NARRA
 local eSound            = enum("SOUND",         {"CHANNEL"}, {eSoundChannel}, true);
 --stratum (1 for drawing game objects, 2 for drawing effects, 3 for drawing UI objects)
 --these serve as super-layers. These are drawn and polled in their ordinal order. These stratum are further sub-divided by layers (listed below).
-local eStratum          = enum("STRATUM",       {"GO", "EFFECT", "UI", "COUNT", "DEFAULT",}, {1, 2, 3, 3, 1}, true);
+local eStratum          = enum("STRATUM",       {"GO", "EFFECT", "UI", "COUNT", "DEFAULT"}, {1, 2, 3, 3, 1}, true);
 --timer
 local eTimerDraw        = enum("DRAW",          {"ID", "INTERVAL"}, {34581, 17}, true);
 local eTimerEvent       = enum("EVENT",         {"ID", "INTERVAL"}, {34580, 50}, true);

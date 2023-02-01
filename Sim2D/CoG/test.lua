@@ -100,8 +100,8 @@ end
 
 --check if item is of type enum.
 ]]
-
-local tVertices 	= {point(0, 0), point(3, 3), point(3, -1)};
+local k = point(0, 0);
+local tVertices 	= {k, point(3, 4), point(3, 0)};
 local bSkipUpdate 	= false;
 
 local tri = polygon(tVertices, bSkipUpdate)

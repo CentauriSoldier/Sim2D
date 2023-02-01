@@ -57,7 +57,6 @@ updateArea
 updateAngles
 
 ]]
-
 local function importVertices(tProt, tVertices, nMax)
 	nMax = rawtype(nMax) == "number" and nMax or #tVertices;
 
@@ -245,7 +244,6 @@ local function updateAngles(tProt)
 
 end]]
 
-
 local function updateAngles(tProt)
 	tProt.interiorAngles 	= {};
 	tProt.exteriorAngles 	= {};
@@ -259,25 +257,58 @@ local function updateAngles(tProt)
 		local oLine1 = tEdges[nLine];
 		local nLine2Index = bIsFirstLine and (tProt.edgesCount) or nLine - 1;
 		local oLine2 = tEdges[nLine2Index];
----LEFT OFF HERE
+		--[[create a ghost triangle by creating a third, ghost line between
+			the start of the first line and the end of the second line]]
+		local oLine3 = line(oLine1:getStart(), oLine2:getEnd()); --ghost line
+
+		---LEFT OFF HERE
+
+
+
+
+
+
+		--get the midpoint of the ghost line
+		--determine if the midpoint falls within the shape or outside
+		--determine hypotenuse and long & short sides
+		--get angle in question
+
+		--if the ghost line midpoint is outside, subtract the angle from 360
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		--get the lines' theta value
-		local nTheta1 = oLine1:getTheta();
-		local nTheta2 = oLine2:getTheta();
-		print("(before) "..nLine.."-> "..nTheta1.." | "..nLine2Index.."-> "..nTheta2);
+		--local nTheta1 = oLine1:getTheta();
+		--local nTheta2 = oLine2:getTheta();
+		--print("(before) "..nLine.."-> "..nTheta1.." | "..nLine2Index.."-> "..nTheta2);
 		--if this is the last line, determine the second theta by flipping it so it's oriented correctly
-		if (bIsFirstLine) then
-			nTheta2 = (nTheta2 >= 180) and nTheta2 - 180 or nTheta2 + 180;
-		end
-		print("(after) "..nLine.."-> "..nTheta1.." | "..nLine2Index.."-> "..nTheta2);
+		--if (bIsFirstLine) then
+		--	nTheta2 = (nTheta2 >= 180) and nTheta2 - 180 or nTheta2 + 180;
+		--end
+		--print("(after) "..nLine.."-> "..nTheta1.." | "..nLine2Index.."-> "..nTheta2);
 		--get the interior angle
 		--tProt.interiorAngles[nLine] = math.max(nTheta1, nTheta2) - math.min(nTheta1, nTheta2);
-		local nSmall = math.min(nTheta1, nTheta2);
-		local nLarge = math.max(nTheta1, nTheta2);
+		--local nSmall = math.min(nTheta1, nTheta2);
+		--local nLarge = math.max(nTheta1, nTheta2);
 
-		tProt.interiorAngles[nLine] = nLarge;
-		print(tProt.interiorAngles[nLine])
+		--tProt.interiorAngles[nLine] = nLarge;
+		--print(tProt.interiorAngles[nLine])
 		--get the exterior angle: this allows for negative interior angles so all extangles == 360 even on concave polygons
-		tProt.exteriorAngles[nLine] = 180 - tProt.interiorAngles[nLine];
+		--tProt.exteriorAngles[nLine] = 180 - tProt.interiorAngles[nLine];
 	end
 
 end
