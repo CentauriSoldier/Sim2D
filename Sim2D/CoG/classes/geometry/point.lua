@@ -135,6 +135,10 @@ local point = class "point" {
 		return this;
 	end,
 
+	clone = function(this)
+		return point(this.x, this.y);
+	end,
+
 	--return O, X, Y, -X, -Y, I, II, III or IV
 	getQuadrant = function(this)
 		local sRet 		= "ERROR";

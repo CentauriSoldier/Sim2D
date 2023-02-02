@@ -194,12 +194,7 @@ local function updatePerimeterAndEdges(tProt)
 		end
 
 	end
---LEFT OFF HERE it looks like the imported vertices are not getting imported clockwise...
---it's as-entered which means that if I'm depending on clockwise order, I'm making calulation errors.
---This means that if the lines are being drawn from the x to x + 1, it may be creating arbitrary lines out/inside
---the polygon that are not related to the polygon
---Go back trhough the creation process and visualize it, find out how it's being done and then determine how
---it should be done.
+
 	for i = 1, nVerticesCount do
 		local oPoint1 = tVertices[i];
 		local oPoint2 = i < nVerticesCount and tVertices[i + 1] or tVertices[1];
@@ -213,102 +208,34 @@ local function updatePerimeterAndEdges(tProt)
 	tProt.edgesCount = #tProt.edges;
 end
 
---[[updates all the interior and exterior angles of the shape (going clockwise)
 local function updateAngles(tProt)
 	tProt.interiorAngles 	= {};
 	tProt.exteriorAngles 	= {};
 	local tEdges 			= tProt.edges;
-
-	for nLine = 1, tProt.verticesCount do --use the number of vertices since it's the same as the number of edges
-		local bIsLastLine = nLine == tProt.verticesCount;
-
-		--determine the lines between which the angle will be
-		local oLine1 = tEdges[nLine];
-		local oLine2 = tEdges[(not bIsLastLine) and (nLine + 1) or 1];
----LEFT OFF HERE
-		--get the lines' theta value
-		local nTheta1 = oLine1:getTheta();
-		local nTheta2 = oLine2:getTheta();
-
-		--if this is the last line, determine the second theta by flipping it so it's oriented correctly
-		if (bIsLastLine) then
-			nTheta2 = (nTheta2 >= 180) and nTheta2 - 180 or nTheta2 + 180;
-		end
-
-		--get the interior angle
-		tProt.interiorAngles[nLine] = math.max(nTheta1, nTheta2) - math.min(nTheta1, nTheta2);
-
-		--get the exterior angle: this allows for negative interior angles so all extangles == 360 even on concave polygons
-		tProt.exteriorAngles[nLine] = 180 - tProt.interiorAngles[nLine];
-	end
-
-end]]
-
-local function updateAngles(tProt)
-	tProt.interiorAngles 	= {};
-	tProt.exteriorAngles 	= {};
-	local tEdges 			= tProt.edges;
+	local nEdges			= #tProt.edges;
 
 	for nLine = 1, tProt.edgesCount do --use the number of vertices since it's the same as the number of edges
 		local bIsFirstLine 	= nLine == 1;
-		--local bIsLastLine 	= nLine == tProt.edgesCount;
 
 		--determine the lines between which the angle will be
 		local oLine1 = tEdges[nLine];
-		local nLine2Index = bIsFirstLine and (tProt.edgesCount) or nLine - 1;
-		local oLine2 = tEdges[nLine2Index];
+		local oLine2 = bIsFirstLine and tEdges[nEdges] or tEdges[nLine - 1];
 		--[[create a ghost triangle by creating a third, ghost line between
 			the start of the first line and the end of the second line]]
-		local oLine3 = line(oLine1:getStart(), oLine2:getEnd()); --ghost line
+		local oLine3 = line(oLine1:getEnd(), oLine2:getStart()); --ghost line
 
-		---LEFT OFF HERE
+		--get the length of each line
+		local nLength1 = oLine1:getLength();
+		local nLength2 = oLine2:getLength();
+		local nLength3 = oLine3:getLength();
 
+		--get the angle opposite the ghost side using law of cosines (c^2 = a^2 + b^2 - 2ab*cos(C))
+		local nTheta = math.deg(math.acos((nLength1 ^ 2 + nLength2 ^ 2 - nLength3 ^ 2) / (2 * nLength1 * nLength2)));
 
-
-
-
-
-		--get the midpoint of the ghost line
-		--determine if the midpoint falls within the shape or outside
-		--determine hypotenuse and long & short sides
-		--get angle in question
-
-		--if the ghost line midpoint is outside, subtract the angle from 360
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		--get the lines' theta value
-		--local nTheta1 = oLine1:getTheta();
-		--local nTheta2 = oLine2:getTheta();
-		--print("(before) "..nLine.."-> "..nTheta1.." | "..nLine2Index.."-> "..nTheta2);
-		--if this is the last line, determine the second theta by flipping it so it's oriented correctly
-		--if (bIsFirstLine) then
-		--	nTheta2 = (nTheta2 >= 180) and nTheta2 - 180 or nTheta2 + 180;
-		--end
-		--print("(after) "..nLine.."-> "..nTheta1.." | "..nLine2Index.."-> "..nTheta2);
-		--get the interior angle
-		--tProt.interiorAngles[nLine] = math.max(nTheta1, nTheta2) - math.min(nTheta1, nTheta2);
-		--local nSmall = math.min(nTheta1, nTheta2);
-		--local nLarge = math.max(nTheta1, nTheta2);
-
-		--tProt.interiorAngles[nLine] = nLarge;
-		--print(tProt.interiorAngles[nLine])
-		--get the exterior angle: this allows for negative interior angles so all extangles == 360 even on concave polygons
-		--tProt.exteriorAngles[nLine] = 180 - tProt.interiorAngles[nLine];
+		--save the angle
+		tProt.interiorAngles[nLine] = nTheta;
+		--get the exterior angle: this allows for negative interior angles so all ext angles == 360 even on concave polygons
+		tProt.exteriorAngles[nLine] = 180 - tProt.interiorAngles[nLine];
 	end
 
 end
@@ -506,7 +433,11 @@ local polygon = class "polygon" : extends(shape) {
 	end,
 
 	isConcave = function(this)--at least one angle that is greater than 180 degrees
-		return false;
+		local bRet = false;
+
+		--TODO do this during angle update
+
+		return bRet;
 	end,
 
 	isConvex = function(this)--no angle greater than 180 degrees
@@ -561,9 +492,9 @@ local polygon = class "polygon" : extends(shape) {
 		return tProtectedRepo[this].edges or nil;
 	end,
 
---TODO should these return a copy of the point?
-	getVertex = function(this, nIndex)
-		return tProtectedRepo[this].vertices[nIndex];
+	getVertex = function(this, nIndex)--TODO check input value
+		local oVertex = tProtectedRepo[this].vertices[nIndex];
+		return point(oVertex.x, oVertex.y);
 	end,
 
 	serialize = function(this)

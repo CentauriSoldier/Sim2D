@@ -105,7 +105,7 @@ local tVertices 	= {k, point(3, 4), point(3, 0)};
 local bSkipUpdate 	= false;
 
 local tri = polygon(tVertices, bSkipUpdate)
-
+print(tri:getSumofInteriorAngles(3))
 
 
 
