@@ -170,8 +170,13 @@ local function clampRate(oPot)
 end
 
 
+local function udpateStatus(oPot)
+	tPots.isAtStart = pos == min;
+	tPots.isAtEnd 	= pos == max;
+end
 
-pot = class "pot" {
+
+local pot = class "pot" {
 
 	--[[!
 		@desc
@@ -184,6 +189,8 @@ pot = class "pot" {
 		tPots[this] = {
 			alternator			= 1,
 			continuity			= continuityIsValid(nContinuity) and nContinuity or POT_CONTINUITY_NONE,
+			isAtStart			= false,
+			isAtEnd				= false,
 			min 				= rawtype(nMin) == "number" and nMin or nMinDefault,
 			max 				= rawtype(nMax) == "number" and nMax or nMaxDefault,
 			pos 				= rawtype(nPos) == "number" and nPos or nMinDefault,
@@ -195,6 +202,7 @@ pot = class "pot" {
 		clampPosMin(oPot);
 		clampPosMax(oPot);
 		clampRate(oPot);
+		udpateStatus(oPot);
 	end,
 
 
@@ -220,6 +228,7 @@ pot = class "pot" {
 		--clamp it
 		clampPosMin(oPot);
 		clampPosMax(oPot);
+		udpateStatus(oPot);
 
 		return this;
 	end,
@@ -249,6 +258,7 @@ pot = class "pot" {
 		end
 
 		clampPosMin(oPot);
+		udpateStatus(oPot);
 
 		return this;
 	end,
@@ -260,7 +270,7 @@ pot = class "pot" {
 		@param
 		@ret
 	!]]
-	deserialize = function(this, sData)
+	deserialize = function(this, sData)--TODO this is done with newly added items!
 		local oPot = tPots[this];
 		local tData = deserialize.table(sData);
 
@@ -362,6 +372,7 @@ pot = class "pot" {
 		end
 
 		clampPosMax(oPot);
+		udpateStatus(oPot);
 
 		return this;
 	end,
@@ -390,6 +401,14 @@ pot = class "pot" {
 		    tPots[this].continuity 	== POT_CONTINUITY_ALT) and
 	        tPots[this].alternator 	== 1
 		  );
+	end,
+
+	isAtStart = function(this)
+		return tPots[this].isAtStart;
+	end,
+
+	isAtEnd = function(this)
+		return tPots[this].isAtEnd;
 	end,
 
 	--[[!
@@ -425,7 +444,7 @@ pot = class "pot" {
 		@param bDefer boolean Whether or not to return a table of data to be serialized instead of a serialize string (if deferring serializtion to another object).
 		@ret sData StringOrTable The data returned as a serialized table (string) or a table is the defer option is set to true.
 	!]]
-	serialize = function(this, bDefer)
+	serialize = function(this, bDefer)--TODO not done
 		local oPot = tPots[this];
 		local tData = {
 			alternator			= oPot.alternator,
@@ -457,7 +476,8 @@ pot = class "pot" {
 		if (rawtype(nValue) == "number") then
 			oPot.max = nValue;
 			clampMax(oPot);
-			clampPosMax(oPot)
+			clampPosMax(oPot);
+			udpateStatus(oPot);
 		end
 
 		return this;
@@ -476,7 +496,8 @@ pot = class "pot" {
 		if (rawtype(nValue) == "number") then
 			oPot.min = nValue;
 			clampMin(oPot);
-			clampPosMin(oPot)
+			clampPosMin(oPot);
+			udpateStatus(oPot);
 		end
 
 		return this;
@@ -496,6 +517,7 @@ pot = class "pot" {
 			oPot.pos = nValue;
 			clampPosMin(oPot);
 			clampPosMax(oPot);
+			udpateStatus(oPot);
 		end
 
 		return this;

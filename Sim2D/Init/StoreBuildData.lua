@@ -36,5 +36,5 @@ if (Project.LoadAutoPlayFile()) then --get the project build info (stores if not
 
 	--delete all page/dialog objects from the table
 
-	TextFile.WriteFromString(SIM2D.VAR.USER_BUILD_DATA_FILE_PATH, serialize.table(tSaveData), false);
+	TextFile.WriteFromString(SIM2D.PATH.USER.FILE.BUILDDATA.value, serialize.table(tSaveData), false);
 end

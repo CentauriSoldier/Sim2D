@@ -17,7 +17,7 @@ local hWnd 		= 0;
 local tDisplay 	= System.GetDisplayInfo();
 
 --read in the data from the project data file (assumes the file exists and is valid)
-tSim2D.BuildData = deserialize.table(TextFile.ReadToString(SIM2D.VAR.USER_BUILD_DATA_FILE_PATH));
+tSim2D.BuildData = deserialize.table(TextFile.ReadToString(SIM2D.PATH.USER.FILE.BUILDDATA.value));
 local tBuildData = tSim2D.BuildData;
 
 local function NewPortTable()

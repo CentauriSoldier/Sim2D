@@ -46,47 +46,48 @@ return class "rectangle" : extends(polygon) {
 	]]
 	__construct = function(this, tProtected, pTopLeft, nWidth, nHeight)
 		tProtectedRepo[this] = rawtype(tProtected) == "table" and tProtected or {};
-		local tProt = tProtectedRepo[this];
+		local tFields = tProtectedRepo[this];
 
 		--setup the protected fields
-		tProt.vertices = {
+		tFields.verticesCount = 4;
+		tFields.vertices = {
 			[1] = point(),
 			[2]	= point(),
 			[3]	= point(),
 			[4]	= point(),
 		};
-		tProt.width 	= rawtype(nWidth) 	== "number" and nWidth 	or 0;
-		tProt.height 	= rawtype(nHeight) 	== "number" and nHeight or 0;
+		tFields.width 	= rawtype(nWidth) 	== "number" and nWidth 	or 0;
+		tFields.height 	= rawtype(nHeight) 	== "number" and nHeight or 0;
 
 		--set the anchor point (to the top left vertex)
-		tProt.anchorIndex = 1;
+		tFields.anchorIndex = 1;
 
 		--check the point input
 		if (type(pTopLeft) == "point") then
-			tProt.vertices[1].x = pTopLeft.x;
-			tProt.vertices[1].y = pTopLeft.y;
-			tProt.vertices[2].x = pTopLeft.x + nWidth;
-			tProt.vertices[2].y = pTopLeft.y;
-			tProt.vertices[3].x = pTopLeft.x + nWidth;
-			tProt.vertices[3].y = pTopLeft.y + nHeight;
-			tProt.vertices[4].x = pTopLeft.x;
-			tProt.vertices[4].y = pTopLeft.y + nHeight;
-		end
-
-		--override the required protected methods
-		tProt.updateArea = function(tProt)
-			tProt.area = tProt.width * tProt.height;
+			tFields.vertices[1].x = pTopLeft.x;
+			tFields.vertices[1].y = pTopLeft.y;
+			tFields.vertices[2].x = pTopLeft.x + nWidth;
+			tFields.vertices[2].y = pTopLeft.y;
+			tFields.vertices[3].x = pTopLeft.x + nWidth;
+			tFields.vertices[3].y = pTopLeft.y + nHeight;
+			tFields.vertices[4].x = pTopLeft.x;
+			tFields.vertices[4].y = pTopLeft.y + nHeight;
 		end
 
 		--call the parent constructor with the protected table, no vertices and skipping auto-update
-		this:super(tProt, nil, true);
+		this:super(tFields, nil, true);
+
+		--override the required protected methods
+		tFields.updateArea = function(tFields)
+			tFields.area = tFields.width * tFields.height;
+		end
 
 		--update the rectangle
-		tProt:updateDetector();
-		tProt:updateAnchors();
-		tProt:updatePerimeterAndEdges();
-		tProt:updateArea();
-		tProt:updateAngles();
+		tFields:updatePerimeterAndEdges();
+		tFields:updateDetector();
+		tFields:updateAnchors();
+		tFields:updateArea();
+		tFields:updateAngles();
 	end,
 
 
@@ -141,33 +142,33 @@ return class "rectangle" : extends(polygon) {
 
 
 	setHeight = function(this, nHeight)
-		local tProt 	= tProtectedRepo[this];
-		local tVertices = tProt.vertices;
-		local nDelta 	= nHeight - tProt.height;
-		tProt.height 	= nHeight;
+		local tFields 	= tProtectedRepo[this];
+		local tVertices = tFields.vertices;
+		local nDelta 	= nHeight - tFields.height;
+		tFields.height 	= nHeight;
 
 		tVertices[3].y = tVertices[3].y + nDelta;
 		tVertices[4].y = tVertices[4].y + nDelta;
 
-		tProt:updateAnchors();
-		tProt:updateDetector();
-		tProt:updatePerimeterAndEdges();
-		tProt:updateArea();
+		tFields:updateAnchors();
+		tFields:updateDetector();
+		tFields:updatePerimeterAndEdges();
+		tFields:updateArea();
 	end,
 
 
 	setWidth = function(this, nWidth)
-		local tProt 	= tProtectedRepo[this];
-		local tVertices = tProt.vertices;
-		local nDelta 	= nWidth - tProt.width;
-		tProt.height 	= nWidth;
+		local tFields 	= tProtectedRepo[this];
+		local tVertices = tFields.vertices;
+		local nDelta 	= nWidth - tFields.width;
+		tFields.height 	= nWidth;
 
 		tVertices[2].x = tVertices[2].x + nDelta;
 		tVertices[3].x = tVertices[3].x + nDelta;
 
-		tProt:updateAnchors();
-		tProt:updateDetector();
-		tProt:updatePerimeterAndEdges();
-		tProt:updateArea();
+		tFields:updateAnchors();
+		tFields:updateDetector();
+		tFields:updatePerimeterAndEdges();
+		tFields:updateArea();
 	end,
 };

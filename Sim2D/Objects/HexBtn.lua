@@ -8,7 +8,7 @@ local HexBtn = class "HexBtn" : extends(Btn) {
 		local nCenterX 	= nX + nWidth / 2;
 		local nCenterY 	= nY + nSize;
 		local oHexPoint = point(nCenterX, nCenterY);
-		local oHex 		= hex(oHexPoint, nSize);
+		local oHex 		= hex(oHexPoint, nSize, true);
 		this:super(sState, sName, oHex, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
 		--this:__fields();--get the shared, quasi-protected fields
 	end,

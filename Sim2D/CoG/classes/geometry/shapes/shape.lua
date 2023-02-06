@@ -25,9 +25,12 @@ local class	= class;
 
 
 
-local shape = class "shape" {
+local shape = class "shape" {--TODO add obligatory function errors
 	containsPoint  = function()
 		error("The 'containsPoint' function has not been implemented in the child class.");
+	end,
+	clone = function()
+		error("The 'clone' function has not been implemented in the child class.");
 	end,
 	--update  = function()
 	--	error("The 'update' function has not been implemented in the child class.");

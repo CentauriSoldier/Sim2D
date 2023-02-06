@@ -36,17 +36,17 @@ function Sim2D.OnPreload(sState)
 
 
 	--start the event timer
-	Page.StartTimer(SIM2D.TIMER.EVENT.INTERVAL, 		SIM2D.TIMER.EVENT.ID);
+	Page.StartTimer(SIM2D.TIMER.EVENT.INTERVAL.value, 		SIM2D.TIMER.EVENT.ID.value);
 
 	--start the pulse timers
-	Page.StartTimer(SIM2D.PULSE.ULTRA_SLOW.INTERVAL, 	SIM2D.PULSE.ULTRA_SLOW.ID);
-	Page.StartTimer(SIM2D.PULSE.SLOW.INTERVAL, 			SIM2D.PULSE.SLOW.ID);
-	Page.StartTimer(SIM2D.PULSE.MEDIUM.INTERVAL, 		SIM2D.PULSE.MEDIUM.ID);
-	Page.StartTimer(SIM2D.PULSE.FAST.INTERVAL, 			SIM2D.PULSE.FAST.ID);
-	Page.StartTimer(SIM2D.PULSE.ULTRA_FAST.INTERVAL, 	SIM2D.PULSE.ULTRA_FAST.ID);
+	Page.StartTimer(SIM2D.PULSE.ULTRA_SLOW.INTERVAL.value, 	SIM2D.PULSE.ULTRA_SLOW.ID.value);
+	Page.StartTimer(SIM2D.PULSE.SLOW.INTERVAL.value, 		SIM2D.PULSE.SLOW.ID.value);
+	Page.StartTimer(SIM2D.PULSE.MEDIUM.INTERVAL.value, 		SIM2D.PULSE.MEDIUM.ID.value);
+	Page.StartTimer(SIM2D.PULSE.FAST.INTERVAL.value, 		SIM2D.PULSE.FAST.ID.value);
+	Page.StartTimer(SIM2D.PULSE.ULTRA_FAST.INTERVAL.value, 	SIM2D.PULSE.ULTRA_FAST.ID.value);
 
 	--start the draw timer
-	Page.StartTimer(SIM2D.TIMER.DRAW.INTERVAL, 			SIM2D.TIMER.DRAW.ID);
+	Page.StartTimer(SIM2D.TIMER.DRAW.INTERVAL.value, 		SIM2D.TIMER.DRAW.ID.value);
 
 	--resize the state background TODO do this only once for each state
 	--local tAppRect = tSim2D.Ports[SIM2D.PORT.APP].Rect;
@@ -74,7 +74,7 @@ end
 
 
 Sim2D.OnStartup = function()
-	--TODO cerate fonts path in the Sim2D Custom Folder
+	--TODO create fonts path in the Sim2D Custom Folder
 
 	--load the fonts
 	for sFont, oFill in pairs(tSim2D.Fonts) do
@@ -254,7 +254,7 @@ end
 
 function Sim2D.OnTimer(nID)
 
-	if (nID == SIM2D.TIMER.EVENT.ID) then
+	if (nID == SIM2D.TIMER.EVENT.ID.value) then
 		--[[____   ___      ___ _______   ________   _________  ________
 		|\  ___ \ |\  \    /  /|\  ___ \ |\   ___  \|\___   ___\\   ____\
 		\ \   __/|\ \  \  /  / | \   __/|\ \  \\ \  \|___ \  \_\ \  \___|_
@@ -325,31 +325,31 @@ function Sim2D.OnTimer(nID)
 		   \ \__\    \ \_______\ \_______\____\_\  \ \_______\
 		    \|__|     \|_______|\|_______|\_________\|_______|
 		                                 \|_________|]]
-	elseif (nID == SIM2D.PULSE.ULTRA_SLOW.ID) then
+	elseif (nID == SIM2D.PULSE.ULTRA_SLOW.ID.value) then
 
 		for x = 1, #tSim2D.PulseObjects[tSim2D.ActiveStateID][SIM2D.PULSE.ULTRA_SLOW] do
 			tSim2D.PulseObjects[tSim2D.ActiveStateID][SIM2D.PULSE.ULTRA_SLOW][x]:Pulse();
 		end
 
-	elseif (nID == SIM2D.PULSE.SLOW.ID) then
+	elseif (nID == SIM2D.PULSE.SLOW.ID.value) then
 
 		for x = 1, #tSim2D.PulseObjects[tSim2D.ActiveStateID][SIM2D.PULSE.SLOW] do
 			tSim2D.PulseObjects[tSim2D.ActiveStateID][SIM2D.PULSE.SLOW][x]:Pulse();
 		end
 
-	elseif (nID == SIM2D.PULSE.MEDIUM.ID) then
+	elseif (nID == SIM2D.PULSE.MEDIUM.ID.value) then
 
 		for x = 1, #tSim2D.PulseObjects[tSim2D.ActiveStateID][SIM2D.PULSE.MEDIUM] do
 			tSim2D.PulseObjects[tSim2D.ActiveStateID][SIM2D.PULSE.MEDIUM][x]:Pulse();
 		end
 
-	elseif (nID == SIM2D.PULSE.FAST.ID) then
+	elseif (nID == SIM2D.PULSE.FAST.ID.value) then
 
 		for x = 1, #tSim2D.PulseObjects[tSim2D.ActiveStateID][SIM2D.PULSE.FAST] do
 			tSim2D.PulseObjects[tSim2D.ActiveStateID][SIM2D.PULSE.FAST][x]:Pulse();
 		end
 
-	elseif (nID == SIM2D.PULSE.ULTRA_FAST.ID) then
+	elseif (nID == SIM2D.PULSE.ULTRA_FAST.ID.value) then
 
 		for x = 1, #tSim2D.PulseObjects[tSim2D.ActiveStateID][SIM2D.PULSE.ULTRA_FAST] do
 			tSim2D.PulseObjects[tSim2D.ActiveStateID][SIM2D.PULSE.ULTRA_FAST][x]:Pulse();
@@ -362,7 +362,7 @@ function Sim2D.OnTimer(nID)
 		  \ \  \_\\ \ \  \\  \\ \  \ \  \ \  \|\__\_\  \
 		   \ \_______\ \__\\ _\\ \__\ \__\ \____________\
 		    \|_______|\|__|\|__|\|__|\|__|\|____________|]]
-	elseif (nID == SIM2D.TIMER.DRAW.ID) then
+	elseif (nID == SIM2D.TIMER.DRAW.ID.value) then
 		Canvas.Draw(SIM2D.CANVAS, OnDraw);
 
 	end

@@ -36,23 +36,23 @@ local type 			= type;
 local tProtectedRepo = {};
 
 --[[assumes the other update functions have been called]]
-local function update(tProt)
+local function update(tFields)
 	--update the sides
-	local nSide1 		= tProt.edges[1]:getLength();
-	local nSide2 		= tProt.edges[2]:getLength();
-	local nSide3 		= tProt.edges[3]:getLength();
+	local nSide1 		= tFields.edges[1]:getLength();
+	local nSide2 		= tFields.edges[2]:getLength();
+	local nSide3 		= tFields.edges[3]:getLength();
 
 	--sort the sides by value
 	local tSort3 = {nSide1, nSide2, nSide3};
 
 	table.sort(tSort3);
 
-	tProt.smallSide		= tSort3[1];
-	tProt.midSide		= tSort3[2];
-	tProt.largeSide		= tSort3[3];
+	tFields.smallSide	= tSort3[1];
+	tFields.midSide		= tSort3[2];
+	tFields.largeSide	= tSort3[3];
 
 	--update the angles
-	local tAngles 	= tProt.angles;
+	local tAngles 	= tFields.angles;
 
 	--TODO update the angles
 	local nAngle1 	= tAngles[1];
@@ -62,17 +62,17 @@ local function update(tProt)
 	--sort the angles by value
 	tSort3 = {nAngle1, nAngle2, nAngle3};
 	table.sort(tSort3);
-	tProt.smallAngle	= tSort3[1];
-	tProt.largeAngle	= tSort3[2];
-	tProt.midAngle		= tSort3[3];
+	tFields.smallAngle	= tSort3[1];
+	tFields.largeAngle	= tSort3[2];
+	tFields.midAngle	= tSort3[3];
 
 	--update the other fields
-	tProt.isAcute 		= nAngle1 < 90 and nAngle2 < 90 and nAngle1 < 90;
-	tProt.isEquilateral	= (nSide1 == nSide2) and (nSide2 == nSide3);
-	tProt.isIsosceles	= (not tProt.isEquilateral) and ( (nSide1 == nSide2) or (nSide1 == nSide3) or (nSide2 == nSide3) );
-	tProt.isObtuse		= nAngle1 > 90 or nAngle2 > 90 or nAngle3 > 90;
-	tProt.isRight 		= nAngle1 == 90 or nAngle2 == 90 or nAngle3 == 90;
-	tProt.isScalene 	= (nSide1 ~= nSide2) and (nSide1 ~= nSide3) and (nSide2 ~= nSide3);
+	tFields.isAcute 		= nAngle1 < 90 and nAngle2 < 90 and nAngle1 < 90;
+	tFields.isEquilateral	= (nSide1 == nSide2) and (nSide2 == nSide3);
+	tFields.isIsosceles		= (not tFields.isEquilateral) and ( (nSide1 == nSide2) or (nSide1 == nSide3) or (nSide2 == nSide3) );
+	tFields.isObtuse		= nAngle1 > 90 or nAngle2 > 90 or nAngle3 > 90;
+	tFields.isRight 		= nAngle1 == 90 or nAngle2 == 90 or nAngle3 == 90;
+	tFields.isScalene 		= (nSide1 ~= nSide2) and (nSide1 ~= nSide3) and (nSide2 ~= nSide3);
 end
 
 local triangle = class "triangle" : extends(polygon) {
@@ -83,37 +83,42 @@ local triangle = class "triangle" : extends(polygon) {
 	@mod triangle
 	@ret oTriangle triangle A triangle object. Public properties are vertices (a table containing points for each corner [topLeft, topRight, bottomRight, bottomLeft, center]), width and height.
 	]]
-	__construct = function(this, tProtected, oPoint1, oPoint2, oPoint3, bSkipUpdate)
+	__construct = function(this, tProtected, oPoint1, oPoint2, oPoint3)
 		tProtectedRepo[this] = rawtype(tProtected) == "table" and tProtected or {};
-		local tProt = tProtectedRepo[this];
+		local tFields = tProtectedRepo[this];
 
 		--default the values in case the initial update is skipped
-		tProt.angles 		= {};
-		tProt.isAcute 		= false;
-		tProt.isEquilateral	= false;
-		tProt.isIsosceles	= false;
-		tProt.isObtuse		= false;
-		tProt.isRight 		= false;
-		tProt.isScalene 	= false;
-		tProt.smallAngle	= 0;
-		tProt.midAngle		= 0;
-		tProt.largeAngle	= 0;
-		tProt.smallSide		= 0;
-		tProt.midSide		= 0;
-		tProt.largeSide		= 0;
+		tFields.angles 		= {};
+		tFields.isAcute 		= false;
+		tFields.isEquilateral	= false;
+		tFields.isIsosceles	= false;
+		tFields.isObtuse		= false;
+		tFields.isRight 		= false;
+		tFields.isScalene 	= false;
+		tFields.smallAngle	= 0;
+		tFields.midAngle		= 0;
+		tFields.largeAngle	= 0;
+		tFields.smallSide		= 0;
+		tFields.midSide		= 0;
+		tFields.largeSide		= 0;
 
-		tProt.vertices = {
+		tFields.verticesCount = 3;
+		tFields.vertices = {
 			[1]	= type(oPoint1) == "point" and point(oPoint1.x, oPoint1.y) or point(),
 			[2]	= type(oPoint2) == "point" and point(oPoint2.x, oPoint2.y) or point(),
 			[3] = type(oPoint3) == "point" and point(oPoint3.x, oPoint3.y) or point(),
 		};
 
-		this:super(tProt, nil, bSkipUpdate);
+		this:super(tFields, nil, true);
 
-		if (not bSkipUpdate) then
-			update(tProt);
-		end
+		update(tFields);
 
+		--update the triangle
+		tFields:updatePerimeterAndEdges();
+		tFields:updateDetector();
+		tFields:updateAnchors();
+		tFields:updateArea();
+		tFields:updateAngles();
 	end,
 
 	deserialize = function(this, sData)

@@ -63,7 +63,7 @@ For more information, please refer to <http://unlicense.org/>
 		<p>Removed the class module (as well other commonly-used Lua libraries) and ported them to a new project. Added CoG's dependency on said project.</p>
 	</li>
 </ul>
-@website https://github.com/CentauriSoldier/CoG
+@website https://github.com/CentauriSoldier/Sim2D
 *]]
 --error(type(Project.GetDetails))
 --warn the user if debug is missing
@@ -79,7 +79,7 @@ local Project = Project;
 --determine the call location
 local sPath = debug.getinfo(1, "S").source;
 --remove the calling filename
-sPath = sPath:gsub("@", ""):gsub("Init.lua", "");
+sPath = sPath:gsub("@", ""):gsub("[Ii][Nn][Ii][Tt].[Ll][Uu][Aa]", "");
 --remove the "/" at the end
 sPath = sPath:sub(1, sPath:len() - 1);
 --format the path to be suitable for the 'require()' function
@@ -91,7 +91,6 @@ end
 
 if not(COG_INIT) then
 	import("CoG.init");
-	--COG_INIT = true; --TODO DOES this need to be here? Doesn't CoG take care of this?
 end
 
 --warn the user if CoG is missing
@@ -99,38 +98,19 @@ assert(type(COG_INIT) == "boolean" and COG_INIT, "Sim2D requires the CoG library
 
 --Sim2D constants
 import("Constants");
-
---TODO move this~! UICOm should not handle game paths...this should be done by the client
---import the user's project settings
-local tDetails				= Project.GetDetails();
---local sMyGames 			= tDetails.IsGame and "My Games\\" or "";
---local sProjectFolder		= tDetails.Title;
-
---set project variables
-SIM2D_VAR					= enum();
-SIM2D.VAR.IS_GAME			= type(tDetails.IsGame) == "boolean" 	and tDetails.IsGame or false;
-SIM2D.VAR.TITLE				= type(tDetails.Title) 	== "string" 	and tDetails.Title 	or "Unknown Project";
-
---set the Sim2D user path for custom objects, etc.
-SIM2D.VAR.USER_FOLDER_NAME  = "Sim2D_User";
-SIM2D.VAR.USER_PATH			= _Scripts.."\\"..SIM2D.VAR.USER_FOLDER_NAME;
-SIM2D.VAR.USER_FACTORY_PATH = SIM2D.VAR.USER_PATH.."\\Factory";
-SIM2D.VAR.USER_OBJECTS_PATH = SIM2D.VAR.USER_PATH.."\\Objects";
---path to the project build data file
-SIM2D.VAR.USER_BUILD_DATA_FILE_PATH = SIM2D.VAR.USER_PATH.."\\BuildData.lua";
-
---TODO move this~! UICOm should not handle game paths...this should be done by the client
---set the userdata path for saving/loading info
---local nStart, nEnd 			= _DesktopFolder:reverse():find("\\");
---SIM2D.VAR.USER_DATA_PATH	= _DesktopFolder:sub(1, _DesktopFolder:len() - nStart).."\\Documents\\"..sMyGames..sProjectFolder;
+--Sim2D enums
+import("Enums");
 
 --create the user folders if needed (and if not compiled)
 if (not Project.IsCompiled()) then
-	Folder.Create(SIM2D.VAR.USER_PATH);
-	Folder.Create(SIM2D.VAR.USER_FACTORY_PATH);
-	Folder.Create(SIM2D.VAR.USER_OBJECTS_PATH);
+	Folder.Create(SIM2D.PATH.USER.DIR.BASE.value);
+	Folder.Create(SIM2D.PATH.USER.DIR.FACTORY.value);
+	Folder.Create(SIM2D.PATH.USER.DIR.OBJECTS.value);
 end
 
+--create the write and save directories
+Folder.Create(SIM2D.PATH.SIM2D.DIR.WRITE.value);
+Folder.Create(SIM2D.PATH.SIM2D.DIR.SAVE.value);
 
 
 ---import the Sim2D base object and set the global properties table
@@ -165,7 +145,7 @@ CircleBtn 			= import("Objects.CircleBtn");
 RectangleBtn 		= import("Objects.RectangleBtn");
 
 --import the custom objects
-local tCustomObjects = File.Find(SIM2D.VAR.USER_OBJECTS_PATH.."\\", "*.lua", false, false, nil, nil);
+local tCustomObjects = File.Find(SIM2D.PATH.USER.DIR.OBJECTS.value.."\\", "*.lua", false, false, nil, nil);
 
 if (type(tCustomObjects) == "table" and #tCustomObjects > 0) then
 

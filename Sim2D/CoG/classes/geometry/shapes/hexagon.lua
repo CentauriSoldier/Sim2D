@@ -1,5 +1,5 @@
 --credits https://www.redblobgames.com/grids/hexagons/
---TODO create flat hex and pointy hex subclasses
+local tProtectedRepo = {};
 
 --localization
 local assert 		= assert;
@@ -10,46 +10,77 @@ local math			= math;
 local point			= point;
 local serialize		= serialize;
 local type 			= type;
+local rawtype		= rawtype;
 local shape			= shape;
 
 constant("HEX_POINT_TOP_DEGREE_MODIFIER", 30);
 local HEX_POINT_TOP_DEGREE_MODIFIER = HEX_POINT_TOP_DEGREE_MODIFIER;
 
+local function recalculateVertices(this)
+	local tFields = tProtectedRepo[this];
+
+	tFields.vertices 	= {};
+	local nDegreeMod 	= tFields.isFlat and HEX_POINT_TOP_DEGREE_MODIFIER or 0;
+
+	--calculate the vertices
+	for x = 1, 6 do
+		local angle_deg = 60 * (x - 1) - nDegreeMod;
+		local angle_rad = math.pi / 180 * angle_deg
+
+		tFields.vertices[x] = point(tFields.center.x + tFields.size * math.cos(angle_rad),
+								 	tFields.center.y + tFields.size * math.sin(angle_rad));
+	end
+
+end
+
 local hexagon = class "hexagon" : extends(polygon) {
 
-	__construct = function(this, pCenter, nSize, bIsFlat)
-		this.center = point();--TODO this should be the centroid
-		this.size 	= type(nSize) 	== "number" 	and nSize 	or 1;
-		this.isFlat	= type(bIsFlat) == "boolean" 	and bIsFlat or false;
+	__construct = function(this, tProtected, oCenterPoint, nSize, bIsFlat)
+		tProtectedRepo[this] = rawtype(tProtected) == "table" and tProtected or {};
 
-		if (type(pCenter) == "point") then
-			this.center.x = pCenter.x;
-			this.center.y = pCenter.y;
+		local tFields 			= tProtectedRepo[this];
+		tFields.size 			= type(nSize) 	== "number" 	and nSize 	or 1;
+		tFields.isFlat			= type(bIsFlat) == "boolean" 	and bIsFlat or false;
+		tFields.verticesCount	= 6;
+
+		if (type(oCenterPoint) == "point") then
+			tFields.centroid.x = oCenterPoint.x;
+			tFields.centroid.y = oCenterPoint.y;
 		end
 
 		--calculate the width and height
-		this.width 	= math.sqrt(3) * this.size;
-		this.height = this.size * 2;
+		tFields.width 	= math.sqrt(3) * this.size;
+		tFields.height	= this.size * 2;
+
+		this:super(tProtectedRepo, nil, true);
 
 		--calculate the vertices
-		--calculateVertices(this);
+		this:recalculateVertices();
 
-		--have the parent class process the object
-		this:update();
+		--update the hexagon
+		tFields:updatePerimeterAndEdges();
+		tFields:updateDetector();
+		tFields:updateAnchors();
+		tFields:updateArea();
+		tFields:updateAngles();
+
 	end,
 
-	recalculateVertices = function(this)
-		this.vertices 		= {};
-		local nDegreeMod 	= this.isFlat and HEX_POINT_TOP_DEGREE_MODIFIER or 0;
+	setSize = function(this, nSize)
+		local tFields 			= tProtectedRepo[this];
 
-		--calculate the vertices
-		for x = 1, 6 do
-		    local angle_deg = 60 * (x - 1) - nDegreeMod;
-		    local angle_rad = math.pi / 180 * angle_deg
-
-			this.vertices[x] = point(this.center.x + this.size * math.cos(angle_rad),
-		    						 this.center.y + this.size * math.sin(angle_rad));
+		if (type(nSize) == "number" and nSize > 0) then
+			error("Size must be a number greater than 0.")
 		end
+
+		tFields.size = nSize;
+
+		this:recalculateVertices();
+		tProt:updatePerimeterAndEdges();
+		tProt:updateDetector();
+		tProt:updateAnchors();
+		tProt:updateArea();
+		tProt:updateAngles();
 	end,
 };
 

@@ -60,8 +60,8 @@ IOTA 						= {
 	MINUTES 				= "minutes",
 	SECONDS 				= "seconds",
 	--if you make the year value larger, be sure to reduce the precache years max
-	MAX					= enum("IOTA.MAX", {"YEARS", "DAYS", "HOURS", "MINUTES", "SECONDS"}, {99999, 365, 24, 60, 60}, true);
-	CALLBACK			= enum("IOTA.CALLBACK", {"ON_SECOND", "ON_MINUTE", "ON_HOUR", "ON_DAY", "ON_YEAR"}, {"onMinute", "onSecond", "onHour", "onDay", "onYear"}, true);
+	MAX					= enum("MAX", {"YEARS", "DAYS", "HOURS", "MINUTES", "SECONDS"}, {99999, 365, 24, 60, 60}, true);
+	CALLBACK			= enum("CALLBACK", {"ON_SECOND", "ON_MINUTE", "ON_HOUR", "ON_DAY", "ON_YEAR"}, {"onMinute", "onSecond", "onHour", "onDay", "onYear"}, true);
 };
 
 table.settype(IOTA, 			"IOTA");

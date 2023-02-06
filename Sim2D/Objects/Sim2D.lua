@@ -29,7 +29,7 @@ local function GetBaseSettings()
 		OnEnterReady	= true,
 		OnLeaveReady	= false,
 		PulseIndex 		= 0,
-		PulseRate		= SIM2D.PULSE.OFF,
+		PulseRate		= SIM2D.PULSE.OFF.value,
 		Shape 			= oShape,
 		State 			= sState,
 		StateID			= nStateID, --no accessor for this since it's internal

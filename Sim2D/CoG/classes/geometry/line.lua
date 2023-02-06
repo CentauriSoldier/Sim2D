@@ -42,7 +42,6 @@ local tProtectedRepo = {};
 
 local function update(this)
 	local tProt = tProtectedRepo[this];
-
 	--update the line's midpoint
 	tProt.midpoint.x = (tProt.start.x + tProt.stop.x) / 2;
 	tProt.midpoint.y = (tProt.start.y + tProt.stop.y) / 2;
@@ -56,17 +55,6 @@ local function update(this)
 	local nXIsPos	= nXDelta > 0;
 	local nYIsPos	= nYDelta > 0;
 
-	--[[defaults to quadrant I
-	local nQuadrantAddative = 0;
-
-	if (not nXIsPos and nYIsPos) then
-		nQuadrantAddative = 90;
-	elseif (not nXIsPos and not nYIsPos) then
-		nQuadrantAddative = 180;
-	elseif (nXIsPos and not nYIsPos) then
-		nQuadrantAddative = 270;
-	end
-]]
 	--determine slope and y-intercept
 	if (tProt.slopeIsUndefined) then
 		tProt.slope 		= MATH_UNDEF;
@@ -78,41 +66,13 @@ local function update(this)
 
 	--translate end point to the origin (using the object's temp point) in order to find theta
 	local oEnd = tTempPoints[this];
-	--[[local tStart = {
-		x = 0,
-		y = 0,
-	};]]
+
 	oEnd.x = tProt.stop.x - tProt.start.x;
 	oEnd.y = tProt.stop.y - tProt.start.y;
 
 	tProt.theta = math.deg(math.atan2(oEnd.y, oEnd.x));
 	--make sure the value is positive
 	tProt.theta = tProt.theta >= 0 and tProt.theta or 360 + tProt.theta;
-
-	--get the end point's relative location
-	--local bQuad = oEnd:getQuadrant();
-
-	--[[
-	if (bQuad == QUADRANT_I) then
-		tProt.theta	= math.deg(math.atan(nXDelta / nYDelta));
-	elseif (bQuad == QUADRANT_II) then
-		tProt.theta	= math.deg(math.atan(nXDelta / nYDelta)) + 90;
-	elseif (bQuad == QUADRANT_III) then
-		tProt.theta	= math.deg(math.atan(nXDelta / nYDelta)) + 180;
-	elseif (bQuad == QUADRANT_IV) then
-		tProt.theta	= math.deg(math.atan(nXDelta / nYDelta)) + 270;
-	elseif (bQuad == QUADRANT_X) then
-		tProt.theta	= 0;
-	elseif (bQuad == QUADRANT_Y) then
-		tProt.theta	= 90;
-	elseif (bQuad == QUADRANT_X_NEG) then
-		tProt.theta	= 180;
-	elseif (bQuad == QUADRANT_Y_NEG) then
-		tProt.theta	= 270;
-	elseif (bQuad == QUADRANT_O) then
-		tProt.theta	= 0; --TODO is this undefined?
-	end
-]]
 
 	--get the standard-form components and set the x intercept
 	tProt.a = nYDelta;--tProt.stop.y - tProt.start.y;
@@ -224,7 +184,6 @@ return class "line" {
 		return sRet;
 	end,
 
-
 	--TODO finish this! Check if it's accurate
 	--[[getObtuseAngleTo = function(this, oOther)
 		local tMe 		= tProtectedRepo[this];
@@ -247,21 +206,13 @@ return class "line" {
 		return tProtectedRepo[this].deltaX;
 	end,
 
-
 	getDeltaY = function(this)
 		return tProtectedRepo[this].deltaY;
 	end,
 
-
-	getDistance = function(this)--TODO do I need this function, is seems redundant and confusing
-		return tProtectedRepo[this].length;
-	end,
-
-
 	getEnd = function(this)
 		return tProtectedRepo[this].stop;
 	end,
-
 
 	getLength = function(this)
 		return tProtectedRepo[this].length;
@@ -269,6 +220,10 @@ return class "line" {
 
 	getMidPoint = function(this)
 		return tProtectedRepo[this].midpoint;
+	end,
+
+	getPointAtDistance = function(this, nDistance)
+		--https://stackoverflow.com/questions/1250419/finding-points-on-a-line-with-a-given-distance
 	end,
 
 	getPointOfIntersection = function(this, oOther)
@@ -368,7 +323,6 @@ return class "line" {
 			   );
 	end,
 
-
 	--[[!
 		@desc Serializes the object's data.
 		@func line.serialize
@@ -391,7 +345,6 @@ return class "line" {
 		return serialize.table(tProt);
 	end,
 
-
 	setEnd = function(this, oPoint, bSkipUpdate)
 		local tProt = tProtectedRepo[this];
 		tProt.stop.x = oPoint.x;
@@ -402,7 +355,6 @@ return class "line" {
 		end
 
 	end,
-
 
 	setStart = function(this, oPoint, bSkipUpdate)
 		local tProt = tProtectedRepo[this];
@@ -415,16 +367,13 @@ return class "line" {
 
 	end,
 
-
 	slopeIsDefined = function(this)
 		return not tProtectedRepo[this].slopeIsUndefined;
 	end,
 
-
 	xInterceptIsDefined = function(this)
 		return not tProtectedRepo[this].xInterceptIsUndefined;
 	end,
-
 
 	yInterceptIsDefined = function(this)
 		return not tProtectedRepo[this].yInterceptIsUndefined;
