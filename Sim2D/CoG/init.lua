@@ -134,6 +134,7 @@ local rClassesAudio 	= rClasses..".audio";
 local rClassesComponent	= rClasses..".component";
 local rClassesGeometry	= rClasses..".geometry";
 local rClassesShapes	= rClassesGeometry..".shapes";
+local rEnums 			= rCoG..".enums";
 
 --require LuaEx
 if not (LUAEX_INIT) then
@@ -168,6 +169,10 @@ constant("SHAPE_ANCHOR_CENTROID",	 	-1); --DO NOT CHANGE THIS VALUE
 	that case, this default will
 	not	be used.]]
 constant("SHAPE_ANCHOR_DEFAULT",		SHAPE_ANCHOR_CENTROID);
+
+--require the enums
+require(rEnums..".PROTEAN");
+require(rEnums..".IOTA");
 
 --static entities and generators
 lists 		= require(rStatic			..".lists"); --TODO change this a less common name!

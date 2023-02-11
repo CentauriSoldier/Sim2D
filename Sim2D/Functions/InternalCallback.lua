@@ -25,17 +25,17 @@ function Sim2D.InternalCallback.OnDraw(sObjectName, D, hDC)
 	local tAppRect = tSim2D.Ports[SIM2D.PORT.APP].Rect;
 
 	--clear the canvas
-	Drawing.DrawRectangle(0, 0, tAppRect.width, tAppRect.height, SIM2D.CANVAS_COLOR.value);
+	Drawing.DrawRectangle(0, 0, tAppRect:getWidth(), tAppRect:getHeight(), SIM2D.CANVAS.COLOR.value);
 
 	--draw the canvas background  --TODO do not do this here...this should be left to the user to do by creating an image object and setting its layer to 0
 	--Drawing.DrawImage(DrawingImage.GetID(tSim2D.Canvas.Backgrounds[tSim2D.ActiveStateID]), 0, 0);
 
 
 	--iterate through each each stratum in the active state
-	for nStratum = 1, SIM2D.STRATUM.COUNT.value do
+	for sStratum, sStratum in SIM2D.STRATUM() do
 
 		--iterate through each each layer in this stratum
-		for nLayer = 1, SIM2D.LAYER.COUNT.value do
+		for sLayer, nLayer in SIM2D.LAYER() do
 		local tLayer = tSim2D.DrawObjects[tSim2D.ActiveStateID][nStratum][nLayer];
 
 			--draw each object in this layer

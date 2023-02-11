@@ -91,12 +91,12 @@ function Sim2D.Util.AddState(sState)
 end
 
 
-function Sim2D.Util.LayerIsValid(vLayer)
-	return (type(vLayer) == "number" and vLayer > 0 and vLayer <= SIM2D.LAYER.COUNT and math.floor(vLayer) == vLayer);
+function Sim2D.Util.LayerIsValid(eLayer)
+	return type(eLayer) == "LAYER";--(type(vLayer) == "number" and vLayer > 0 and vLayer <= SIM2D.LAYER.COUNT.value and math.floor(vLayer) == vLayer);
 end
 
-function Sim2D.Util.StratumIsValid(nStratum)
-	return (type(nStratum) == "number" and nStratum > 0 and nStratum <= SIM2D.STRATUM.COUNT and math.floor(nStratum) == nStratum);
+function Sim2D.Util.StratumIsValid(eStratum)
+	return type(eStratum) == "STRATUM";--(type(nStratum) == "number" and nStratum > 0 and nStratum <= SIM2D.STRATUM.COUNT.value and math.floor(nStratum) == nStratum);
 end
 
 

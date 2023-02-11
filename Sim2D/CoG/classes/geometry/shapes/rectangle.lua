@@ -48,46 +48,52 @@ return class "rectangle" : extends(polygon) {
 		tProtectedRepo[this] = rawtype(tProtected) == "table" and tProtected or {};
 		local tFields = tProtectedRepo[this];
 
-		--setup the protected fields
-		tFields.verticesCount = 4;
-		tFields.vertices = {
+		--set th width and height
+		nWidth 	= rawtype(nWidth) 	== "number" and nWidth 	or 0;
+		nHeight = rawtype(nHeight) 	== "number" and nHeight or 0;
+
+		--tFields.verticesCount = 4;
+		tVertices = {
 			[1] = point(),
 			[2]	= point(),
 			[3]	= point(),
 			[4]	= point(),
 		};
-		tFields.width 	= rawtype(nWidth) 	== "number" and nWidth 	or 0;
-		tFields.height 	= rawtype(nHeight) 	== "number" and nHeight or 0;
+
+		--check the point input
+		if (type(pTopLeft) == "point") then
+			tVertices[1].x = pTopLeft.x;
+			tVertices[1].y = pTopLeft.y;
+			tVertices[2].x = pTopLeft.x + nWidth;
+			tVertices[2].y = pTopLeft.y;
+			tVertices[3].x = pTopLeft.x + nWidth;
+			tVertices[3].y = pTopLeft.y + nHeight;
+			tVertices[4].x = pTopLeft.x;
+			tVertices[4].y = pTopLeft.y + nHeight;
+		end
+
+		--call the parent constructor with the protected table, no vertices and skipping auto-update
+		this:super(tFields, tVertices);
 
 		--set the anchor point (to the top left vertex)
 		tFields.anchorIndex = 1;
 
-		--check the point input
-		if (type(pTopLeft) == "point") then
-			tFields.vertices[1].x = pTopLeft.x;
-			tFields.vertices[1].y = pTopLeft.y;
-			tFields.vertices[2].x = pTopLeft.x + nWidth;
-			tFields.vertices[2].y = pTopLeft.y;
-			tFields.vertices[3].x = pTopLeft.x + nWidth;
-			tFields.vertices[3].y = pTopLeft.y + nHeight;
-			tFields.vertices[4].x = pTopLeft.x;
-			tFields.vertices[4].y = pTopLeft.y + nHeight;
-		end
-
-		--call the parent constructor with the protected table, no vertices and skipping auto-update
-		this:super(tFields, nil, true);
+		--set th width and height
+		tFields.width 	= nWidth;
+		tFields.height 	= nHeight;
 
 		--override the required protected methods
 		tFields.updateArea = function(tFields)
 			tFields.area = tFields.width * tFields.height;
 		end
 
+
 		--update the rectangle
-		tFields:updatePerimeterAndEdges();
-		tFields:updateDetector();
-		tFields:updateAnchors();
-		tFields:updateArea();
-		tFields:updateAngles();
+		--tFields:updatePerimeterAndEdges();
+		--tFields:updateDetector();
+		--tFields:updateAnchors();
+		--tFields:updateArea();
+		--tFields:updateAngles();
 	end,
 
 

@@ -105,37 +105,9 @@ local tVertices 	= {k, point(3, 4), point(3, 0)};
 local bSkipUpdate 	= false;
 
 local tri = polygon(tVertices, bSkipUpdate)
---print(tri:isRegular())
 
-local CREATURE = clausum();
-CREATURE.HUMAN = clausum("CREATURE");
-CREATURE.HUMAN.SOLDIER = clausum("CREATURE.HUMAN");
-CREATURE.HUMAN.SOLDIER.COUNT = 17;
-CREATURE.HUMAN.SOLDIER.ERIC = {age = 22, power = 56}
-CREATURE.DOG = "asd"
-CREATURE.FROG = {};
-
-print(CREATURE.DOG.val)
-
-for _, item in CREATURE() do
-
-
---print(tostring(item))
-
-end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
---sd
+--print(ERRER.BLOOP.value)
+print(type(u.c.a), u.c.a.value)
+--print(type(u.c.a), u.c.a)
+--print(_VERSION)
+--directive.enum("C:\\Users\\CS\\Sync\\Projects\\GitHub\\Supremecratic\\Supremecratic\\CD_Root\\Data\\Mods\\Shipped\\Population.enum");

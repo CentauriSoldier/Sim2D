@@ -101,16 +101,37 @@ import("Constants");
 --Sim2D enums
 import("Enums");
 
---create the user folders if needed (and if not compiled)
-if (not Project.IsCompiled()) then
-	Folder.Create(SIM2D.PATH.USER.DIR.BASE.value);
-	Folder.Create(SIM2D.PATH.USER.DIR.FACTORY.value);
-	Folder.Create(SIM2D.PATH.USER.DIR.OBJECTS.value);
+--create the SIM2D and USER directories (if they don't exist)
+local function createDirectories(eEnum)
+	local tMeta = getmetatable(eEnum);
+
+	--make this is an enum object
+	if (type(tMeta) == "table" and type(tMeta["__call"]) == "function") then
+		--TextFile.WriteFromString(_ExeFolder.."\\DIR TEST.txt", tostring(eEnum).."\r\n", true); TODO log this item
+
+		for sName, vValue in eEnum() do
+			local sType = vValue.valueType;
+
+			if (sType == "string") then
+				--TextFile.WriteFromString(_ExeFolder.."\\DIR TEST.txt", vValue.value.."\r\n", true);TODO log this item
+				if not (Folder.DoesExist(vValue.value)) then
+					Folder.Create(vValue.value);
+				end
+
+			else
+				createDirectories(vValue);
+			end
+
+		end
+
+	end
+
 end
 
---create the write and save directories
-Folder.Create(SIM2D.PATH.SIM2D.DIR.WRITE.value);
-Folder.Create(SIM2D.PATH.SIM2D.DIR.SAVE.value);
+createDirectories(SIM2D.PATH.DIR);
+createDirectories(SIM2D.PATH.USER.DIR);
+
+
 
 
 ---import the Sim2D base object and set the global properties table
@@ -134,7 +155,7 @@ Sim2D.Init();
 
 --import the Sim2D global event functions
 				  	  import("Functions.Event");
-
+--TODO ISN'T THIS DONE IN THE ENUMS?
 --base objects
 Ani 				= import("Objects.Ani");
 Btn 				= import("Objects.Btn");
@@ -159,4 +180,4 @@ end
 
 
 --useful if using Sim2D as a dependency in multiple modules to prevent the need for loading it multilple times.
-UICOM_INIT = true;
+constant("SIM2D_INIT", true)

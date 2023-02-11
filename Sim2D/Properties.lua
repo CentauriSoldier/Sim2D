@@ -26,9 +26,7 @@ return {
 		InCanvas 		= false;
 	},
 	PageOrDialog = Page,
-	Fonts = {
-		Baumarkt = -1,
-	},
+	Fonts = {},
 	InfoPane = nil,
 	Mouse = {
 		X = 0,

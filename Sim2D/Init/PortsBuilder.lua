@@ -14,7 +14,9 @@ local nHeight 	= 0;
 local nCoV_HX 	= 0;
 local nCoV_VY 	= 0;
 local hWnd 		= 0;
-local tDisplay 	= System.GetDisplayInfo();
+--local tDesktopRect = WinApi.GetWindowRect(WinApi.GetDesktopWindow());
+--local tDisplay 	= System.GetDisplayInfo();
+local tDisplay = {Width = 3440, Height = 1440};
 
 --read in the data from the project data file (assumes the file exists and is valid)
 tSim2D.BuildData = deserialize.table(TextFile.ReadToString(SIM2D.PATH.USER.FILE.BUILDDATA.value));

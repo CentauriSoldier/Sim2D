@@ -284,22 +284,22 @@ local Sim2D = class "Sim2D" {
 		return this;
 	end,
 
-	SetPulseRate = function(this, nRate)
+	SetPulseRate = function(this, eRate)
 		local oObject			= tSim2D.ObjectSettings[this];
 		local nOldRate 			= oObject.PulseRate;
 		local nOldPulseIndex	= oObject.PulseIndex;
 		local nStateID 			= oObject.StateID;
-		local bPulseOff 		= nRate == SIM2D.PULSE.OFF;
+		local bPulseOff 		= eRate == SIM2D.PULSE.OFF;
 
 		--change the pulse value and add to the appropriate pulse table (if indicated)
-		local bChange = (nRate ~= nOldRate) and
+		local bChange = (eRate ~= nOldRate) and
 						(
 							bPulseOff							or
-							(nRate == SIM2D.PULSE.ULTRA_SLOW) 	or
-							(nRate == SIM2D.PULSE.SLOW) 		or
-							(nRate == SIM2D.PULSE.MEDIUM) 		or
-							(nRate == SIM2D.PULSE.FAST) 		or
-							(nRate == SIM2D.PULSE.ULTRA_FAST)
+							(eRate == SIM2D.PULSE.ULTRA_SLOW) 	or
+							(eRate == SIM2D.PULSE.SLOW) 		or
+							(eRate == SIM2D.PULSE.MEDIUM) 		or
+							(eRate == SIM2D.PULSE.FAST) 		or
+							(eRate == SIM2D.PULSE.ULTRA_FAST)
 						);
 
 		if (bChange) then
@@ -310,7 +310,7 @@ local Sim2D = class "Sim2D" {
 
 			else
 				--set the new rate
-				oObject.PulseRate = nRate;
+				oObject.PulseRate = eRate;
 				--get the new pulse index
 				local nIndex = #tPulsars + 1;
 				--set the object's new pulse index
@@ -322,7 +322,7 @@ local Sim2D = class "Sim2D" {
 			--remove the object from the old pulse table
 			local tOldPulsars = tSim2D.PulseObjects[nStateID][nOldRate];
 
-			if (nOldRate ~= SIM2D.PULSE.OFF and tOldPulsars and tOldPulsars[nOldPulseIndex]) then
+			if (eRate ~= SIM2D.PULSE.OFF and tOldPulsars and tOldPulsars[nOldPulseIndex]) then
 				table.remove(tOldPulsars, nOldPulseIndex);
 			end
 

@@ -86,6 +86,7 @@
 </ul>
 @website https://github.com/CentauriSoldier
 *]]
+local tProteans = {};
 local protean;
 
 local class 	= class;
@@ -95,30 +96,10 @@ local pairs 	= pairs;
 local table 	= table;
 local type 		= type;
 local rawtype 	= rawtype;
+local PROTEAN 	= PROTEAN;
 
-constant("PROTEAN_BASE_BONUS", 				0);
-constant("PROTEAN_BASE_PENALTY", 			1);
-constant("PROTEAN_MULTIPLICATIVE_BONUS", 	2);
-constant("PROTEAN_MULTIPLICATIVE_PENALTY", 	3);
-constant("PROTEAN_ADDATIVE_BONUS", 			4);
-constant("PROTEAN_ADDATIVE_PENALTY", 		5);
-constant("PROTEAN_VALUE_BASE", 				6);
-constant("PROTEAN_VALUE_FINAL", 			7);
-constant("PROTEAN_LIMIT_MIN", 				8);
-constant("PROTEAN_LIMIT_MAX", 				9);
 
-local PROTEAN_BASE_BONUS 				= PROTEAN_BASE_BONUS;
-local PROTEAN_BASE_PENALTY 				= PROTEAN_BASE_PENALTY;
-local PROTEAN_MULTIPLICATIVE_BONUS 		= PROTEAN_MULTIPLICATIVE_BONUS;
-local PROTEAN_MULTIPLICATIVE_PENALTY 	= PROTEAN_MULTIPLICATIVE_PENALTY;
-local PROTEAN_ADDATIVE_BONUS 			= PROTEAN_ADDATIVE_BONUS;
-local PROTEAN_ADDATIVE_PENALTY 			= PROTEAN_ADDATIVE_PENALTY;
-local PROTEAN_VALUE_BASE 				= PROTEAN_VALUE_BASE;
-local PROTEAN_VALUE_FINAL 				= PROTEAN_VALUE_FINAL;
-local PROTEAN_LIMIT_MIN 				= PROTEAN_LIMIT_MIN;
-local PROTEAN_LIMIT_MAX 				= PROTEAN_LIMIT_MAX;
 
-local tProteans = {};
 
 --placeholder so higher functions can access it
 local calculateFinalValue;
@@ -168,7 +149,7 @@ local function unlink(this, bRestoreOriginalValue)
 	if (oProtean.isLinked and linkerIDIsValid(nLinkerID) and tHub[nLinkerID] and tHub[nLinkerID].index[this]) then
 
 		--set the object's base value to it's original value or the linker's base value
-		oProtean[PROTEAN_VALUE_BASE] = bRestoreOriginalValue 		and
+		oProtean[PROTEAN.VALUE.BASE] = bRestoreOriginalValue 		and
 									   tHub[nLinkerID].index[this] 	or
 									   tHub[nLinkerID].baseValue;
 
@@ -201,7 +182,7 @@ local function link(this, nLinkerID)
 	if (not tHub[nLinkerID]) then
 		tHub[nLinkerID] = {
 			--the new linker will start with the creating object's base value
-			baseValue 	= oProtean[PROTEAN_VALUE_BASE],
+			baseValue 	= oProtean[PROTEAN.VALUE.BASE],
 			index 		= {},
 			proteans	= {},
 		};
@@ -210,9 +191,9 @@ local function link(this, nLinkerID)
 	--link it only if it's not already linked
 	if (not tHub[nLinkerID].index[this]) then
 		--store the object's original value
-		local nOriginalValue = oProtean[PROTEAN_VALUE_BASE]
+		local nOriginalValue = oProtean[PROTEAN.VALUE.BASE]
 		--set the object's base value to be the same as the linker's
-		oProtean[PROTEAN_VALUE_BASE] = tHub[nLinkerID].baseValue;
+		oProtean[PROTEAN.VALUE.BASE] = tHub[nLinkerID].baseValue;
 		--link the protean and update its settings
 		oProtean.isLinked = true;
 		oProtean.linkerID = nLinkerID;
@@ -279,16 +260,16 @@ end
 	@scope local
 !]]
 calculateFinalValue = function(oProtean)
-	local nBase = oProtean.isLinked and tHub[oProtean.linkerID].baseValue or oProtean[PROTEAN_VALUE_BASE];
+	local nBase = oProtean.isLinked and tHub[oProtean.linkerID].baseValue or oProtean[PROTEAN.VALUE.BASE];
 
-	local nBaseBonus	= oProtean[PROTEAN_BASE_BONUS];
-	local nBasePenalty	= oProtean[PROTEAN_BASE_PENALTY];
-	local nMultBonus	= oProtean[PROTEAN_MULTIPLICATIVE_BONUS];
-	local nMultPenalty	= oProtean[PROTEAN_MULTIPLICATIVE_PENALTY];
-	local nAddBonus		= oProtean[PROTEAN_ADDATIVE_BONUS];
-	local nAddPenalty	= oProtean[PROTEAN_ADDATIVE_PENALTY];
+	local nBaseBonus	= oProtean[PROTEAN.BASE.BONUS];
+	local nBasePenalty	= oProtean[PROTEAN.BASE.PENALTY];
+	local nMultBonus	= oProtean[PROTEAN.MULTIPLICATIVE.BONUS];
+	local nMultPenalty	= oProtean[PROTEAN.MULTIPLICATIVE.PENALTY];
+	local nAddBonus		= oProtean[PROTEAN.ADDATIVE.BONUS];
+	local nAddPenalty	= oProtean[PROTEAN.ADDATIVE.PENALTY];
 
-	oProtean[PROTEAN_VALUE_FINAL] = ((nBase + nBaseBonus - nBasePenalty) * (1 + nMultBonus - nMultPenalty)) + nAddBonus - nAddPenalty;
+	oProtean[PROTEAN.VALUE.FINAL] = ((nBase + nBaseBonus - nBasePenalty) * (1 + nMultBonus - nMultPenalty)) + nAddBonus - nAddPenalty;
 end
 
 --[[!
@@ -301,7 +282,7 @@ end
 local function setValue(this, sType, vValue)
 	local oProtean = tProteans[this];
 
-	if (sType ~= PROTEAN_VALUE_FINAL) then
+	if (sType ~= PROTEAN.VALUE.FINAL) then
 		local bCalculated 		= false;
 		local bCallbackCalled 	= false;
 
@@ -309,7 +290,7 @@ local function setValue(this, sType, vValue)
 		oProtean[sType] = vValue;
 
 		--check if this object is linked and, if so, update the linker and it's proteans
-		if (oProtean.isLinked and sType == PROTEAN_VALUE_BASE) then
+		if (oProtean.isLinked and sType == PROTEAN.VALUE.BASE) then
 			tHub[oProtean.linkerID].baseValue = vValue;
 
 			--update the linked proteans' final value
@@ -373,16 +354,16 @@ protean = class "protean" {
 		local bHasCallbackFunction = rawtype(fonChange) == "function";
 
 		tProteans[this] = {
-			[PROTEAN_VALUE_BASE]				= rawtype(nBaseValue) 				== "number" 	and nBaseValue 				or 0,
-			[PROTEAN_BASE_BONUS] 				= rawtype(nBaseBonus) 				== "number"		and nBaseBonus  			or 0,
-			[PROTEAN_BASE_PENALTY] 				= rawtype(nBasePenalty) 			== "number"		and nBasePenalty 			or 0,
-			[PROTEAN_MULTIPLICATIVE_BONUS] 		= rawtype(nMultiplicativeBonus) 	== "number"		and nMultiplicativeBonus 	or 0,
-			[PROTEAN_MULTIPLICATIVE_PENALTY] 	= rawtype(nMultiplicativePenalty) 	== "number"		and nMultiplicativePenalty 	or 0,
-			[PROTEAN_ADDATIVE_BONUS] 			= rawtype(nAddativeBonus) 			== "number"		and nAddativeBonus 			or 0,
-			[PROTEAN_ADDATIVE_PENALTY] 			= rawtype(nAddativePenalty) 		== "number"		and nAddativePenalty 		or 0,
-			[PROTEAN_VALUE_FINAL]				= 0, --this is (re)calcualted whenever another item is changed
-			[PROTEAN_LIMIT_MIN] 				= rawtype(nMinLimit) 				== "number"		and nMinLimit 				or nil,
-			[PROTEAN_LIMIT_MAX] 				= rawtype(nMaxLimit) 				== "number"		and nMaxLimit				or nil,
+			[PROTEAN.VALUE.BASE]				= rawtype(nBaseValue) 				== "number" 	and nBaseValue 				or 0,
+			[PROTEAN.BASE.BONUS] 				= rawtype(nBaseBonus) 				== "number"		and nBaseBonus  			or 0,
+			[PROTEAN.BASE.PENALTY] 				= rawtype(nBasePenalty) 			== "number"		and nBasePenalty 			or 0,
+			[PROTEAN.MULTIPLICATIVE.BONUS] 		= rawtype(nMultiplicativeBonus) 	== "number"		and nMultiplicativeBonus 	or 0,
+			[PROTEAN.MULTIPLICATIVE.PENALTY] 	= rawtype(nMultiplicativePenalty) 	== "number"		and nMultiplicativePenalty 	or 0,
+			[PROTEAN.ADDATIVE.BONUS] 			= rawtype(nAddativeBonus) 			== "number"		and nAddativeBonus 			or 0,
+			[PROTEAN.ADDATIVE.PENALTY] 			= rawtype(nAddativePenalty) 		== "number"		and nAddativePenalty 		or 0,
+			[PROTEAN.VALUE.FINAL]				= 0, --this is (re)calcualted whenever another item is changed
+			[PROTEAN.LIMIT.MIN] 				= rawtype(nMinLimit) 				== "number"		and nMinLimit 				or nil,
+			[PROTEAN.LIMIT.MAX] 				= rawtype(nMaxLimit) 				== "number"		and nMaxLimit				or nil,
 			linkerID							= nil,
 			isLinked							= false, --for fast queries
 			autoCalculate						= rawtype(bAutoCalculate) 			== "boolean" 	and bAutoCalculate 			or true,
@@ -395,7 +376,7 @@ protean = class "protean" {
 	end,
 
 	--[[!
-	@desc Adjusts the given value by the amount input. Note: if using an external table which contains the base value, and the rawtype provided is PROTEAN_VALUE_BASE, nil will be returned. An external base value cannot be adjusted from inside the protean	object (although the base bonus and base penalty may be).
+	@desc Adjusts the given value by the amount input. Note: if using an external table which contains the base value, and the rawtype provided is PROTEAN.VALUE.BASE, nil will be returned. An external base value cannot be adjusted from inside the protean	object (although the base bonus and base penalty may be).
 	@func protean.adjust
 	@module protean
 	@param sType PROTEAN The type of value to adjust.
@@ -436,16 +417,16 @@ protean = class "protean" {
 		local oProtean 	= tCharacters[this];--TODO what is this table?
 		local tData 	= deserialize.table(sTable);
 
-		oProtean[PROTEAN_VALUE_BASE] 				= tData[PROTEAN_VALUE_BASE];
-		oProtean[PROTEAN_BASE_BONUS] 				= tData[PROTEAN_BASE_BONUS];
-		oProtean[PROTEAN_BASE_PENALTY] 				= tData[PROTEAN_BASE_PENALTY];
-		oProtean[PROTEAN_MULTIPLICATIVE_BONUS] 		= tData[PROTEAN_MULTIPLICATIVE_BONUS];
-		oProtean[PROTEAN_MULTIPLICATIVE_PENALTY] 	= tData[PROTEAN_MULTIPLICATIVE_PENALTY];
-		oProtean[PROTEAN_ADDATIVE_BONUS] 			= tData[PROTEAN_ADDATIVE_BONUS];
-		oProtean[PROTEAN_ADDATIVE_PENALTY]			= tData[PROTEAN_ADDATIVE_PENALTY];
-		oProtean[PROTEAN_VALUE_FINAL]				= tData[PROTEAN_VALUE_FINAL];
-		oProtean[PROTEAN_LIMIT_MIN]					= tData[PROTEAN_LIMIT_MIN];
-		oProtean[PROTEAN_LIMIT_MAX] 				= tData[PROTEAN_LIMIT_MAX];
+		oProtean[PROTEAN.VALUE.BASE] 				= tData[PROTEAN.VALUE.BASE];
+		oProtean[PROTEAN.BASE.BONUS] 				= tData[PROTEAN.BASE.BONUS];
+		oProtean[PROTEAN.BASE.PENALTY] 				= tData[PROTEAN.BASE.PENALTY];
+		oProtean[PROTEAN.MULTIPLICATIVE.BONUS] 		= tData[PROTEAN.MULTIPLICATIVE.BONUS];
+		oProtean[PROTEAN.MULTIPLICATIVE.PENALTY] 	= tData[PROTEAN.MULTIPLICATIVE.PENALTY];
+		oProtean[PROTEAN.ADDATIVE.BONUS] 			= tData[PROTEAN.ADDATIVE.BONUS];
+		oProtean[PROTEAN.ADDATIVE.PENALTY]			= tData[PROTEAN.ADDATIVE.PENALTY];
+		oProtean[PROTEAN.VALUE.FINAL]				= tData[PROTEAN.VALUE.FINAL];
+		oProtean[PROTEAN.LIMIT.MIN]					= tData[PROTEAN.LIMIT.MIN];
+		oProtean[PROTEAN.LIMIT.MAX] 				= tData[PROTEAN.LIMIT.MAX];
 		oProtean.isLinked							= tData.isLinked;
 		oProtean.linkerID							= tData.linkerID;
 		oProtean.autoCalculate						= tData.autoCalculate;
@@ -470,7 +451,7 @@ protean = class "protean" {
 	end,
 
 	--[[!
-		@desc Gets the value of the given value type. Note: if the type provided is PROTEAN_VALUE_FINAL and MIN or MAX limits have been set, the returned value will fall within the confines of those paramter(s).
+		@desc Gets the value of the given value type. Note: if the type provided is PROTEAN.VALUE.FINAL and MIN or MAX limits have been set, the returned value will fall within the confines of those paramter(s).
 		@func protean.get
 		@module protean
 		@param sType PROTEAN The type of value to get.
@@ -478,21 +459,21 @@ protean = class "protean" {
 	!]]
 	get = function(this, sType)
 		local oProtean	= tProteans[this];
-		sType 			= rawtype(oProtean[sType]) ~= nil and sType or PROTEAN_VALUE_FINAL;
+		sType 			= rawtype(oProtean[sType]) ~= nil and sType or PROTEAN.VALUE.FINAL;
 		local nRet 		= oProtean[sType];
 
-		if (sType == PROTEAN_VALUE_FINAL) then
+		if (sType == PROTEAN.VALUE.FINAL) then
 
 			--clamp the value if it has been limited
-			if (oProtean[PROTEAN_LIMIT_MIN]) then
-				nRet = nRet < oProtean[PROTEAN_LIMIT_MIN] and oProtean[PROTEAN_LIMIT_MIN] or nRet;
+			if (oProtean[PROTEAN.LIMIT.MIN]) then
+				nRet = nRet < oProtean[PROTEAN.LIMIT.MIN] and oProtean[PROTEAN.LIMIT.MIN] or nRet;
 			end
 
-			if (oProtean[PROTEAN_LIMIT_MAX]) then
-				nRet = nRet > oProtean[PROTEAN_LIMIT_MAX] and oProtean[PROTEAN_LIMIT_MAX] or nRet;
+			if (oProtean[PROTEAN.LIMIT.MAX]) then
+				nRet = nRet > oProtean[PROTEAN.LIMIT.MAX] and oProtean[PROTEAN.LIMIT.MAX] or nRet;
 			end
 
-		elseif (sType == PROTEAN_VALUE_BASE) then
+		elseif (sType == PROTEAN.VALUE.BASE) then
 
 			if (oProtean.isLinked) then
 				nRet = tHub[oProtean.linkerID].baseValue;
@@ -549,16 +530,16 @@ protean = class "protean" {
 
 
 		local tData = {
-			[PROTEAN_VALUE_BASE]				= oProtean.isLinked and tHub[oProtean.linkerID].baseValue or oProtean[PROTEAN_VALUE_BASE],
-			[PROTEAN_BASE_BONUS] 				= oProtean[PROTEAN_BASE_BONUS],
-			[PROTEAN_BASE_PENALTY] 				= oProtean[PROTEAN_BASE_PENALTY],
-			[PROTEAN_MULTIPLICATIVE_BONUS] 		= oProtean[PROTEAN_MULTIPLICATIVE_BONUS],
-			[PROTEAN_MULTIPLICATIVE_PENALTY] 	= oProtean[PROTEAN_MULTIPLICATIVE_PENALTY],
-			[PROTEAN_ADDATIVE_BONUS] 			= oProtean[PROTEAN_ADDATIVE_BONUS],
-			[PROTEAN_ADDATIVE_PENALTY] 			= oProtean[PROTEAN_ADDATIVE_PENALTY],
-			[PROTEAN_VALUE_FINAL]				= oProtean[PROTEAN_VALUE_FINAL],
-			[PROTEAN_LIMIT_MIN] 				= oProtean[PROTEAN_LIMIT_MIN],
-			[PROTEAN_LIMIT_MAX] 				= oProtean[PROTEAN_LIMIT_MAX],
+			[PROTEAN.VALUE.BASE]				= oProtean.isLinked and tHub[oProtean.linkerID].baseValue or oProtean[PROTEAN.VALUE.BASE],
+			[PROTEAN.BASE.BONUS] 				= oProtean[PROTEAN.BASE.BONUS],
+			[PROTEAN.BASE.PENALTY] 				= oProtean[PROTEAN.BASE.PENALTY],
+			[PROTEAN.MULTIPLICATIVE.BONUS] 		= oProtean[PROTEAN.MULTIPLICATIVE.BONUS],
+			[PROTEAN.MULTIPLICATIVE.PENALTY] 	= oProtean[PROTEAN.MULTIPLICATIVE.PENALTY],
+			[PROTEAN.ADDATIVE.BONUS] 			= oProtean[PROTEAN.ADDATIVE.BONUS],
+			[PROTEAN.ADDATIVE.PENALTY] 			= oProtean[PROTEAN.ADDATIVE.PENALTY],
+			[PROTEAN.VALUE.FINAL]				= oProtean[PROTEAN.VALUE.FINAL],
+			[PROTEAN.LIMIT.MIN] 				= oProtean[PROTEAN.LIMIT.MIN],
+			[PROTEAN.LIMIT.MAX] 				= oProtean[PROTEAN.LIMIT.MAX],
 			isLinked							= oProtean.isLinked,
 			linkerID							= oProtean.linkerID,
 			autoCalculate						= oProtean.autoCalculate,
@@ -574,7 +555,7 @@ protean = class "protean" {
 	end,
 
 	--[[!
-		@desc Set the given value type to the value input. Note: if this object is linked, and the type provided is PROTEAN_VALUE_BASE, this linker's base value will also change, affecting every other linked object's base value.
+		@desc Set the given value type to the value input. Note: if this object is linked, and the type provided is PROTEAN.VALUE.BASE, this linker's base value will also change, affecting every other linked object's base value.
 		@func protean.set
 		@module protean
 		@param sType PROTEAN The type of value to adjust.

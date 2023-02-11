@@ -29,9 +29,9 @@ function Sim2D.OnPreload(sState)
 
 	--TODO this should be left to the (soon-to-be-implemented) equalize function
 	local tAppRect = tSim2D.Ports[SIM2D.PORT.APP].Rect;
-
-	Input.SetSize(SIM2D.CANVAS, tAppRect.width, tAppRect.height);
-	Input.SetPos(SIM2D.CANVAS, tAppRect.vertices.topLeft.x, tAppRect.vertices.topLeft.y);
+	Input.SetSize(SIM2D.CANVAS.NAME.value, tAppRect:getWidth(), tAppRect:getHeight());
+	local tPos = tAppRect:getPos();
+	Input.SetPos(SIM2D.CANVAS.NAME.value, tPos.x, tPos.y);
 
 
 
@@ -59,9 +59,9 @@ function Sim2D.OnShow(sState)
 
 	Application.SetRedraw(false);
 	--create the canvas
-	Canvas.Create(SIM2D.CANVAS, {Keyboard = true, ClipMouse = true});
+	Canvas.Create(SIM2D.CANVAS.NAME.value, {Keyboard = true, ClipMouse = true});
 	--add the event callback function
-	Canvas.SetCallback(SIM2D.CANVAS, OnEvent);
+	Canvas.SetCallback(SIM2D.CANVAS.NAME.value, OnEvent);
 	--TODO only do this once!
 
 	--setup the Sim2D canvas
@@ -74,14 +74,20 @@ end
 
 
 Sim2D.OnStartup = function()
-	--TODO create fonts path in the Sim2D Custom Folder
+	--TODO create fonts path in the Sim2D Custom Folder ||\ ISN' this done and taken care of in init?
 
-	--load the fonts
-	for sFont, oFill in pairs(tSim2D.Fonts) do
-		local pFont = _Fonts.."\\"..sFont..".ttf";
+	--(temporarily) register all game fonts
+	local pUserFonts = SIM2D.PATH.USER.DIR.FONTS.value;
+	local tFonts = File.Find(pUserFonts, "*.ttf", false, false, nil, nil);
 
-		if (File.DoesExist(pFont)) then
-			oFill = DrawingFont.ImportPrivateFont(pFont);
+	if (tFonts) then
+
+		for _, pFont in pairs(tFonts) do
+			local sName = String.SplitPath(pFont).Filename;
+			--register the font with AMS
+			System.RegisterFont(pFont, sName, false);
+			--register the font with the Draw Plugin
+			tSim2D.Fonts[sName] = DrawingFont.ImportPrivateFont(pFont);
 		end
 
 	end
@@ -91,7 +97,7 @@ Sim2D.OnStartup = function()
 	local tSystem 	= tSim2D.Ports[SIM2D.PORT.SYSTEM];
 
 	tApp.Wnd = Application.GetWndHandle();
-	Window.SetSize(tApp.Wnd, tSystem.Rect.width, tSystem.Rect.height);
+	Window.SetSize(tApp.Wnd, tSystem.Rect:getWidth(), tSystem.Rect:getHeight());
 	Window.SetPos( tApp.Wnd, 0, 			 0);
 
 	--get every state whether dialog or page
@@ -217,16 +223,17 @@ Sim2D.OnStartup = function()
 			};
 
 			--import the objects from the factory files
-			local bSuccess, tObjects = pcall(require, SIM2D.VAR.USER_FACTORY_PATH:gsub("\\", "%.").."."..sState..".Objects");
+			local bSuccess, tObjects = pcall(require, SIM2D.PATH.USER.DIR.FACTORY.value:gsub("\\", "%.").."."..sState..".Objects");
 
 			if (bSuccess) then
 
 				for sObject, tData in pairs(tObjects) do
 					local oRect 	= UI.GetCoVAdjustedRect(tData.X, tData.Y, tData.Width, tData.Height);
-					local nX 		= oRect.vertices.topLeft.x;
-					local nY 		= oRect.vertices.topLeft.y;
-					local nWidth 	= oRect.width;
-					local nHeight 	= oRect.height;
+					local tPos 		= oRect:getPos();
+					local nX 		= tPos.x;
+					local nY 		= tPos.y;
+					local nWidth 	= oRect:getWidth();
+					local nHeight 	= oRect:getHeight();
 
 					--TODO make this use a pairs function to call all objects using their TYPEs (designated at the end ofeach class file)
 					if (tData.Type == SIM2D.TYPE.PRG) then
@@ -363,7 +370,7 @@ function Sim2D.OnTimer(nID)
 		   \ \_______\ \__\\ _\\ \__\ \__\ \____________\
 		    \|_______|\|__|\|__|\|__|\|__|\|____________|]]
 	elseif (nID == SIM2D.TIMER.DRAW.ID.value) then
-		Canvas.Draw(SIM2D.CANVAS, OnDraw);
+		Canvas.Draw(SIM2D.CANVAS.NAME.value, OnDraw);
 
 	end
 

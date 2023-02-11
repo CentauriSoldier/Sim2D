@@ -308,6 +308,7 @@ local polygon = class "polygon" : extends(shape) {
 
 	__construct = function(this, tProtected, tVertices, bSkipUpdate)
 		tProtectedRepo[this] = rawtype(tProtected) 	== "table" and tProtected or {};
+		
 		--super(tProtectedRepo[this], true);
 		local tFields = tProtectedRepo[this];
 

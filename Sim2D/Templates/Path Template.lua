@@ -1,17 +1,26 @@
 --[[this is the base enum and MUST remain intact
     in order for Sim2D to function properly. You
-    may add to these as much as you wish but Do NOT
-    delete these base values or alter existing items.]]
-local pUserDir      = SIM2D_USER_DIR;
-local pFactory      = SIM2D_USER_FACTORY_DIR;
-local pObjects      = SIM2D_USER_OBJECTS_DIR;
-local pBuildData    = SIM2D_USER_BUILD_DATA_FILE;
-local pPaths        = SIM2D_USER_PATHS_FILE;
-local eDir  = enum("DIR",   {"USER", "FACTORY", "OBJECTS"}, {pUserDir, pFactory, pObjects}, true);
-local eFile = enum("FILE", {"BUILDDATA", "PATHS"}, {pBuildData, "PATHS"}, true);
-return enum(
-    "USER",
-    {"DIR", "FILE"},
-    {eDir,  eFile},
-    true
-);
+    may add to it as much as you wish but DO NOT
+    delete or alter existing items.
+
+    All directories in which your app will write
+    data should be created in SIM2D_PATH_DIR_WRITE
+]]
+
+local USER                          = enum.prep("USER", true);
+--directories
+USER.DIR                            = enum.prep("DIR", true);
+USER.DIR.BASE                       = SIM2D_PATH_USER_DIR_BASE;
+USER.DIR.FACTORY                    = SIM2D_PATH_USER_DIR_FACTORY;
+USER.DIR.OBJECTS                    = SIM2D_PATH_USER_DIR_OBJECTS;
+USER.DIR.FONTS                      = SIM2D_PATH_USER_DIR_FONTS;
+--ADD YOUR DIRECTORY PATHS HERE
+
+--files
+USER.FILE                           = enum.prep("FILE", true);
+USER.FILE.BUILDDATA                 = SIM2D_PATH_USER_FILE_BUILDDATA_FILE;
+USER.FILE.PATHS                     = SIM2D_PATH_USER_FILE_PATHS;--this file
+--ADD YOUR FILE PATHS HERE
+
+--hand this prepped enum off to Sim2D's 'Enums.lua' file for processing. "You mean execution?"..."Processing"
+return USER;
