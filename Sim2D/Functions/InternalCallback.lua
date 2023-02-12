@@ -57,6 +57,28 @@ function Sim2D.InternalCallback.OnDraw(sObjectName, D, hDC)
 	--Drawing.DrawImage(DrawingImage.GetID(hPanel), tSim2D.Canvas.Mouse.X, tSim2D.Canvas.Mouse.Y);
 end
 
+--[[TODO implement all these events into each objects
+
+Events 	= {
+			OnEnter 		= false, --oObject, nX, nY
+			OnLeave 		= false, --oObject, nX, nY
+			OnRButtonDown 	= false, --oObject, nX, nY
+			OnRButtonUp		= false, --oObject, nX, nY
+			OnMButtonDown 	= false, --oObject, nX, nY
+			OnMButtonUp		= false, --oObject, nX, nY
+			OnLButtonUp		= false, --oObject, nX, nY
+			OnLButtonDown 	= false, --oObject, nX, nY
+			OnKey			= false, --oObject, tModifiers, nKey
+			OnCreate		= false, --oObject
+			OnDestroy		= false, --oObject
+			OnDraw			= false, --oObject, nX, nY
+			OnWheel			= false, --oObject, nDelta
+		},
+		these too
+		- CANVAS_MOUSE_LEFT_CLICK           -- Fired when the left mouse button is clicked.
+	    - CANVAS_MOUSE_LEFT_DOUBLECLICK     -- Fired when the left mouse button is double clicked.
+]]
+
 --[[
 eventContext = {
   ObjectName      -- A string representing the AMS object from where the canvas area event is fired

@@ -18,7 +18,7 @@ local DrawingFont = DrawingFont;
 --TODO also make horizonal bars
 local Prg = class "Prg" : extends(Sim2D) {
 
-	__construct = function(this, sState, sName, nX, nY, nWidth, nHeight, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
+	__construct = function(this, tProtected, sState, sName, nX, nY, nWidth, nHeight, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		local oRect = rectangle(point(nX, nY), nWidth, nHeight);
 		this:super(sState, sName, oRect, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
 

@@ -51,7 +51,7 @@ end
 
 local Btn = class "Btn" : extends(Sim2D) {
 
-	__construct = function(this, sState, sName, oShape, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
+	__construct = function(this, tProtected, sState, sName, oShape, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		this:super(sState, sName, oShape, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
 
 		tBtns[this] = this:__fields();--get the shared, quasi-protected fields

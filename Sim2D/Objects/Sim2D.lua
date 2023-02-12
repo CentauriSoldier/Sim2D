@@ -37,7 +37,7 @@ local function GetBaseSettings()
 		Visible 		= true,
 	};
 end
-
+--TODO add the Scale (and OnScale?) function to each object so they can be made larger/smaller
 local Sim2D = class "Sim2D" {
 
 	--[[
@@ -53,12 +53,13 @@ local Sim2D = class "Sim2D" {
 		return tSim2D.ObjectSettings[this];
 	end,
 
-	__construct = function(this, tprot, sState, sName, oShape, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
+	__construct = function(this, tProtected, sState, sName, oShape, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		sState = sState:lower();--TODO check this input!!!
+
 		--get the object's stratum
-		nStratum = Util.StratumIsValid(nStratum) and nStratum or SIM2D.STRATUM.DEFAULT;
+		nStratum = Util.StratumIsValid(nStratum) and nStratum or SIM2D.STRATUM[1];
 		--get the object's layer
-		local nLayer = Util.LayerIsValid(nLayer) and nLayer or SIM2D.LAYER.DEFAULT;
+		local nLayer = Util.LayerIsValid(nLayer) and nLayer or SIM2D.LAYER[1]; --TODO cerate a SIM.DEFAULT section to store these values in
 		--get the state ID
 		local nStateID = tSim2D.StateIDs[sState];
 

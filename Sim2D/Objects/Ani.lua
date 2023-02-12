@@ -26,7 +26,7 @@ end
 
 class "Ani" : extends(Sim2D) {
 
-	__construct = function(this, sState, sName, oShape, nStratum, nLayer, pFolder, sFiletype, nDuration, nX, nY, nWidth, nHeight, bDoNotPoll, bDoNotAutoDraw)
+	__construct = function(this, tProtected, sState, sName, oShape, nStratum, nLayer, pFolder, sFiletype, nDuration, nX, nY, nWidth, nHeight, bDoNotPoll, bDoNotAutoDraw)
 		this:super(sState, sName, rectangle(point(nX, nY), nWidth, nHeight), nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw);
 		tAnis[this] = this:__fields();--get the shared, quasi-protected fields
 		local oAni 	= tAnis[this];

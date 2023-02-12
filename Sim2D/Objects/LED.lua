@@ -89,7 +89,7 @@ end
 local LED = class "LED" : extends(Sim2D) {
 
 
-	__construct = function(this, sState, sName, nX, nY, nWidth, nHeight, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
+	__construct = function(this, tProtected, sState, sName, nX, nY, nWidth, nHeight, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		local nRadius 		= nHeight / 2;
 		local nCenterX 		= nX + nWidth / 2;
 		local nCenterY 		= nY + nHeight / 2;

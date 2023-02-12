@@ -223,7 +223,8 @@ Sim2D.OnStartup = function()
 			};
 
 			--import the objects from the factory files
-			local bSuccess, tObjects = pcall(require, SIM2D.PATH.USER.DIR.FACTORY.value:gsub("\\", "%.").."."..sState..".Objects");
+			--local bSuccess, tObjects = pcall(dofile, SIM2D.PATH.USER.DIR.FACTORY.value:gsub("\\", "%.").."."..sState..".Objects");
+			local bSuccess, tObjects = pcall(dofile, SIM2D.PATH.USER.DIR.FACTORY.value.."\\"..sState.."\\Objects.lua");
 
 			if (bSuccess) then
 
@@ -235,17 +236,19 @@ Sim2D.OnStartup = function()
 					local nWidth 	= oRect:getWidth();
 					local nHeight 	= oRect:getHeight();
 
-					--TODO make this use a pairs function to call all objects using their TYPEs (designated at the end ofeach class file)
-					if (tData.Type == SIM2D.TYPE.PRG) then
+					--TODO make this use a pairs function to call all objects using their TYPEs (designated at the end of each class file)
+					if (tData.Type == SIM2D.TYPE.PRG.value) then
 						--sState, sName, nX, nY, nWidth, nHeight, nLayer, bDoNotPoll, bDoNotAutoDraw
-						Prg(sState, sObject, nX, nY, nWidth, nHeight, SIM2D.LAYER.MIDGROUND_MID);
+						Prg(sState, sObject, nX, nY, nWidth, nHeight, nil, SIM2D.LAYER.MIDGROUND_MID);
 
 					--hex statebutton
-					elseif (tData.Type == SIM2D.TYPE.STATEBTN) then
-						StateBtn(sState, sObject, nX, nY, nWidth, nHeight, SIM2D.LAYER.MIDGROUND_MID);
+					elseif (tData.Type == SIM2D.TYPE.STATEBTN.value) then
+						--StateBtn(sState, sObject, nX, nY, nWidth, nHeight, SIM2D.LAYER.MIDGROUND_MID);
+						--this, tProtected, sState, sName, nX, nY, nWidth, nHeight, hDC, nLayer, bDoNotPoll, bDoNotAutoDraw
+						StateBtn(sState, sObject, nX, nY, nWidth, nHeight, nil, SIM2D.LAYER.MIDGROUND_MID);
 
-					elseif (tData.Type == SIM2D.TYPE.COUNTYROW) then
-						CountyRow(sState, sObject, nX, nY, nWidth, nHeight, SIM2D.LAYER.MIDGROUND_MID);
+					elseif (tData.Type == SIM2D.TYPE.COUNTYROW.value) then
+						CountyRow(sState, sObject, nX, nY, nWidth, nHeight, nil, SIM2D.LAYER.MIDGROUND_MID);
 
 					end
 

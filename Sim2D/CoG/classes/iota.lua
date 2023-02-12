@@ -55,10 +55,21 @@ local MAX_YEARS		= IOTA.MAX.YEARS.value;
 
 
 --TODO make sure unpack has the new and old version...check then set
---=====================================================>
--- 					String Precache
---=====================================================>
---this is the place that strings are stored for use by the __tostring method
+--[[=====================================================>
+ 					String Precache
+	This is the place that strings are stored for use by
+	the __tostring method. Set the 'CREATE_PRECACHE'
+	variable to true to create the string precache of
+	all possible year/day/hour/minute/second combinations.
+	Note: Be careful about a high years value. If the max
+	years value is high, may/must set the precache max
+	year to a lower value. A precache max years value of
+	1,000,000 will increase load time by about 12 - 14
+	seconds while a value of 100,000 will increase load
+	time by about 8-10 seconds.	A value of 10,000 or
+	lower is negligible.
+--=====================================================>]]
+local CREATE_PRECACHE = false;
 
 --used by the __tostring method
 local sBlank 	= "";
@@ -95,17 +106,20 @@ local tStringPreCache = {
 	  string.format(" Day: %03d Hour: %02d", oIota[IOTA.DAYS], oIota[IOTA.HOURS]);
 ]]
 
-for nType = 1, #tStringPreCache do
-	--store the max value and function
-	local nMax = tStringPreCache[nType].max;
-	local func = tStringPreCache[nType].func;
+if (CREATE_PRECACHE) then
+	for nType = 1, #tStringPreCache do
+		--store the max value and function
+		local nMax = tStringPreCache[nType].max;
+		local func = tStringPreCache[nType].func;
 
-	--now, set the value to be a table
-	tStringPreCache[nType] = {};
+		--now, set the value to be a table
+		tStringPreCache[nType] = {};
 
-	--store the strings in the table
-	for x = 0, nMax do
-		tStringPreCache[nType][x] = func(x);
+		--store the strings in the table
+		for x = 0, nMax do
+			tStringPreCache[nType][x] = func(x);
+		end
+
 	end
 
 end

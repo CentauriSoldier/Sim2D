@@ -138,6 +138,7 @@ function Sim2D.Util.GetObject(sState, sObject)
 
 		if (type(tSim2D.ObjectsByName[nIndex]) ~= "nil" and
 			type(tSim2D.ObjectsByName[nIndex][sObject]) ~= "nil") then
+				error(nIndex)
 				oRet = tSim2D.ObjectsByName[nIndex][sObject];
 		end
 
