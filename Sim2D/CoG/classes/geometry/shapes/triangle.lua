@@ -88,28 +88,28 @@ local triangle = class "triangle" : extends(polygon) {
 		local tFields = tProtectedRepo[this];
 
 		--default the values in case the initial update is skipped
-		tFields.angles 		= {};
+		tFields.angles 			= {};
 		tFields.isAcute 		= false;
 		tFields.isEquilateral	= false;
-		tFields.isIsosceles	= false;
+		tFields.isIsosceles		= false;
 		tFields.isObtuse		= false;
 		tFields.isRight 		= false;
-		tFields.isScalene 	= false;
-		tFields.smallAngle	= 0;
+		tFields.isScalene 		= false;
+		tFields.smallAngle		= 0;
 		tFields.midAngle		= 0;
-		tFields.largeAngle	= 0;
+		tFields.largeAngle		= 0;
 		tFields.smallSide		= 0;
-		tFields.midSide		= 0;
+		tFields.midSide			= 0;
 		tFields.largeSide		= 0;
 
-		tFields.verticesCount = 3;
-		tFields.vertices = {
+		--tFields.verticesCount = 3;
+		local tVertices = {
 			[1]	= type(oPoint1) == "point" and point(oPoint1.x, oPoint1.y) or point(),
 			[2]	= type(oPoint2) == "point" and point(oPoint2.x, oPoint2.y) or point(),
 			[3] = type(oPoint3) == "point" and point(oPoint3.x, oPoint3.y) or point(),
 		};
 
-		this:super(tFields, nil, true);
+		this:super(tVertices, true);
 
 		update(tFields);
 

@@ -53,7 +53,7 @@ return class "rectangle" : extends(polygon) {
 		nHeight = rawtype(nHeight) 	== "number" and nHeight or 0;
 
 		--tFields.verticesCount = 4;
-		tVertices = {
+		local tVertices = {
 			[1] = point(),
 			[2]	= point(),
 			[3]	= point(),
@@ -73,7 +73,7 @@ return class "rectangle" : extends(polygon) {
 		end
 
 		--call the parent constructor with the protected table, no vertices and skipping auto-update
-		this:super(tFields, tVertices);
+		this:super(tVertices);
 
 		--set the anchor point (to the top left vertex)
 		tFields.anchorIndex = 1;

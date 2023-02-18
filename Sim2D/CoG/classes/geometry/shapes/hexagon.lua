@@ -52,7 +52,7 @@ local hexagon = class "hexagon" : extends(polygon) {
 		tFields.width 	= math.sqrt(3) * this.size;
 		tFields.height	= this.size * 2;
 
-		this:super(tProtectedRepo, nil, true);
+		this:super(nil, true);
 
 		--calculate the vertices
 		this:recalculateVertices();
