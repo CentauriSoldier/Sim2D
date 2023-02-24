@@ -141,6 +141,8 @@ Sim2D.__properties 	= import("Properties");
 --process the build data
 					  import("Init.StoreBuildData");
 
+					 -- import("Init.StoreBuildData");
+
 --build the Sim2D ports
 					  import("Init.PortsBuilder");
 

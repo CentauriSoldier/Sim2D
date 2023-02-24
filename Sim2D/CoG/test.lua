@@ -105,9 +105,19 @@ local tVertices 	= {k, point(3, 4), point(3, 0)};
 local bSkipUpdate 	= false;
 
 local tri = polygon(tVertices, bSkipUpdate)
+--_ENV = {_G = _G};
+local env = _ENV;
+
+function tr()
+	local _ENV = {loadstring = loadstring,print=print};
+
+	loadstring("print(\"hello\")")();
+end
+
+tr();
 
 --print(ERRER.BLOOP.value)
-print(type(u.c.a), u.c.a.value)
+--print(type(u.c.a), u.c.a.value)
 --print(type(u.c.a), u.c.a)
 --print(_VERSION)
 --directive.enum("C:\\Users\\CS\\Sync\\Projects\\GitHub\\Supremecratic\\Supremecratic\\CD_Root\\Data\\Mods\\Shipped\\Population.enum");

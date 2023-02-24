@@ -55,7 +55,7 @@ local Sim2D = class "Sim2D" {
 
 	__construct = function(this, tProtected, sState, sName, oShape, nStratum, nLayer, bDoNotPoll, bDoNotAutoDraw)
 		sState = sState:lower();--TODO check this input!!!
-error(tostring(sState).." | "..tostring(sName))
+		error(tostring(sState).." | "..tostring(sName))
 		--get the object's stratum
 		nStratum = Util.StratumIsValid(nStratum) and nStratum or SIM2D.STRATUM[1];
 		--get the object's layer

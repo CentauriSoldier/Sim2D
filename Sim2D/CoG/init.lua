@@ -124,7 +124,7 @@ sPath = sPath:gsub("@", ""):gsub("[Ii][Nn][Ii][Tt].[Ll][Uu][Aa]", "");
 --remove the "/" at the end
 sPath = sPath:sub(1, sPath:len() - 1);
 --update the package.path (use the main directory to prevent namespace issues)
-package.path = package.path..";"..sPath.."\\..\\?.lua";
+package.path = package.path..";"..sPath.."\\..\\?.lua";--TODO check for directory separator type here
 
 local rCoG				= "CoG";
 local rStatic 			= rCoG..".static";
